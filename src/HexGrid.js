@@ -12,21 +12,25 @@ export default function HexGrid() {
   const corners = Hex().corners();
   // an SVG symbol can be reused;
 
+  const map = {};
   // render 10,000 hexes;
-  const hexSVGs = Grid.rectangle({ width: 22, height: 14 }).map(hex => {
+  const hexSVGs = Grid.rectangle({ width: 23, height: 14 }).map(hex => {
     const { x, y } = hex.toPoint();
     const key = `${x}-${y}`;
     const coords = hex.cartesian();
     const coordText = `${coordNumToLetter(coords.x)}${String(coords.y + 1).padStart(2, 0)}`;
+    map[coordText] = {};
     // const coordText = `${coordNumToLetter(coords.x)}${coords.y + 1}`;
     // use hexSymbol and set its position for each hex;
     return (
       <>
-        <use key={key} xlinkHref='#hex' transform={`translate(${x} ${y})`} onClick={() => console.log('TODO')} />
-        <text x={x + 15} y={y + 30} class="hex-text">{coordText}</text>
+        <use key={'use' + coordText} xlinkHref='#hex' transform={`translate(${x} ${y})`} onClick={() => console.log('TODO')} />
+        <text key={'text' + coordText} x={x + 15} y={y + 30} class="hex-text">{coordText}</text>
       </>
     )
   });
+
+  console.log(JSON.stringify(map, null, 2));
 
   return (
     <svg>
