@@ -1,9 +1,9 @@
 import galilei from './maps/galilei'
-import jake from './maps/jake'
+import fermi from './maps/fermi'
 
 const MAPS = {
   galilei,
-  jake,
+  fermi,
 };
 
 export default MAPS;
