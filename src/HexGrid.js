@@ -1,53 +1,51 @@
 
 import * as Honeycomb from 'honeycomb-grid';
 import Map, { HEX } from './maps/galilei';
+import { useState, useEffect } from 'react';
 
 function coordNumToLetter(num) {
   return String.fromCharCode(65 + num);
 }
 
+function ActualHexComponentTodoRenameThis({ x, y, coordText, className, label = coordText }) {
+  const [currentClassName, setCurrentClassName] = useState(className);
+
+  function clickHandler() {
+    console.log(coordText);
+    setCurrentClassName('clicked');
+  }
+
+  useEffect(() => {
+    const timer = setTimeout(() => setCurrentClassName(className), 1000);
+    return () => clearTimeout(timer);
+  }, [className, currentClassName]);
+
+  return (
+    <g onClick={clickHandler}>
+      <use xlinkHref='#hex' className={currentClassName} transform={`translate(${x} ${y})`} />
+      <text x={x + 15} y={y + 30} className={className}>{label}</text>
+    </g>
+  );
+}
 
 function Hexy({ coordText, x, y }) {
   const hexInfo = Map[coordText];
   switch (hexInfo) {
     case HEX.silent:
-      return (
-        <g class='silent'>
-          <use xlinkHref='#hex' transform={`translate(${x} ${y})`} />
-          <text x={x + 15} y={y + 30} class='hex-text'>{coordText}</text>
-        </g>
-      );
+      return <ActualHexComponentTodoRenameThis className='silent' {...{ coordText, x, y }} />;
     case HEX.danger:
-      return (
-        <g class='danger'>
-          <use xlinkHref='#hex' transform={`translate(${x} ${y})`} />
-          <text x={x + 15} y={y + 30} class='hex-text'>{coordText}</text>
-        </g>
-      );
+      return <ActualHexComponentTodoRenameThis className='danger' {...{ coordText, x, y }} />;
     case HEX.human:
-      return (
-        <g class='key'>
-          <use xlinkHref='#hex' transform={`translate(${x} ${y})`} />
-          <text x={x + 20} y={y + 35} class='hex-text'>H</text>
-        </g>
-      );
+      return <ActualHexComponentTodoRenameThis className='key' label='H' {...{ coordText, x, y, }} />;
     case HEX.alien:
-      return (
-        <g class='key'>
-          <use xlinkHref='#hex' transform={`translate(${x} ${y})`} />
-          <text x={x + 20} y={y + 35} class='hex-text'>A</text>
-        </g>
-      );
+      return <ActualHexComponentTodoRenameThis className='key' label='A' {...{ coordText, x, y, }} />;
+    // escape pods
     case 1:
     case 2:
     case 3:
     case 4:
-      return (
-        <g class='key'>
-          <use xlinkHref='#hex' transform={`translate(${x} ${y})`} />
-          <text x={x + 20} y={y + 35} class='hex-text'>{hexInfo}</text>
-        </g>
-      );
+      return <ActualHexComponentTodoRenameThis className='key' label={hexInfo} {...{ coordText, x, y, }} />;
+    // empty
     default:
   }
   return null;
@@ -56,12 +54,10 @@ function Hexy({ coordText, x, y }) {
 export default function HexGrid() {
   const Hex = Honeycomb.extendHex({ orientation: 'flat', size: 30, });
   const Grid = Honeycomb.defineGrid(Hex);
-  // get the corners of a hex (they're the same for all hexes created with the same Hex factory)
   const corners = Hex().corners();
-  // an SVG symbol can be reused;
 
-  // render 10,000 hexes;
-  const hexSVGs = Grid.rectangle({ width: 23, height: 14 }).map(hex => {
+  const grid = Grid.rectangle({ width: 23, height: 14 });
+  const hexSVGs = grid.map(hex => {
     const { x, y } = hex.toPoint();
     const coords = hex.cartesian();
     const coordText = `${coordNumToLetter(coords.x)}${String(coords.y + 1).padStart(2, 0)}`;
