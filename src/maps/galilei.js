@@ -7,33 +7,6 @@ const HEX = Object.freeze({
   escape: 'escape',
 });
 
-
-/*
-A: [],
-B: [],
-C: [],
-D: [],
-E: [],
-F: [],
-G: [],
-H: [],
-I: [],
-J: [],
-K: [],
-L: [],
-M: [],
-N: [],
-O: [],
-P: [],
-Q: [],
-R: [],
-S: [],
-T: [],
-U: [],
-V: [],
-W: [],
-*/
-
 const HEX_CONFIG = {
   [HEX.silent]: {
     A: [[4, 6], [9, 13]],
@@ -101,27 +74,30 @@ const HEXES = Object.freeze(Object.entries(HEX_CONFIG).reduce((config, [hexType,
     case HEX.danger:
       for (const [c, rows] of Object.entries(typeConfig)) {
         for (let row of rows) {
-          if (row instanceof Array) {
+          if (!(row instanceof Array)) {
             row = [row, row];
           }
           const [min, max] = row;
           for (let r = min; r <= max; ++r) {
-            HEXES[`${c}${String(r).padStart(2, 0)}`] = hexType
+            config[`${c}${String(r).padStart(2, 0)}`] = hexType
           }
         }
       }
       break;
     case HEX.human:
-      1;
+      config[typeConfig] = HEX.human;
       break;
     case HEX.alien:
-      1;
+      config[typeConfig] = HEX.alien;
       break;
     case HEX.escape:
-      1;
+      config[typeConfig[1]] = 1;
+      config[typeConfig[2]] = 2;
+      config[typeConfig[3]] = 3;
+      config[typeConfig[4]] = 4;
       break;
   }
+  return config;
 }, {}));
-
 
 export default HEXES;
