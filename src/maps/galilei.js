@@ -34,7 +34,7 @@ V: [],
 W: [],
 */
 
-const HEXES = {
+const HEX_CONFIG = {
   [HEX.silent]: {
     A: [[4, 6], [9, 13]],
     B: [5, 10],
@@ -95,4 +95,33 @@ const HEXES = {
   },
 };
 
-export default hexes;
+const HEXES = Object.freeze(Object.entries(HEX_CONFIG).reduce((config, [hexType, typeConfig]) => {
+  switch (hexType) {
+    case HEX.silent:
+    case HEX.danger:
+      for (const [c, rows] of Object.entries(typeConfig)) {
+        for (let row of rows) {
+          if (row instanceof Array) {
+            row = [row, row];
+          }
+          const [min, max] = row;
+          for (let r = min; r <= max; ++r) {
+            HEXES[`${c}${String(r).padStart(2, 0)}`] = hexType
+          }
+        }
+      }
+      break;
+    case HEX.human:
+      1;
+      break;
+    case HEX.alien:
+      1;
+      break;
+    case HEX.escape:
+      1;
+      break;
+  }
+}, {}));
+
+
+export default HEXES;
