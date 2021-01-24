@@ -1,7 +1,7 @@
-import { HEX, generateHexesFromConfig } from './util';
+import { HEX_TYPES, generateHexesFromConfig } from './util';
 
 const HEXES = generateHexesFromConfig({
-  [HEX.silent]: {
+  [HEX_TYPES.silent]: {
     H: [10, 11],
     I: [6, 10],
     J: [4, 7, 8, [10, 12]],
@@ -12,7 +12,7 @@ const HEXES = generateHexesFromConfig({
     O: [6, 7, 9, 12],
     P: [10],
   },
-  [HEX.danger]: {
+  [HEX_TYPES.danger]: {
     H: [],
     I: [7, 9, 12],
     J: [3],
@@ -23,9 +23,9 @@ const HEXES = generateHexesFromConfig({
     O: [10],
     P: [11],
   },
-  [HEX.human]: 'L10',
-  [HEX.alien]: 'L09',
-  [HEX.escape]: {
+  [HEX_TYPES.human]: 'L10',
+  [HEX_TYPES.alien]: 'L09',
+  [HEX_TYPES.escape]: {
     1: 'J05',
     2: 'N05',
     3: 'J01',

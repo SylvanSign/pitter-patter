@@ -1,7 +1,7 @@
-import { HEX, generateHexesFromConfig } from './util';
+import { HEX_TYPES, generateHexesFromConfig } from './util';
 
 const HEXES = generateHexesFromConfig({
-  [HEX.silent]: {
+  [HEX_TYPES.silent]: {
     A: [[4, 6], [9, 13]],
     B: [5, 10],
     C: [1, 14],
@@ -26,7 +26,7 @@ const HEXES = generateHexesFromConfig({
     V: [1, 8],
     W: [[3, 6], [10, 12]],
   },
-  [HEX.danger]: {
+  [HEX_TYPES.danger]: {
     A: [2, 3, 14],
     B: [1, 3, 4, 6, 8, 9, 11, 12, 14],
     C: [[2, 13]],
@@ -51,9 +51,9 @@ const HEXES = generateHexesFromConfig({
     V: [[3, 6], [9, 12], 14],
     W: [2, 9, 13, 14],
   },
-  [HEX.human]: 'L08',
-  [HEX.alien]: 'L06',
-  [HEX.escape]: {
+  [HEX_TYPES.human]: 'L08',
+  [HEX_TYPES.alien]: 'L06',
+  [HEX_TYPES.escape]: {
     1: 'B02',
     2: 'V02',
     3: 'V13',

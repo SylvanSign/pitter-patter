@@ -1,11 +1,11 @@
 import './App.css';
-import HexGrid from './HexGrid';
+import Game from './Game';
 
 function App() {
   return (
     <div>
       <h1 style={{ textAlign: 'center' }}>Pitter Patter</h1>
-      <HexGrid />
+      <Game />
     </div >
   );
 }

@@ -1,4 +1,4 @@
-export const HEX = Object.freeze({
+export const HEX_TYPES = Object.freeze({
   empty: 'empty',
   silent: 'silent',
   danger: 'danger',
@@ -10,8 +10,8 @@ export const HEX = Object.freeze({
 export function generateHexesFromConfig(hexConfig) {
   return Object.freeze(Object.entries(hexConfig).reduce((hexes, [hexType, typeConfig]) => {
     switch (hexType) {
-      case HEX.silent:
-      case HEX.danger:
+      case HEX_TYPES.silent:
+      case HEX_TYPES.danger:
         for (const [c, rows] of Object.entries(typeConfig)) {
           for (let row of rows) {
             if (!(row instanceof Array)) {
@@ -24,13 +24,13 @@ export function generateHexesFromConfig(hexConfig) {
           }
         }
         break;
-      case HEX.human:
-        hexes[typeConfig] = HEX.human;
+      case HEX_TYPES.human:
+        hexes[typeConfig] = HEX_TYPES.human;
         break;
-      case HEX.alien:
-        hexes[typeConfig] = HEX.alien;
+      case HEX_TYPES.alien:
+        hexes[typeConfig] = HEX_TYPES.alien;
         break;
-      case HEX.escape:
+      case HEX_TYPES.escape:
         hexes[typeConfig[1]] = 1;
         hexes[typeConfig[2]] = 2;
         hexes[typeConfig[3]] = 3;
@@ -41,4 +41,8 @@ export function generateHexesFromConfig(hexConfig) {
     }
     return hexes;
   }, {}))
-};
+}
+
+export function coordNumToLetter(num) {
+  return String.fromCharCode(65 + num);
+}
