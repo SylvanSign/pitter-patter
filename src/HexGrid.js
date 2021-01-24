@@ -1,6 +1,7 @@
 
 import * as Honeycomb from 'honeycomb-grid';
-import Map, { HEX } from './maps/galilei';
+import MAPS from './maps';
+import { HEX } from './maps/util';
 import { useState, useEffect } from 'react';
 
 function coordNumToLetter(num) {
@@ -28,8 +29,8 @@ function ActualHexComponentTodoRenameThis({ x, y, coordText, className, label = 
   );
 }
 
-function Hexy({ coordText, x, y }) {
-  const hexInfo = Map[coordText];
+function Hexy({ map, coordText, x, y }) {
+  const hexInfo = MAPS[map][coordText];
   switch (hexInfo) {
     case HEX.silent:
       return <ActualHexComponentTodoRenameThis className='silent' {...{ coordText, x, y }} />;
@@ -51,7 +52,22 @@ function Hexy({ coordText, x, y }) {
   return null;
 }
 
+function MapSelector({ map, setMap }) {
+  const options = Object.entries(MAPS).map(([name, config]) => <option key={name} value={name}>{name}</option>);
+
+  function onChange(e) {
+    setMap(e.target.value);
+  }
+
+  return (
+    <select value={map} onChange={onChange}>
+      {options}
+    </select>
+  );
+}
+
 export default function HexGrid() {
+  const [map, setMap] = useState('galilei');
   const Hex = Honeycomb.extendHex({ orientation: 'flat', size: 30, });
   const Grid = Honeycomb.defineGrid(Hex);
   const corners = Hex().corners();
@@ -62,20 +78,23 @@ export default function HexGrid() {
     const coords = hex.cartesian();
     const coordText = `${coordNumToLetter(coords.x)}${String(coords.y + 1).padStart(2, 0)}`;
     // use hexSymbol and set its position for each hex;
-    return <Hexy key={coordText} {...{ x, y, coordText }} />
+    return <Hexy key={coordText} {...{ map, coordText, x, y }} />
   });
 
   return (
-    <svg>
-      <symbol id='hex'>
-        <polygon points={corners.map(({ x, y }) => `${x},${y}`).join(' ')} stroke='grey' strokeWidth='3' />
-      </symbol>
-      <pattern id="stripes" width="10" height="10" patternTransform="rotate(-50 0 0)" patternUnits="userSpaceOnUse">
-        <line x1="0" y1="0" x2="0" y2="10" stroke='grey' strokeWidth='0.5' />
-      </pattern>
-      <rect width='100%' height='100%' fill='white' />
-      <rect width='100%' height='100%' fill='url(#stripes)' />
-      {hexSVGs}
-    </svg>
+    <>
+      <MapSelector map={map} setMap={setMap} />
+      <svg>
+        <symbol id='hex'>
+          <polygon points={corners.map(({ x, y }) => `${x},${y}`).join(' ')} stroke='grey' strokeWidth='3' />
+        </symbol>
+        <pattern id="stripes" width="10" height="10" patternTransform="rotate(-50 0 0)" patternUnits="userSpaceOnUse">
+          <line x1="0" y1="0" x2="0" y2="10" stroke='grey' strokeWidth='0.5' />
+        </pattern>
+        <rect width='100%' height='100%' fill='white' />
+        <rect width='100%' height='100%' fill='url(#stripes)' />
+        {hexSVGs}
+      </svg>
+    </>
   );
 }
