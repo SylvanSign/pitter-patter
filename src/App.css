@@ -4,15 +4,25 @@ html, body, div, svg {
   margin: 0;
 }
 
-.hex-text {
+.danger>.hex-text, .silent>.hex-text {
   font-family: "Courier New", Courier, monospace;
   fill: rgb(121, 121, 121);
 }
 
 .danger>use {
-fill: lightgrey;
+  fill: lightgrey;
 }
 
 .silent>use {
   fill: white;
+}
+
+.key>.hex-text {
+  font-family: "Courier New", Courier, monospace;
+  font-size: xx-large;
+  fill: white;
+}
+
+.key>use {
+  fill: black;
 }

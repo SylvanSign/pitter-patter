@@ -3,7 +3,10 @@ import HexGrid from './HexGrid';
 
 function App() {
   return (
-    <HexGrid />
+    <div>
+      <h1 style={{ textAlign: 'center' }}>Pitter Patter</h1>
+      <HexGrid />
+    </div >
   );
 }
 

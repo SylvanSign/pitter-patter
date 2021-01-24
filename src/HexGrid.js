@@ -8,7 +8,8 @@ function coordNumToLetter(num) {
 
 
 function Hexy({ coordText, x, y }) {
-  switch (Map[coordText]) {
+  const hexInfo = Map[coordText];
+  switch (hexInfo) {
     case HEX.silent:
       return (
         <g class='silent'>
@@ -24,13 +25,30 @@ function Hexy({ coordText, x, y }) {
         </g>
       );
     case HEX.human:
-      break;
+      return (
+        <g class='key'>
+          <use xlinkHref='#hex' transform={`translate(${x} ${y})`} />
+          <text x={x + 20} y={y + 35} class='hex-text'>H</text>
+        </g>
+      );
     case HEX.alien:
-      break;
-    case HEX.escape:
-      break;
+      return (
+        <g class='key'>
+          <use xlinkHref='#hex' transform={`translate(${x} ${y})`} />
+          <text x={x + 20} y={y + 35} class='hex-text'>A</text>
+        </g>
+      );
+    case 1:
+    case 2:
+    case 3:
+    case 4:
+      return (
+        <g class='key'>
+          <use xlinkHref='#hex' transform={`translate(${x} ${y})`} />
+          <text x={x + 20} y={y + 35} class='hex-text'>{hexInfo}</text>
+        </g>
+      );
     default:
-      break;
   }
   return null;
 }
