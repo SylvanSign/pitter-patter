@@ -1,6 +1,6 @@
 
 import * as Honeycomb from 'honeycomb-grid';
-import Map from './maps/galilei';
+import Map, { HEX } from './maps/galilei';
 
 function coordNumToLetter(num) {
   return String.fromCharCode(65 + num);
@@ -8,13 +8,31 @@ function coordNumToLetter(num) {
 
 
 function Hexy({ coordText, x, y }) {
-  console.log(coordText, Map[coordText]);
-  return (
-    <g>
-      <use xlinkHref='#hex' transform={`translate(${x} ${y})`} onClick={() => console.log('TODO')} />
-      <text x={x + 15} y={y + 30} class="hex-text">{coordText}</text>
-    </g>
-  );
+  switch (Map[coordText]) {
+    case HEX.silent:
+      return (
+        <g class="silent">
+          <use xlinkHref='#hex' transform={`translate(${x} ${y})`} />
+          <text x={x + 15} y={y + 30} class="hex-text">{coordText}</text>
+        </g>
+      );
+    case HEX.danger:
+      return (
+        <g class="danger">
+          <use xlinkHref='#hex' transform={`translate(${x} ${y})`} />
+          <text x={x + 15} y={y + 30} class="hex-text">{coordText}</text>
+        </g>
+      );
+    case HEX.human:
+      break;
+    case HEX.alien:
+      break;
+    case HEX.escape:
+      break;
+    default:
+      break;
+  }
+  return null;
 }
 
 export default function HexGrid() {
@@ -36,8 +54,9 @@ export default function HexGrid() {
   return (
     <svg>
       <symbol id='hex'>
-        <polygon points={corners.map(({ x, y }) => `${x},${y}`).join(' ')} fill='none' stroke='#999' strokeWidth='2' />
+        <polygon points={corners.map(({ x, y }) => `${x},${y}`).join(' ')} stroke='black' strokeWidth='3' />
       </symbol>
+      <rect width="100%" height="100%" fill="black" />
       {hexSVGs}
     </svg>
   );

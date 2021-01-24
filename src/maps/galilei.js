@@ -103,3 +103,4 @@ const HEXES = Object.freeze(Object.entries(HEX_CONFIG).reduce((config, [hexType,
 }, {}));
 
 export default HEXES;
+export { HEX };

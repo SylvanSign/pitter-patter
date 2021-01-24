@@ -7,3 +7,11 @@ html, body, div, svg {
 .hex-text {
   font-family: "Courier New", Courier, monospace;
 }
+
+.danger>use {
+fill: grey;
+}
+
+.silent>use {
+  fill: white;
+}
