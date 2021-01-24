@@ -96,6 +96,8 @@ const HEXES = Object.freeze(Object.entries(HEX_CONFIG).reduce((config, [hexType,
       config[typeConfig[3]] = 3;
       config[typeConfig[4]] = 4;
       break;
+    default:
+      throw new Error('Map invalid!');
   }
   return config;
 }, {}));
