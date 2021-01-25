@@ -25,21 +25,24 @@ export default function Hex({ x, y, coordText, className, label = coordText }) {
 
 export function makeHexComponent({ map, coordText, x, y }) {
   const hexInfo = MAPS[map][coordText];
+  const key = `${map}${coordText}`;
+  const otherProps = { key, coordText, x, y };
+
   switch (hexInfo) {
     case HEX_TYPES.silent:
-      return <Hex className='silent' {...{ coordText, x, y }} />;
+      return <Hex className='silent' {...otherProps} />;
     case HEX_TYPES.danger:
-      return <Hex className='danger' {...{ coordText, x, y }} />;
+      return <Hex className='danger' {...otherProps} />;
     case HEX_TYPES.human:
-      return <Hex className='key' label='H' {...{ coordText, x, y, }} />;
+      return <Hex className='key' label='H' {...otherProps} />;
     case HEX_TYPES.alien:
-      return <Hex className='key' label='A' {...{ coordText, x, y, }} />;
+      return <Hex className='key' label='A' {...otherProps} />;
     // escape pods
     case 1:
     case 2:
     case 3:
     case 4:
-      return <Hex className='key' label={hexInfo} {...{ coordText, x, y, }} />;
+      return <Hex className='key' label={hexInfo} {...otherProps} />;
     // empty
     default:
   }
