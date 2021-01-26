@@ -1,22 +1,26 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import MAPS from './maps';
 import { HEX_TYPES } from './maps/util';
 
 export default function Hex({ x, y, coordText, className, label = coordText }) {
   const [currentClassName, setCurrentClassName] = useState(className);
+  const timer = useRef();
 
-  function clickHandler() {
-    console.log(coordText);
+  // cleanup any dangling resources when component unmounts
+  useEffect(() => {
+    return () => {
+      clearTimeout(timer.current);
+    };
+  }, []);
+
+  function onClick() {
+    clearTimeout(timer.current);
+    timer.current = setTimeout(() => setCurrentClassName(className), 3000)
     setCurrentClassName('clicked');
   }
 
-  useEffect(() => {
-    const timer = setTimeout(() => setCurrentClassName(className), 1000);
-    return () => clearTimeout(timer);
-  }, [className, currentClassName]);
-
   return (
-    <g onClick={clickHandler}>
+    <g onClick={onClick}>
       <use xlinkHref='#hex' className={currentClassName} transform={`translate(${x} ${y})`} />
       <text x={x + 15} y={y + 30} className={className}>{label}</text>
     </g>
