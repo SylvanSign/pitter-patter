@@ -3,10 +3,7 @@ import Game from './Game';
 
 function App() {
   return (
-    <div>
-      <h1 style={{ textAlign: 'center' }}>Pitter Patter</h1>
-      <Game />
-    </div >
+    <Game />
   );
 }
 

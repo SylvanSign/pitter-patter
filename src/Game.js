@@ -7,7 +7,9 @@ export default function Game() {
 
   return (
     <div>
-      <MapSelector map={map} setMap={setMap} />
+      <div>
+        <MapSelector map={map} setMap={setMap} />
+      </div>
       <Map map={map} />
     </div>
   );
