@@ -49,6 +49,6 @@ export function makeHexComponent({ map, coordText, x, y }) {
       return <Hex className='key' label={hexInfo} {...otherProps} />;
     // empty
     default:
+      throw new Error('Map component should not try to render empty hexes!');
   }
-  return null;
 }

@@ -43,6 +43,6 @@ export function generateHexesFromConfig(hexConfig) {
   }, {}))
 }
 
-export function coordNumToLetter(num) {
-  return String.fromCharCode(65 + num);
+export function cartesianToCoordText(x, y) {
+  return `${String.fromCharCode(65 + x)}${String(y + 1).padStart(2, 0)}`
 }
