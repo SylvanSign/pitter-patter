@@ -34,8 +34,8 @@ export default function Map({ map }) {
         <symbol id='hex'>
           <polygon points={HexData().corners().map(({ x, y }) => `${x},${y}`).join(' ')} stroke='grey' strokeWidth='2' />
         </symbol>
-        <pattern id="stripes" width="10" height="10" patternTransform="rotate(-50 0 0)" patternUnits="userSpaceOnUse">
-          <line x1="0" y1="0" x2="0" y2="10" stroke='grey' strokeWidth='2' />
+        <pattern id="stripes" width="10" height="10" patternTransform="rotate(-40 0 0)" patternUnits="userSpaceOnUse">
+          <line x1="0" y1="0" x2="0" y2="10" stroke='darkgrey' strokeWidth='2' />
         </pattern>
       </defs>
       <rect width='100%' height='100%' fill='white' />
