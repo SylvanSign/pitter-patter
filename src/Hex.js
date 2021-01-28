@@ -43,10 +43,10 @@ export default function Hex({ x, y, coordText, className, label = coordText }) {
   return (
     <g onClick={onClick}>
       <use xlinkHref='#hex' className={currentClassName} transform={`translate(${x} ${y})`} />
-      { label > 0 && label < 5 ?
+      {label > 0 && label < 5 ?
         <>
-          <text x={x + 20} y={y + 35} className={className}>{label}</text>
-          <svg viewBox="0 0 134 116" width='60' height='60' transform={`translate(${x} ${y - 5})`}>
+          <text transform={`translate(${x + 20} ${y + 35})`} className={className}>{label}</text>
+          <svg viewBox="0 0 134 116" width='60' height='60' x={x} y={y - 5}>
             <path d="M94.427,106.959l-46.254,-0.011l0,-9.349l40.856,0.011l20.423,-35.37l8.102,4.668l-23.127,40.051Z" style={{ fill: '#fff', fillRule: 'nonzero' }} />
             <path d="M24.543,53.766l-8.097,-4.674l23.127,-40.051l46.243,0.011l0,9.349l-40.851,-0.006l-20.422,35.371Z" style={{ fill: '#fff', fillRule: 'nonzero' }} />
           </svg>
