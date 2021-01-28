@@ -1,26 +1,28 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useMemo } from 'react';
 import MAPS from './maps';
 import { HEX_TYPES } from './maps/util';
 
-export default function Hex({ x, y, coordText, className, label = coordText }) {
+export default function Hex({ inRange, todoRenameThis, x, y, coordText, className, label = coordText }) {
   const [currentClassName, setCurrentClassName] = useState(className);
-  const timer = useRef();
 
-  // cleanup any dangling resources when component unmounts
-  useEffect(() => {
-    return () => {
-      clearTimeout(timer.current);
-    };
-  }, []);
+  useMemo(() => {
+    if (inRange) {
+      setCurrentClassName('clicked');
+    } else {
+      setCurrentClassName(className);
+    }
+  }, [inRange, className]);
 
-  function onClick() {
-    clearTimeout(timer.current);
-    timer.current = setTimeout(() => setCurrentClassName(className), 3000)
-    setCurrentClassName('clicked');
+  function enter() {
+    todoRenameThis(coordText);
+  }
+
+  function leave() {
+    todoRenameThis(null);
   }
 
   return (
-    <g onClick={onClick}>
+    <g onMouseEnter={enter} onMouseLeave={leave}>
       <use xlinkHref='#hex' className={currentClassName} transform={`translate(${x} ${y})`} />
       {label > 0 && label < 5 ?
         <g>
@@ -63,10 +65,10 @@ export default function Hex({ x, y, coordText, className, label = coordText }) {
   );
 }
 
-export function makeHexComponent({ map, coordText, x, y }) {
+export function makeHexComponent({ map, todoRenameThis, coordText, x, y, inRange }) {
   const hexInfo = MAPS[map][coordText];
   const key = `${map}${coordText}`;
-  const otherProps = { key, coordText, x, y };
+  const otherProps = { inRange, todoRenameThis, key, coordText, x, y };
 
   switch (hexInfo) {
     case HEX_TYPES.silent:
