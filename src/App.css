@@ -5,7 +5,7 @@ svg {
 }
 
 text.danger, text.silent {
-  font-family: "Courier New", Courier, monospace;
+  font-family: 'Roboto Mono', monospace;
   fill: rgb(121, 121, 121);
 }
 
@@ -18,7 +18,7 @@ use.silent {
 }
 
 text.key {
-  font-family: "Courier New", Courier, monospace;
+  font-family: 'Roboto Mono', monospace;
   font-size: xx-large;
   fill: white;
 }
