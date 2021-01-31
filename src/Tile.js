@@ -1,14 +1,14 @@
 import MAPS from './maps';
 import { HEX_TYPES } from './maps/util';
 
-export default function Tile({ map, coordText, x, y }) {
-  const hexInfo = MAPS[map][coordText];
+export default function Tile({ map, id, x, y }) {
+  const hexInfo = MAPS[map][id];
 
   switch (hexInfo) {
     case HEX_TYPES.silent:
-      return <SilentHex {...{ x, y, label: coordText }} />;
+      return <SilentHex {...{ x, y, label: id }} />;
     case HEX_TYPES.danger:
-      return <DangerHex {...{ x, y, label: coordText }} />;
+      return <DangerHex {...{ x, y, label: id }} />;
     case HEX_TYPES.human:
       return <HumanHex {...{ x, y }} />;
     case HEX_TYPES.alien:
@@ -26,6 +26,7 @@ export default function Tile({ map, coordText, x, y }) {
 }
 
 function HexShape({ className = '', x, y }) {
+  console.log('x:', x, ' y:', y);
   return <use xlinkHref='#hex' className={className} transform={`translate(${x} ${y})`} />;
 }
 

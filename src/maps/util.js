@@ -43,12 +43,12 @@ export function generateHexesFromConfig(hexConfig) {
   }, {}))
 }
 
-export function cartesianToCoordText(x, y) {
+export function cartesianToId(x, y) {
   return `${String.fromCharCode(65 + x)}${String(y + 1).padStart(2, 0)}`
 }
 
-export function coordTextToCartesian(coordText) {
-  const x = coordText.charCodeAt(0) - 65;
-  const y = Number.parseInt(coordText.substring(1), 10) - 1;
+export function idToCartesian(id) {
+  const x = id.charCodeAt(0) - 65;
+  const y = Number.parseInt(id.substring(1), 10) - 1;
   return [x, y];
 }
