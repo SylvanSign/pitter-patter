@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 import Tile from './Tile';
 import { cartesianToId } from './maps/util';
 
-export default function Map({ G, G: { map, gridData }, }) {
+export default function Map({ G, G: { map, gridData }, moves, }) {
   const {
     grid,
     fullGrid,
@@ -25,8 +25,8 @@ export default function Map({ G, G: { map, gridData }, }) {
 
       // The cursor point, translated into svg coordinates
       const { x, y } = point.matrixTransform(svg.getScreenCTM().inverse());
-      const hexCoordinates = Grid.pointToHex(x, y)
-      console.log(grid.get(hexCoordinates))
+      const hexCoordinates = Grid.pointToHex(x, y);
+      moves.click(grid.get(hexCoordinates));
     };
 
     svg.addEventListener('click', clickHandler);

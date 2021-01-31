@@ -26,7 +26,6 @@ export default function Tile({ map, id, x, y }) {
 }
 
 function HexShape({ className = '', x, y }) {
-  console.log('x:', x, ' y:', y);
   return <use xlinkHref='#hex' className={className} transform={`translate(${x} ${y})`} />;
 }
 
