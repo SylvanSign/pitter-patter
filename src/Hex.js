@@ -1,13 +1,38 @@
 import MAPS from './maps';
 import { HEX_TYPES } from './maps/util';
 
-function HexShape({ className, x, y }) {
+export function makeHexComponent({ map, coordText, x, y }) {
+  const hexInfo = MAPS[map][coordText];
+
+  switch (hexInfo) {
+    case HEX_TYPES.silent:
+      return <SilentHex {...{ x, y, label: coordText }} />;
+    case HEX_TYPES.danger:
+      return <DangerHex {...{ x, y, label: coordText }} />;
+    case HEX_TYPES.human:
+      return <HumanHex {...{ x, y }} />;
+    case HEX_TYPES.alien:
+      return <AlienHex {...{ x, y }} />;
+    // escape pods
+    case 1:
+    case 2:
+    case 3:
+    case 4:
+      return <EscapeHex {...{ x, y, label: hexInfo }} />;
+    // empty
+    default:
+      throw new Error('Map component should not try to render empty hexes!');
+  }
+}
+
+function HexShape({ className = '', x, y }) {
   return <use xlinkHref='#hex' className={className} transform={`translate(${x} ${y})`} />;
 }
 
 function EscapeHex({ x, y, label }) {
   return (
     <g>
+      <HexShape {...{ className: 'key', x, y }} />
       <text transform={`translate(${x + 20} ${y + 35})`} className='key'>{label}</text>
       <svg viewBox="0 0 134 116" width='60' height='60' x={x} y={y - 5}>
         <path d="M94.427,106.959l-46.254,-0.011l0,-9.349l40.856,0.011l20.423,-35.37l8.102,4.668l-23.127,40.051Z" style={{ fill: 'white', fillRule: 'nonzero' }} />
@@ -19,26 +44,33 @@ function EscapeHex({ x, y, label }) {
 
 function HumanHex({ x, y }) {
   return (
-    <svg viewBox="0 0 134 116" width='60' height='60' x={x} y={y - 5}>
-      <path d="M67.009,100.979l-33.996,-19.624l0,-56.517l16.998,-9.817l4.067,7.058l-12.921,7.456l0,47.117l25.852,14.927l25.834,-14.927l0,-47.117l-12.912,-7.456l4.072,-7.058l16.984,9.817l0,56.517l-33.978,19.624Z" style={{ fill: 'white', fillRule: 'nonzero' }} />
-      <path d="M67.009,66.431l-31.958,-18.444l4.072,-7.058l27.886,16.103l27.872,-16.103l4.072,7.058l-31.944,18.444Z" style={{ fill: 'white', fillRule: 'nonzero' }} />
-    </svg>
+    <g>
+      <HexShape {...{ className: 'key', x, y }} />
+      <svg viewBox="0 0 134 116" width='60' height='60' x={x} y={y - 5}>
+        <path d="M67.009,100.979l-33.996,-19.624l0,-56.517l16.998,-9.817l4.067,7.058l-12.921,7.456l0,47.117l25.852,14.927l25.834,-14.927l0,-47.117l-12.912,-7.456l4.072,-7.058l16.984,9.817l0,56.517l-33.978,19.624Z" style={{ fill: 'white', fillRule: 'nonzero' }} />
+        <path d="M67.009,66.431l-31.958,-18.444l4.072,-7.058l27.886,16.103l27.872,-16.103l4.072,7.058l-31.944,18.444Z" style={{ fill: 'white', fillRule: 'nonzero' }} />
+      </svg>
+    </g>
   );
 }
 
 function AlienHex({ x, y }) {
   return (
-    <svg viewBox="0 0 134 116" width='60' height='60' x={x} y={y - 5}>
-      <path d="M66.995,44.187l-31.918,-18.101l4.015,-7.086l27.903,15.826l27.908,-15.826l4.02,7.086l-31.928,18.101Z" style={{ fill: 'white', fillRule: 'nonzero' }} />
-      <path d="M33.013,97.384l0,-43.289l33.895,-19.215l34.079,17.566l0,44.938l-33.994,-19.272l-33.98,19.272Zm33.98,-28.628l25.846,14.65l0,-25.997l-25.756,-13.272l-25.927,14.703l0,24.566l25.837,-14.65Z" style={{ fill: 'white', fillRule: 'nonzero' }} />
-      <path d="M134,58.024l-33.5,58.023l-67,0l-33.5,-58.023l33.5,-58.024l67,0l33.5,58.024Z" style={{ fill: 'none', stroke: '#000', strokeWidth: '1px' }} />
-    </svg>
+    <g>
+      <HexShape {...{ className: 'key', x, y }} />
+      <svg viewBox="0 0 134 116" width='60' height='60' x={x} y={y - 5}>
+        <path d="M66.995,44.187l-31.918,-18.101l4.015,-7.086l27.903,15.826l27.908,-15.826l4.02,7.086l-31.928,18.101Z" style={{ fill: 'white', fillRule: 'nonzero' }} />
+        <path d="M33.013,97.384l0,-43.289l33.895,-19.215l34.079,17.566l0,44.938l-33.994,-19.272l-33.98,19.272Zm33.98,-28.628l25.846,14.65l0,-25.997l-25.756,-13.272l-25.927,14.703l0,24.566l25.837,-14.65Z" style={{ fill: 'white', fillRule: 'nonzero' }} />
+        <path d="M134,58.024l-33.5,58.023l-67,0l-33.5,-58.023l33.5,-58.024l67,0l33.5,58.024Z" style={{ fill: 'none', stroke: '#000', strokeWidth: '1px' }} />
+      </svg>
+    </g>
   );
 }
 
 function DangerHex({ x, y, label }) {
   return (
     <g>
+      <HexShape {...{ className: 'danger', x, y }} />
       <svg viewBox="0 0 134 116" width='60' height='60' x={x} y={y - 5}>
         <path d="M10.469,39.925l-10.432,18.074l10.432,18.083l10.432,-18.083l-10.432,-18.074Z" style={{ fill: 'grey', fillRule: 'nonzero' }} />
         <path d="M123.531,39.925l-10.432,18.074l10.432,18.083l10.432,-18.083l-10.432,-18.074Z" style={{ fill: 'grey', fillRule: 'nonzero' }} />
@@ -53,53 +85,10 @@ function DangerHex({ x, y, label }) {
 }
 
 function SilentHex({ x, y, label }) {
-  return <text x={x + 15} y={y + 30} className='silent'>{label}</text>;
-}
-
-function HexTodoRename({ x, y, coordText, className, label = coordText }) {
   return (
     <g>
-      <HexShape {...{ className, x, y }} />
-      {label > 0 && label < 5 ?
-        <EscapeHex {...{ x, y, label }} />
-        :
-        label === 'H' ?
-          <HumanHex {...{ x, y }} />
-          :
-          label === 'A' ?
-            <AlienHex {...{ x, y }} />
-            :
-            className === 'danger' ?
-              <DangerHex {...{ x, y, label }} />
-              :
-              <SilentHex {...{ x, y, label }} />
-      }
+      <HexShape {...{ className: 'silent', x, y }} />
+      <text x={x + 15} y={y + 30} className='silent'>{label}</text>
     </g>
   );
-}
-
-export function makeHexComponent({ map, coordText, x, y }) {
-  const hexInfo = MAPS[map][coordText];
-  const key = `${map}${coordText}`;
-  const otherProps = { key, coordText, x, y };
-
-  switch (hexInfo) {
-    case HEX_TYPES.silent:
-      return <HexTodoRename className='silent' {...otherProps} />;
-    case HEX_TYPES.danger:
-      return <HexTodoRename className='danger' {...otherProps} />;
-    case HEX_TYPES.human:
-      return <HexTodoRename className='key' label='H' {...otherProps} />;
-    case HEX_TYPES.alien:
-      return <HexTodoRename className='key' label='A' {...otherProps} />;
-    // escape pods
-    case 1:
-    case 2:
-    case 3:
-    case 4:
-      return <HexTodoRename className='key' label={hexInfo} {...otherProps} />;
-    // empty
-    default:
-      throw new Error('Map component should not try to render empty hexes!');
-  }
 }
