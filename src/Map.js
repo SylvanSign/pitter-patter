@@ -1,5 +1,5 @@
 import * as Honeycomb from 'honeycomb-grid';
-import { makeHexComponent } from './Hex';
+import Tile from './Tile';
 import MAPS from './maps';
 import { cartesianToCoordText } from './maps/util';
 
@@ -25,7 +25,7 @@ export default function Map({ map }) {
     const { x, y } = hex.toPoint();
     const cartesian = hex.cartesian();
     const coordText = cartesianToCoordText(cartesian.x, cartesian.y);
-    return makeHexComponent({ map, coordText, x, y });
+    return <Tile {...{ map, coordText, x, y }} />;
   });
 
   return (

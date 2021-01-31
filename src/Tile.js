@@ -1,7 +1,7 @@
 import MAPS from './maps';
 import { HEX_TYPES } from './maps/util';
 
-export function makeHexComponent({ map, coordText, x, y }) {
+export default function Tile({ map, coordText, x, y }) {
   const hexInfo = MAPS[map][coordText];
 
   switch (hexInfo) {
