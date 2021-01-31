@@ -8,6 +8,11 @@ export const HEX_TYPES = Object.freeze({
 });
 
 export function generateHexesFromConfig(hexConfig) {
+  const baseConfig = {
+    [HEX_TYPES.human]: hexConfig[HEX_TYPES.human],
+    [HEX_TYPES.alien]: hexConfig[HEX_TYPES.alien],
+    [HEX_TYPES.escape]: hexConfig[HEX_TYPES.escape],
+  };
   return Object.freeze(Object.entries(hexConfig).reduce((hexes, [hexType, typeConfig]) => {
     switch (hexType) {
       case HEX_TYPES.silent:
@@ -40,7 +45,7 @@ export function generateHexesFromConfig(hexConfig) {
         throw new Error('Map invalid!');
     }
     return hexes;
-  }, {}))
+  }, baseConfig));
 }
 
 export function cartesianToId(x, y) {

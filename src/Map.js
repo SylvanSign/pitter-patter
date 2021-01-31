@@ -1,4 +1,3 @@
-import { useEffect } from 'react';
 import Tile from './Tile';
 import { cartesianToId } from './maps/util';
 
@@ -16,25 +15,24 @@ export default function Map({ G, G: { map, gridData }, moves, }) {
     return <Tile {...{ key: id, map, id, x, y }} />;
   });
 
-  useEffect(() => {
+  function onClick({ clientX, clientY }) {
     const svg = document.getElementById('map');
-    const point = svg.createSVGPoint();
-    const clickHandler = ({ clientX, clientY }) => {
-      point.x = clientX;
-      point.y = clientY;
+    const point = svg.createSVGPoint(); // TODO should this be done once, outside of click handler?
 
-      // The cursor point, translated into svg coordinates
-      const { x, y } = point.matrixTransform(svg.getScreenCTM().inverse());
-      const hexCoordinates = Grid.pointToHex(x, y);
-      moves.click(grid.get(hexCoordinates));
-    };
+    point.x = clientX;
+    point.y = clientY;
 
-    svg.addEventListener('click', clickHandler);
-    return () => svg.removeEventListener('click', clickHandler);
-  }, [grid, Grid]); // empty deps array, indicating only run after first render
+    // The cursor point, translated into svg coordinates
+    const { x, y } = point.matrixTransform(svg.getScreenCTM().inverse());
+    const hexCoordinates = Grid.pointToHex(x, y);
+    const hex = grid.get(hexCoordinates);
+    if (hex) {
+      moves.click(hex);
+    }
+  };
 
   return (
-    <svg id='map' viewBox={`0 0 ${fullGrid.pointWidth()} ${fullGrid.pointHeight()}`}>
+    <svg id='map' onClick={onClick} viewBox={`0 0 ${fullGrid.pointWidth()} ${fullGrid.pointHeight()}`}>
       <defs>
         <symbol id='hex'>
           <polygon points={corners.map(({ x, y }) => `${x},${y}`).join(' ')} stroke='grey' strokeWidth='2' />
