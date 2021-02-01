@@ -1,16 +1,20 @@
 import { INVALID_MOVE } from 'boardgame.io/core';
 import gridGenerator from './maps/gridGenerator';
 import MAPS from './maps';
-import { HEX_TYPES, idToCartesian } from './maps/util';
+import { HEX_TYPES, idToCartesian, reachableHexes } from './maps/util';
 
 // TODO generally, remove all console.logs
 const Game = {
   setup() {
     const [map, mapConfig] = Object.entries(MAPS)[1];// TODO make this selectable
     const gridData = gridGenerator(map);
+    const pos = gridData.grid.get(idToCartesian(mapConfig[HEX_TYPES.human]));
+    const reachable = reachableHexes(gridData.grid, pos, 1);
+
     return {
-      pos: gridData.grid.get(idToCartesian(mapConfig[HEX_TYPES.human])),
+      pos,
       gridData,
+      reachable,
       map,
       mapConfig,
     };
@@ -29,6 +33,16 @@ const Game = {
 
   moves: {
     click(G, ctx, hex) {
+      if (hex === G.pos) {
+        alert('Cannot stay in same tile!');
+        return INVALID_MOVE;
+      }
+
+      if (!G.reachable.has(hex)) {
+        alert('Cannot yet reach that tile!');
+        return INVALID_MOVE;
+      }
+
       switch (G.mapConfig[hex.id]) {
         case HEX_TYPES.human:
           alert('Cannot move into human spawn!'); // TODO something nicer :)
@@ -40,6 +54,7 @@ const Game = {
       }
 
       G.pos = hex;
+      G.reachable = reachableHexes(G.gridData.grid, G.pos, 1)
     }
   },
 };

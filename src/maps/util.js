@@ -57,3 +57,24 @@ export function idToCartesian(id) {
   const y = Number.parseInt(id.substring(1), 10) - 1;
   return [x, y];
 }
+
+// from https://www.redblobgames.com/grids/hexagons/#range-obstacles
+export function reachableHexes(grid, start, movement) {
+  const visited = new Set([start]); // set of hexes
+  const fringes = [[start]] // array of arrays of hexes
+
+  for (let k = 1; k <= movement; ++k) {
+    fringes.push([])
+    for (const hex of fringes[k - 1]) {
+      for (const neighbor of grid.neighborsOf(hex)) {
+        if (neighbor && !visited.has(neighbor)) { // TODO should we filter out spawn hexes?
+          visited.add(neighbor);
+          fringes[k].push(neighbor)
+        }
+      }
+    }
+  }
+
+  // visited.delete(start); // TODO? must move every turn
+  return visited;
+}

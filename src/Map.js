@@ -1,7 +1,7 @@
 import Tile from './Tile';
 import { cartesianToId } from './maps/util';
 
-export default function Map({ G, G: { map, gridData }, moves, }) {
+export default function Map({ G, G: { map, gridData, reachable }, moves, }) {
   const {
     grid,
     fullGrid,
@@ -29,8 +29,10 @@ export default function Map({ G, G: { map, gridData }, moves, }) {
     const { x, y } = hex.toPoint();
     const cartesian = hex.cartesian();
     const id = cartesianToId(cartesian.x, cartesian.y);
+
     const current = G.pos.id === id;
-    return <Tile {...{ key: id, current, map, id, x, y }} />;
+    const moveCandidate = reachable.has(hex);
+    return <Tile {...{ key: id, current, moveCandidate, map, id, x, y }} />;
   });
 
   return (

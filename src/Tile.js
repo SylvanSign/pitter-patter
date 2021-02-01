@@ -1,14 +1,14 @@
 import MAPS from './maps';
 import { HEX_TYPES } from './maps/util';
 
-export default function Tile({ map, id, x, y, current }) {
+export default function Tile({ map, id, x, y, current, moveCandidate }) {
   const hexInfo = MAPS[map][id];
 
   switch (hexInfo) {
     case HEX_TYPES.silent:
-      return <SilentHex {...{ x, y, label: id, current }} />;
+      return <SilentHex {...{ x, y, label: id, current, moveCandidate }} />;
     case HEX_TYPES.danger:
-      return <DangerHex {...{ x, y, label: id, current }} />;
+      return <DangerHex {...{ x, y, label: id, current, moveCandidate }} />;
     case HEX_TYPES.human:
       return <HumanHex {...{ x, y, current }} />;
     case HEX_TYPES.alien:
@@ -18,22 +18,24 @@ export default function Tile({ map, id, x, y, current }) {
     case 2:
     case 3:
     case 4:
-      return <EscapeHex {...{ x, y, label: hexInfo, current }} />;
+      return <EscapeHex {...{ x, y, label: hexInfo, current, moveCandidate }} />;
     // empty
     default:
       throw new Error('Map component should not try to render empty hexes!');
   }
 }
 
-function HexShape({ className, x, y, current }) {
-  const finalClassName = current ? 'clicked' : className;
+function HexShape({ className, x, y, current, moveCandidate }) {
+  let finalClassName = current ? 'clicked'
+    : moveCandidate ? 'can-move'
+      : className;
   return <use xlinkHref='#hex' className={finalClassName} transform={`translate(${x} ${y})`} />;
 }
 
-function EscapeHex({ x, y, label, current }) {
+function EscapeHex({ x, y, label, current, moveCandidate }) {
   return (
     <g>
-      <HexShape {...{ className: 'key', x, y, current }} />
+      <HexShape {...{ className: 'key', x, y, current, moveCandidate }} />
       <text transform={`translate(${x + 20} ${y + 35})`} className='key'>{label}</text>
       <svg viewBox="0 0 134 116" width='60' height='60' x={x} y={y - 5}>
         <path d="M94.427,106.959l-46.254,-0.011l0,-9.349l40.856,0.011l20.423,-35.37l8.102,4.668l-23.127,40.051Z" style={{ fill: 'white', fillRule: 'nonzero' }} />
@@ -68,10 +70,10 @@ function AlienHex({ x, y, current }) {
   );
 }
 
-function DangerHex({ x, y, label, current }) {
+function DangerHex({ x, y, label, current, moveCandidate }) {
   return (
     <g>
-      <HexShape {...{ className: 'danger', x, y, current }} />
+      <HexShape {...{ className: 'danger', x, y, current, moveCandidate }} />
       <svg viewBox="0 0 134 116" width='60' height='60' x={x} y={y - 5}>
         <path d="M10.469,39.925l-10.432,18.074l10.432,18.083l10.432,-18.083l-10.432,-18.074Z" style={{ fill: 'grey', fillRule: 'nonzero' }} />
         <path d="M123.531,39.925l-10.432,18.074l10.432,18.083l10.432,-18.083l-10.432,-18.074Z" style={{ fill: 'grey', fillRule: 'nonzero' }} />
@@ -85,10 +87,10 @@ function DangerHex({ x, y, label, current }) {
   );
 }
 
-function SilentHex({ x, y, label, current }) {
+function SilentHex({ x, y, label, current, moveCandidate }) {
   return (
     <g>
-      <HexShape {...{ className: 'silent', x, y, current }} />
+      <HexShape {...{ className: 'silent', x, y, current, moveCandidate }} />
       <text x={x + 15} y={y + 30} className='silent'>{label}</text>
     </g>
   );
