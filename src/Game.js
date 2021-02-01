@@ -3,6 +3,7 @@ import gridGenerator from './maps/gridGenerator';
 import MAPS from './maps';
 import { HEX_TYPES, idToCartesian } from './maps/util';
 
+// TODO generally, remove all console.logs
 const Game = {
   setup() {
     const [map, mapConfig] = Object.entries(MAPS)[0];// TODO make this selectable

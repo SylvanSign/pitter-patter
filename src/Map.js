@@ -8,12 +8,6 @@ export default function Map({ G, G: { map, gridData }, moves, }) {
     Grid,
     corners,
   } = gridData;
-  const hexSVGs = grid.map(hex => {
-    const { x, y } = hex.toPoint();
-    const cartesian = hex.cartesian();
-    const id = cartesianToId(cartesian.x, cartesian.y);
-    return <Tile {...{ key: id, map, id, x, y }} />;
-  });
 
   function onClick({ clientX, clientY }) {
     const svg = document.getElementById('map');
@@ -30,6 +24,14 @@ export default function Map({ G, G: { map, gridData }, moves, }) {
       moves.click(hex);
     }
   };
+
+  const hexSVGs = grid.map(hex => {
+    const { x, y } = hex.toPoint();
+    const cartesian = hex.cartesian();
+    const id = cartesianToId(cartesian.x, cartesian.y);
+    const current = G.pos.id === id;
+    return <Tile {...{ key: id, current, map, id, x, y }} />;
+  });
 
   return (
     <svg id='map' onClick={onClick} viewBox={`0 0 ${fullGrid.pointWidth()} ${fullGrid.pointHeight()}`}>
