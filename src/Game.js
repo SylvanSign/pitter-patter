@@ -6,7 +6,7 @@ import { HEX_TYPES, idToCartesian } from './maps/util';
 // TODO generally, remove all console.logs
 const Game = {
   setup() {
-    const [map, mapConfig] = Object.entries(MAPS)[0];// TODO make this selectable
+    const [map, mapConfig] = Object.entries(MAPS)[1];// TODO make this selectable
     const gridData = gridGenerator(map);
     return {
       pos: gridData.grid.get(idToCartesian(mapConfig[HEX_TYPES.human])),
@@ -14,6 +14,13 @@ const Game = {
       map,
       mapConfig,
     };
+  },
+
+  endIf(G, ctx) {
+    const hexType = G.mapConfig[G.pos.id];
+    if (hexType > 0 || hexType < 5) {
+      return { winner: ctx.currentPlayer }; // TODO flesh this out
+    }
   },
 
   turn: {
