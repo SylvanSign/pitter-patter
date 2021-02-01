@@ -9,7 +9,8 @@ const Game = {
     const [map, mapConfig] = Object.entries(MAPS)[1];// TODO make this selectable
     const gridData = gridGenerator(map);
     const pos = gridData.grid.get(idToCartesian(mapConfig[HEX_TYPES.human]));
-    const reachable = reachableHexes(gridData.grid, pos, 1);
+    const moveSpeed = 1;
+    const reachable = reachableHexes(gridData.grid, pos, moveSpeed);
 
     return {
       pos,
@@ -17,6 +18,7 @@ const Game = {
       reachable,
       map,
       mapConfig,
+      moveSpeed,
     };
   },
 
@@ -54,7 +56,7 @@ const Game = {
       }
 
       G.pos = hex;
-      G.reachable = reachableHexes(G.gridData.grid, G.pos, 1)
+      G.reachable = reachableHexes(G.gridData.grid, G.pos, G.moveSpeed);
     }
   },
 };

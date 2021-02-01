@@ -1,6 +1,6 @@
 import * as Honeycomb from 'honeycomb-grid';
 import MAPS from '.';
-import { cartesianToId } from './util';
+import { cartesianToId, HEX_TYPES } from './util';
 
 export default function gridGenerator(map) {
   const HexData = Honeycomb.extendHex({
@@ -15,8 +15,10 @@ export default function gridGenerator(map) {
     .map(hex => {
       const { x, y } = hex.cartesian();
       const id = cartesianToId(x, y);
-      if (MAPS[map][id]) {
-        return Hex(x, y, { id });
+      const config = MAPS[map][id];
+      console.log(config);
+      if (config) {
+        return Hex(x, y, { id, accessible: !(config === HEX_TYPES.human || config === HEX_TYPES.alien) });
       }
       return null;
     })

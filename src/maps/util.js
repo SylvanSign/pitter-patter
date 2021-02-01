@@ -67,7 +67,7 @@ export function reachableHexes(grid, start, movement) {
     fringes.push([])
     for (const hex of fringes[k - 1]) {
       for (const neighbor of grid.neighborsOf(hex)) {
-        if (neighbor && !visited.has(neighbor)) { // TODO should we filter out spawn hexes?
+        if (neighbor && neighbor.accessible && !visited.has(neighbor)) {
           visited.add(neighbor);
           fringes[k].push(neighbor)
         }
