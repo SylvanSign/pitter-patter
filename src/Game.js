@@ -38,11 +38,6 @@ const Game = {
         return INVALID_MOVE;
       }
 
-      if (!G.reachable.has(hex)) {
-        alert('Cannot yet reach that tile!');
-        return INVALID_MOVE;
-      }
-
       switch (G.mapConfig[hex.id]) {
         case HEX_TYPES.human:
           alert('Cannot move into human spawn!'); // TODO something nicer :)
@@ -51,6 +46,11 @@ const Game = {
           alert('Cannot move into alien spawn!'); // TODO something nicer :)
           return INVALID_MOVE;
         default: // proceed
+      }
+
+      if (!G.reachable.has(hex)) {
+        alert('Cannot yet reach that tile!');
+        return INVALID_MOVE;
       }
 
       G.pos = hex;

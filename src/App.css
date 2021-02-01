@@ -29,8 +29,10 @@ use.key {
 
 use.clicked {
   fill: gold;
+  opacity: 70%;
 }
 
 use.can-move {
   fill: lightblue;
+  opacity: 70%;
 }

@@ -26,10 +26,19 @@ export default function Tile({ map, id, x, y, current, moveCandidate }) {
 }
 
 function HexShape({ className, x, y, current, moveCandidate }) {
-  let finalClassName = current ? 'clicked'
+  // TODO use better indicator (symbol based like styled inner ring?) that doesn't disrupt primary coloring of base tiles
+  let movementClass = current ? 'clicked'
     : moveCandidate ? 'can-move'
-      : className;
-  return <use xlinkHref='#hex' className={finalClassName} transform={`translate(${x} ${y})`} />;
+      : '';
+  return (
+    <g transform={`translate(${x} ${y})`}>
+      <use xlinkHref='#hex' className={className} />
+      {movementClass ?
+        <use xlinkHref='#hex' className={movementClass} transform='scale(0.7) translate(12 10)' stroke='red' />
+        : ''
+      }
+    </g>
+  );
 }
 
 function EscapeHex({ x, y, label, current, moveCandidate }) {
