@@ -20,11 +20,14 @@ const Game = {
     const { map, } = setupData
     const [humans, aliens] = pickRoles(ctx, playOrder)
     const players = setupPlayers(humans, aliens, 0, 1) // TODO pull start coords from map
-    const deck = makeDeck(ctx);
+    const dangerousDeck = makeDangerousDeck(ctx);
+    const escapeDeck = makeEscapeDeck(ctx);
+
     return {
       map,
       players,
-      deck,
+      escapeDeck,
+      dangerousDeck,
     }
   },
 
@@ -68,12 +71,21 @@ function setupPlayers(humans, aliens, humanStart, alienStart) {
   return players
 }
 
-function makeDeck(ctx) {
+function makeDangerousDeck(ctx) {
   const deck = [
     ...Array(27).fill('you'),
     ...Array(27).fill('any'),
     ...Array(17).fill('item'),
     ...Array(17).fill('silent'),
+  ]
+
+  return ctx.random.Shuffle(deck)
+}
+
+function makeEscapeDeck(ctx) {
+  const deck = [
+    'fail',
+    ...Array(4).fill('success'),
   ]
 
   return ctx.random.Shuffle(deck)
