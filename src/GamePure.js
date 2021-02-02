@@ -14,12 +14,16 @@ const Game = {
   //   "log": {},
   //   "events": {}
   // }
-  setup(ctx) {
+  setup(ctx, setupData) {
     window.ctx = ctx // TODO remove this as it's for testing only
     const { playOrder, } = ctx
+    const { map, } = setupData
     const [humans, aliens] = pickRoles(ctx, playOrder)
     const players = setupPlayers(humans, aliens, 0, 1) // TODO pull start coords from map
-    return { players };
+    return {
+      map,
+      players,
+    }
   },
 
   turn: {
