@@ -5,14 +5,14 @@ export const HEX_TYPES = Object.freeze({
   human: 'human',
   alien: 'alien',
   escape: 'escape',
-});
+})
 
 export function generateHexesFromConfig(hexConfig) {
   const baseConfig = {
     [HEX_TYPES.human]: hexConfig[HEX_TYPES.human],
     [HEX_TYPES.alien]: hexConfig[HEX_TYPES.alien],
     [HEX_TYPES.escape]: hexConfig[HEX_TYPES.escape],
-  };
+  }
   return Object.freeze(Object.entries(hexConfig).reduce((hexes, [hexType, typeConfig]) => {
     switch (hexType) {
       case HEX_TYPES.silent:
@@ -20,32 +20,32 @@ export function generateHexesFromConfig(hexConfig) {
         for (const [c, rows] of Object.entries(typeConfig)) {
           for (let row of rows) {
             if (!(row instanceof Array)) {
-              row = [row, row];
+              row = [row, row]
             }
-            const [min, max] = row;
+            const [min, max] = row
             for (let r = min; r <= max; ++r) {
               hexes[`${c}${String(r).padStart(2, 0)}`] = hexType
             }
           }
         }
-        break;
+        break
       case HEX_TYPES.human:
-        hexes[typeConfig] = HEX_TYPES.human;
-        break;
+        hexes[typeConfig] = HEX_TYPES.human
+        break
       case HEX_TYPES.alien:
-        hexes[typeConfig] = HEX_TYPES.alien;
-        break;
+        hexes[typeConfig] = HEX_TYPES.alien
+        break
       case HEX_TYPES.escape:
-        hexes[typeConfig[1]] = 1;
-        hexes[typeConfig[2]] = 2;
-        hexes[typeConfig[3]] = 3;
-        hexes[typeConfig[4]] = 4;
-        break;
+        hexes[typeConfig[1]] = 1
+        hexes[typeConfig[2]] = 2
+        hexes[typeConfig[3]] = 3
+        hexes[typeConfig[4]] = 4
+        break
       default:
-        throw new Error('Map invalid!');
+        throw new Error('Map invalid!')
     }
-    return hexes;
-  }, baseConfig));
+    return hexes
+  }, baseConfig))
 }
 
 export function cartesianToId(x, y) {
@@ -53,9 +53,9 @@ export function cartesianToId(x, y) {
 }
 
 export function idToCartesian(id) {
-  const x = id.charCodeAt(0) - 65;
-  const y = Number.parseInt(id.substring(1), 10) - 1;
-  return [x, y];
+  const x = id.charCodeAt(0) - 65
+  const y = Number.parseInt(id.substring(1), 10) - 1
+  return [x, y]
 }
 
 // from https://www.redblobgames.com/grids/hexagons/#range-obstacles
@@ -68,7 +68,7 @@ export function reachableHexes(grid, start, movement) {
     for (const hex of fringes[k - 1]) {
       for (const neighbor of grid.neighborsOf(hex)) {
         if (neighbor && neighbor.accessible && !visited.has(neighbor)) {
-          visited.add(neighbor);
+          visited.add(neighbor)
           fringes[k].push(neighbor)
         }
       }
@@ -76,5 +76,5 @@ export function reachableHexes(grid, start, movement) {
   }
 
   // visited.delete(start); // TODO? must move every turn
-  return visited;
+  return visited
 }

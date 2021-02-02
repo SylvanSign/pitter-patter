@@ -1,18 +1,18 @@
-import Map from './Map';
-import { useEffect } from 'react';
+import Map from './Map'
+import { useEffect } from 'react'
 
 export default function Game(props) { // props from boardgame.io/react
-  const gameOver = props.ctx.gameover;
+  const gameOver = props.ctx.gameover
   useEffect(() => {
     if (gameOver) {
-      alert(`Winner is ${gameOver.winner}`);
+      alert(`Winner is ${gameOver.winner}`)
     }
-  }, [gameOver]);
+  }, [gameOver])
 
   return (
     <div>
       {/* TODO add MapSelector somehow? */}
       <Map {...props} />
     </div>
-  );
+  )
 }

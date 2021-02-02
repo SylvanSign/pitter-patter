@@ -1,4 +1,4 @@
-import { HEX_TYPES, generateHexesFromConfig } from './util';
+import { HEX_TYPES, generateHexesFromConfig } from './util'
 
 const HEXES = generateHexesFromConfig({
   [HEX_TYPES.silent]: {
@@ -31,6 +31,6 @@ const HEXES = generateHexesFromConfig({
     3: 'J01',
     4: 'N01',
   },
-});
+})
 
-export default HEXES;
+export default HEXES

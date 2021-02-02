@@ -4,6 +4,6 @@ import fermi from './fermi'
 const MAPS = {
   galilei,
   fermi,
-};
+}
 
-export default MAPS;
+export default MAPS

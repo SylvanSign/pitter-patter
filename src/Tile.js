@@ -1,27 +1,27 @@
-import MAPS from './maps';
-import { HEX_TYPES } from './maps/util';
+import MAPS from './maps'
+import { HEX_TYPES } from './maps/util'
 
 export default function Tile({ map, id, x, y, current, moveCandidate }) {
-  const hexInfo = MAPS[map][id];
+  const hexInfo = MAPS[map][id]
 
   switch (hexInfo) {
     case HEX_TYPES.silent:
-      return <SilentHex {...{ x, y, label: id, current, moveCandidate }} />;
+      return <SilentHex {...{ x, y, label: id, current, moveCandidate }} />
     case HEX_TYPES.danger:
-      return <DangerHex {...{ x, y, label: id, current, moveCandidate }} />;
+      return <DangerHex {...{ x, y, label: id, current, moveCandidate }} />
     case HEX_TYPES.human:
-      return <HumanHex {...{ x, y, current }} />;
+      return <HumanHex {...{ x, y, current }} />
     case HEX_TYPES.alien:
-      return <AlienHex {...{ x, y, current }} />;
+      return <AlienHex {...{ x, y, current }} />
     // escape pods
     case 1:
     case 2:
     case 3:
     case 4:
-      return <EscapeHex {...{ x, y, label: hexInfo, current, moveCandidate }} />;
+      return <EscapeHex {...{ x, y, label: hexInfo, current, moveCandidate }} />
     // empty
     default:
-      throw new Error('Map component should not try to render empty hexes!');
+      throw new Error('Map component should not try to render empty hexes!')
   }
 }
 
@@ -29,7 +29,7 @@ function HexShape({ className, x, y, current, moveCandidate }) {
   // TODO use better indicator (symbol based like styled inner ring?) that doesn't disrupt primary coloring of base tiles
   let movementClass = current ? 'clicked'
     : moveCandidate ? 'can-move'
-      : '';
+      : ''
   return (
     <g transform={`translate(${x} ${y})`}>
       <use xlinkHref='#hex' className={className} />
@@ -38,7 +38,7 @@ function HexShape({ className, x, y, current, moveCandidate }) {
         : ''
       }
     </g>
-  );
+  )
 }
 
 function EscapeHex({ x, y, label, current, moveCandidate }) {
@@ -51,7 +51,7 @@ function EscapeHex({ x, y, label, current, moveCandidate }) {
         <path d="M24.543,53.766l-8.097,-4.674l23.127,-40.051l46.243,0.011l0,9.349l-40.851,-0.006l-20.422,35.371Z" style={{ fill: 'white', fillRule: 'nonzero' }} />
       </svg>
     </g>
-  );
+  )
 }
 
 function HumanHex({ x, y, current }) {
@@ -63,7 +63,7 @@ function HumanHex({ x, y, current }) {
         <path d="M67.009,66.431l-31.958,-18.444l4.072,-7.058l27.886,16.103l27.872,-16.103l4.072,7.058l-31.944,18.444Z" style={{ fill: 'white', fillRule: 'nonzero' }} />
       </svg>
     </g>
-  );
+  )
 }
 
 function AlienHex({ x, y, current }) {
@@ -76,7 +76,7 @@ function AlienHex({ x, y, current }) {
         <path d="M134,58.024l-33.5,58.023l-67,0l-33.5,-58.023l33.5,-58.024l67,0l33.5,58.024Z" style={{ fill: 'none', stroke: '#000', strokeWidth: '1px' }} />
       </svg>
     </g>
-  );
+  )
 }
 
 function DangerHex({ x, y, label, current, moveCandidate }) {
@@ -93,7 +93,7 @@ function DangerHex({ x, y, label, current, moveCandidate }) {
       </svg>
       <text x={x + 15} y={y + 30} className='danger'>{label}</text>
     </g>
-  );
+  )
 }
 
 function SilentHex({ x, y, label, current, moveCandidate }) {
@@ -102,5 +102,5 @@ function SilentHex({ x, y, label, current, moveCandidate }) {
       <HexShape {...{ className: 'silent', x, y, current, moveCandidate }} />
       <text x={x + 15} y={y + 30} className='silent'>{label}</text>
     </g>
-  );
+  )
 }

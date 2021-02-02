@@ -1,5 +1,5 @@
-import Tile from './Tile';
-import { cartesianToId } from './maps/util';
+import Tile from './Tile'
+import { cartesianToId } from './maps/util'
 
 export default function Map({ G, G: { map, gridData, reachable }, moves, }) {
   const {
@@ -7,33 +7,33 @@ export default function Map({ G, G: { map, gridData, reachable }, moves, }) {
     fullGrid,
     Grid,
     corners,
-  } = gridData;
+  } = gridData
 
   function onClick({ clientX, clientY }) {
-    const svg = document.getElementById('map');
+    const svg = document.getElementById('map')
     const point = svg.createSVGPoint(); // TODO should this be done once, outside of click handler?
 
-    point.x = clientX;
-    point.y = clientY;
+    point.x = clientX
+    point.y = clientY
 
     // The cursor point, translated into svg coordinates
-    const { x, y } = point.matrixTransform(svg.getScreenCTM().inverse());
-    const hexCoordinates = Grid.pointToHex(x, y);
-    const hex = grid.get(hexCoordinates);
+    const { x, y } = point.matrixTransform(svg.getScreenCTM().inverse())
+    const hexCoordinates = Grid.pointToHex(x, y)
+    const hex = grid.get(hexCoordinates)
     if (hex) {
-      moves.click(hex);
+      moves.click(hex)
     }
-  };
+  }
 
   const hexSVGs = grid.map(hex => {
-    const { x, y } = hex.toPoint();
-    const cartesian = hex.cartesian();
-    const id = cartesianToId(cartesian.x, cartesian.y);
+    const { x, y } = hex.toPoint()
+    const cartesian = hex.cartesian()
+    const id = cartesianToId(cartesian.x, cartesian.y)
 
-    const current = G.pos.id === id;
-    const moveCandidate = reachable.has(hex);
-    return <Tile {...{ key: id, current, moveCandidate, map, id, x, y }} />;
-  });
+    const current = G.pos.id === id
+    const moveCandidate = reachable.has(hex)
+    return <Tile {...{ key: id, current, moveCandidate, map, id, x, y }} />
+  })
 
   return (
     <svg id='map' onClick={onClick} viewBox={`0 0 ${fullGrid.pointWidth()} ${fullGrid.pointHeight()}`}>
@@ -49,5 +49,5 @@ export default function Map({ G, G: { map, gridData, reachable }, moves, }) {
       <rect width='100%' height='100%' fill='url(#stripes)' />
       {hexSVGs}
     </svg>
-  );
+  )
 }
