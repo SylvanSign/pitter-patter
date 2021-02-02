@@ -1,3 +1,6 @@
+import { TurnOrder } from 'boardgame.io/core'
+import { EffectsPlugin } from 'bgio-effects/plugin';
+
 const Game = {
   // ctx = {
   //   "numPlayers": 2,
@@ -19,26 +22,40 @@ const Game = {
     const { playOrder, } = ctx
     const { map, } = setupData
     const [humans, aliens] = pickRoles(ctx, playOrder)
-    const players = setupPlayers(humans, aliens, 0, 1) // TODO pull start coords from map
+    const players = setupPlayers(humans, aliens, 0, 1) // TODO pull start hexes from map
     const dangerousDeck = makeDangerousDeck(ctx);
     const escapeDeck = makeEscapeDeck(ctx);
 
     return {
       map,
       players,
+      playOrder: ctx.random.Shuffle(playOrder),
       escapeDeck,
       dangerousDeck,
     }
   },
 
   turn: {
-    moveLimit: 1,
+    order: TurnOrder.CUSTOM_FROM('playOrder'),
   },
 
+  plugins: [EffectsPlugin({
+    effects: {
+      move: {
+        create(hex) { return hex },
+        duration: 3,
+      },
+    },
+  })],
+
   moves: {
-    m(G, ctx) {
-      alert('m')
-    }
+    move(G, ctx, hex) {
+      G.players[ctx.currentPlayer].hex = hex
+      ctx.effects.move(hex)
+    },
+
+    silent(G, ctx) {
+    },
   },
 }
 
@@ -47,13 +64,13 @@ function pickRoles(ctx, playOrder) {
   return [shuffled, shuffled.splice(shuffled.length / 2)]
 }
 
-function setupPlayers(humans, aliens, humanStart, alienStart) {
+function setupPlayers(humans, aliens, humanHex, alienHex) {
   let players = {}
 
   humans.reduce((players, p) => {
     players[p] = {
       role: 'human',
-      pos: humanStart,
+      hex: humanHex,
       speed: 1,
     }
     return players
@@ -62,7 +79,7 @@ function setupPlayers(humans, aliens, humanStart, alienStart) {
   aliens.reduce((players, p) => {
     players[p] = {
       role: 'alien',
-      pos: alienStart,
+      hex: alienHex,
       speed: 2,
     }
     return players
