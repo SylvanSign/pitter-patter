@@ -75,6 +75,11 @@ export function reachableHexes(grid, start, movement) {
     }
   }
 
-  // visited.delete(start); // TODO? must move every turn
+  if (movement > 1) { // TODO better check for alien?
+    [...visited]
+      .filter(v => v.escape)
+      .forEach(v => visited.delete(v))
+  }
+  visited.delete(start); // TODO? must move every turn
   return visited
 }

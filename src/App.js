@@ -30,7 +30,8 @@ function FakeBoard(props) {
 
 const App = Client({
   game: wrappedGameDef({ map: 'galilei' }),
-  board: FakeBoard, // TODO
+  // board: FakeBoard, // TODO
+  board: Board, // TODO
   numPlayers: 2, // TODO multiplayer
 })
 

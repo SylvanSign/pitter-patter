@@ -3,10 +3,9 @@ import gridGenerator from './maps/gridGenerator'
 import MAPS from './maps'
 import { HEX_TYPES, idToCartesian, reachableHexes } from './maps/util'
 
-// TODO generally, remove all console.logs
+// TODO remove this file
 const Game = {
   setup(ctx) {
-    console.log(ctx)
     const [map, mapConfig] = Object.entries(MAPS)[1];// TODO make this selectable
     const gridData = gridGenerator(map)
     const pos = gridData.grid.get(idToCartesian(mapConfig[HEX_TYPES.human]))

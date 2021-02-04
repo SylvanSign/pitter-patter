@@ -17,7 +17,7 @@ export default function gridGenerator(map) {
       const id = cartesianToId(x, y)
       const config = MAPS[map][id]
       if (config) {
-        return Hex(x, y, { id, accessible: !(config === HEX_TYPES.human || config === HEX_TYPES.alien) })
+        return Hex(x, y, { id, accessible: !(config === HEX_TYPES.human || config === HEX_TYPES.alien), escape: config > 0 || config < 5 })
       }
       return null
     })
