@@ -1,6 +1,14 @@
 import { HEX_TYPES, generateHexesFromConfig } from './util'
 
 const HEXES = generateHexesFromConfig({
+  [HEX_TYPES.human]: 'L10',
+  [HEX_TYPES.alien]: 'L09',
+  [HEX_TYPES.escape]: {
+    1: 'J05',
+    2: 'N05',
+    3: 'J01',
+    4: 'N01',
+  },
   [HEX_TYPES.silent]: {
     H: [10, 11],
     I: [6, 10],
@@ -13,7 +21,6 @@ const HEXES = generateHexesFromConfig({
     P: [10],
   },
   [HEX_TYPES.danger]: {
-    H: [],
     I: [7, 9, 12],
     J: [3],
     K: [4, 13],
@@ -22,14 +29,6 @@ const HEXES = generateHexesFromConfig({
     N: [3, 7, 12],
     O: [10],
     P: [11],
-  },
-  [HEX_TYPES.human]: 'L10',
-  [HEX_TYPES.alien]: 'L09',
-  [HEX_TYPES.escape]: {
-    1: 'J05',
-    2: 'N05',
-    3: 'J01',
-    4: 'N01',
   },
 })
 

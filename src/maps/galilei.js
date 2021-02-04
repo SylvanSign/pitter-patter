@@ -1,6 +1,14 @@
 import { HEX_TYPES, generateHexesFromConfig } from './util'
 
 const HEXES = generateHexesFromConfig({
+  [HEX_TYPES.human]: 'L08',
+  [HEX_TYPES.alien]: 'L06',
+  [HEX_TYPES.escape]: {
+    1: 'B02',
+    2: 'V02',
+    3: 'V13',
+    4: 'B13',
+  },
   [HEX_TYPES.silent]: {
     A: [[4, 6], [9, 13]],
     B: [5, 10],
@@ -20,7 +28,6 @@ const HEXES = generateHexesFromConfig({
     P: [1, 3, 4, 12],
     Q: [1, 4, 6, 11, 14],
     R: [1, 4, [6, 8], 12],
-    S: [],
     T: [7, 8, 14],
     U: [1, 5, 12],
     V: [1, 8],
@@ -50,14 +57,6 @@ const HEXES = generateHexesFromConfig({
     U: [[2, 4], [6, 11], 13, 14],
     V: [[3, 6], [9, 12], 14],
     W: [2, 9, 13, 14],
-  },
-  [HEX_TYPES.human]: 'L08',
-  [HEX_TYPES.alien]: 'L06',
-  [HEX_TYPES.escape]: {
-    1: 'B02',
-    2: 'V02',
-    3: 'V13',
-    4: 'B13',
   },
 })
 

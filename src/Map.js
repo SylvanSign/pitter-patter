@@ -43,7 +43,7 @@ export default function Map({ ctx, G, G: { map, gridData, }, moves, }) {
           <polygon points={corners.map(({ x, y }) => `${x},${y}`).join(' ')} stroke='grey' strokeWidth='2' />
         </symbol>
         <pattern id="stripes" width="10" height="10" patternTransform="rotate(-40 0 0)" patternUnits="userSpaceOnUse">
-          <line x1="0" y1="0" x2="0" y2="10" stroke='darkgrey' strokeWidth='2' />
+          <line x1="0" y1="0" x2="0" y2="10" stroke='darkgrey' strokeWidth='1.5' />
         </pattern>
       </defs>
       <rect width='100%' height='100%' fill='white' />
