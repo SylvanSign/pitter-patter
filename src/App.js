@@ -12,26 +12,9 @@ function wrapGameDefinition(game) {
 }
 const wrappedGameDef = wrapGameDefinition(Game)
 
-function FakeBoard(props) {
-  const winner = props.ctx.gameover ? <h1>Winner is {props.ctx.gameover.winner}</h1> : ''
-  return (
-    <div>
-      <ul>
-        {
-          props.log
-            .filter(l => l.action.type === 'MAKE_MOVE')
-            .map(l => <li key={l._stateID}>{JSON.stringify(l)}</li>)
-        }
-      </ul>
-      {winner}
-    </div>
-  )
-}
-
 const App = Client({
   game: wrappedGameDef({ map: 'galilei' }),
-  // board: FakeBoard, // TODO
-  board: Board, // TODO
+  board: Board,
   numPlayers: 2, // TODO multiplayer
 })
 

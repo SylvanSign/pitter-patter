@@ -53,13 +53,13 @@ const Game = {
   },
 
   endIf(G, ctx) {
-    const currentPlayer = G.players[ctx.currentPlayer]
-    if (currentPlayer.role === 'human') {
-      const hexType = G.mapConfig[currentPlayer.hex.id]
-      if (hexType > 0 || hexType < 5) {
-        return { winner: ctx.currentPlayer }; // TODO flesh this out
-      }
-    }
+    // const currentPlayer = G.players[ctx.currentPlayer]
+    // if (currentPlayer.role === 'human') {
+    //   const hexType = G.mapConfig[currentPlayer.hex.id]
+    //   if (hexType > 0 || hexType < 5) {
+    //     return { winner: ctx.currentPlayer }; // TODO flesh this out
+    //   }
+    // }
 
     // TODO handle player elimination
     if (ctx.turn / ctx.numPlayers > 40) {
@@ -101,6 +101,23 @@ const Game = {
       currentPlayer.hex = hex
       currentPlayer.reachable = new Set() // TODO clean this reachable thing up
 
+      switch (hex.type) {
+        case HEX_TYPES.silent:
+          console.log('silent sector')
+          break;
+        case HEX_TYPES.danger:
+          console.log('dangerous sector')
+          const dangerCard = G.dangerousDeck.pop()
+          console.log(dangerCard)
+          break;
+        default: // escape pod
+          const escapeCard = G.escapeDeck.pop()
+          if (escapeCard === 'success') {
+            console.log('successful escape!')
+          } else { // 'fail'
+            console.log('failed launch!')
+          }
+      }
       ctx.events.endTurn()
     },
     silent(G, ctx) {
