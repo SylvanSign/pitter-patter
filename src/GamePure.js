@@ -1,5 +1,4 @@
 import { TurnOrder } from 'boardgame.io/core'
-import { EffectsPlugin } from 'bgio-effects/plugin';
 
 const Game = {
   // ctx = {
@@ -18,43 +17,48 @@ const Game = {
   //   "events": {}
   // }
   setup(ctx, setupData) {
-    window.ctx = ctx // TODO remove this as it's for testing only
     const { playOrder, } = ctx
     const { map, } = setupData
     const [humans, aliens] = pickRoles(ctx, playOrder)
     const players = setupPlayers(humans, aliens, 0, 1) // TODO pull start hexes from map
-    const dangerousDeck = makeDangerousDeck(ctx);
-    const escapeDeck = makeEscapeDeck(ctx);
+    const dangerousDeck = makeDangerousDeck(ctx)
+    const escapeDeck = makeEscapeDeck(ctx)
 
     return {
       map,
       players,
-      playOrder: ctx.random.Shuffle(playOrder),
       escapeDeck,
       dangerousDeck,
+      playOrder: ctx.random.Shuffle(playOrder),
+    }
+  },
+
+  endIf(G, ctx) {
+    // TODO handle player elimination
+    if (ctx.turn / ctx.numPlayers > 3) {
+      return { winner: ctx.currentPlayer } // TODO fix this
     }
   },
 
   turn: {
-    order: TurnOrder.CUSTOM_FROM('playOrder'),
+    order: TurnOrder.CUSTOM_FROM('playOrder'), // TODO handle player elimination
+    // TODO use stages to enforce this and allow other players to take notes when not current player?
+    moveLimit: 2, // must move, then either silent, draw, or attack
   },
-
-  plugins: [EffectsPlugin({
-    effects: {
-      move: {
-        create(hex) { return hex },
-        duration: 3,
-      },
-    },
-  })],
 
   moves: {
     move(G, ctx, hex) {
       G.players[ctx.currentPlayer].hex = hex
-      ctx.effects.move(hex)
+      // ctx.events.endTurn()
     },
-
     silent(G, ctx) {
+      // ctx.events.endTurn()
+    },
+    draw(G, ctx, hex) {
+      // ctx.events.endTurn()
+    },
+    attack(G, ctx, hex) {
+      // ctx.events.endTurn()
     },
   },
 }
