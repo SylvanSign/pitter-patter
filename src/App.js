@@ -1,6 +1,6 @@
 import './App.css'
 import Board from './Board'
-import Game from './GamePure'
+import Game from './Game'
 import { Client } from 'boardgame.io/react'
 
 // TODO remove this wrapper stuff when we switch to Multiplayer
