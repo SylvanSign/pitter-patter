@@ -104,19 +104,17 @@ const Game = {
 
       switch (hex.type) {
         case HEX_TYPES.silent:
-          console.log('silent sector')
           break;
         case HEX_TYPES.danger:
-          console.log('dangerous sector')
           const dangerCard = drawDangerCard(G, ctx)
-          console.log(dangerCard)
+          alert(dangerCard)
           break;
         default: // escape pod
           const escapeCard = G.escapeDeck.pop()
           if (escapeCard === 'success') {
-            console.log('successful escape!')
+            alert('successful escape!')
           } else { // 'fail'
-            console.log('failed launch!')
+            alert('failed launch!')
           }
       }
       ctx.events.endTurn()

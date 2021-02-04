@@ -2,6 +2,7 @@ import './App.css'
 import Board from './Board'
 import Game from './Game'
 import { Client } from 'boardgame.io/react'
+import { Local } from 'boardgame.io/multiplayer';
 
 // TODO remove this wrapper stuff when we switch to Multiplayer
 function wrapGameDefinition(game) {
@@ -12,10 +13,17 @@ function wrapGameDefinition(game) {
 }
 const wrappedGameDef = wrapGameDefinition(Game)
 
-const App = Client({
+const C = Client({
   game: wrappedGameDef({ map: 'galilei' }),
   board: Board,
-  numPlayers: 2, // TODO multiplayer
+  multiplayer: Local(),
 })
 
-export default App
+export default function App() {
+  return (
+    <div>
+      <C playerID='0' />
+      <C playerID='1' />
+    </div>
+  )
+}

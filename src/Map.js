@@ -1,7 +1,7 @@
 import Tile from './Tile'
 import { cartesianToId } from './maps/util'
 
-export default function Map({ ctx, G, G: { map, gridData, }, moves, }) {
+export default function Map({ ctx, G, G: { map, gridData, }, playerID, moves, }) {
   const {
     grid,
     fullGrid,
@@ -10,7 +10,7 @@ export default function Map({ ctx, G, G: { map, gridData, }, moves, }) {
   } = gridData
 
   function onClick({ clientX, clientY }) {
-    const svg = document.getElementById('map')
+    const svg = document.getElementById(`map${playerID}`)
     const point = svg.createSVGPoint(); // TODO should this be done once, outside of click handler?
 
     point.x = clientX
@@ -37,7 +37,7 @@ export default function Map({ ctx, G, G: { map, gridData, }, moves, }) {
   })
 
   return (
-    <svg id='map' onClick={onClick} viewBox={`0 0 ${fullGrid.pointWidth()} ${fullGrid.pointHeight()}`}>
+    <svg id={`map${playerID}`} onClick={onClick} viewBox={`0 0 ${fullGrid.pointWidth()} ${fullGrid.pointHeight()}`}>
       <defs>
         <symbol id='hex'>
           <polygon points={corners.map(({ x, y }) => `${x},${y}`).join(' ')} stroke='grey' strokeWidth='2' />
