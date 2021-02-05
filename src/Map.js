@@ -30,7 +30,7 @@ export default function Map({ ctx, G, G: { map, gridData, }, playerID, moves, })
     const cartesian = hex.cartesian()
     const id = cartesianToId(cartesian.x, cartesian.y)
 
-    const currentPlayer = G.players[ctx.currentPlayer]
+    const currentPlayer = G.players[playerID]
     const current = currentPlayer.hex.id === id
     const moveCandidate = currentPlayer.reachable.has(hex)
     return <Tile {...{ key: id, current, moveCandidate, map, id, x, y }} />
