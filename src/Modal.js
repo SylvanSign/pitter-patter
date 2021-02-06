@@ -1,36 +1,40 @@
 export default function Modal({ self, moves, fullGrid, hex, close, }) {
-  // TODO delete
-  window.hex = hex
-  window.fullGrid = fullGrid
-  // TODO end delete
   const [note, move, hunt] = fullGrid.neighborsOf(hex, ['S', 'SE', 'NE'])
+  const moveComp = self.reachable.has(hex) ? <Move {...{ place: move, hex, moves, close }} /> : ''
   return (
-    <g>
-      <Note hex={note} />
-      <Move hex={move} />
-      {/* <Hunt hex={hunt} /> */}
-      <Highlight hex={hex} />
+    <g onClick={e => e.stopPropagation()}>
+      <Note place={note} />
+      {moveComp}
+      {/* <Hunt place={hunt} hex={hex} /> */}
+      <Highlight place={hex} />
     </g>
   )
 }
 
-function Note({ hex }) {
-  const text = <text x={10} y={30} className='menu'>NOTE</text>
-  return <ModalHex {...{ hex, text, }} />
+function Note({ place, }) {
+  return <ModalHex {...{ place, text: 'NOTE', }} />
 }
 
-function Move({ hex }) {
-  const text = <text x={10} y={30} className='menu'>MOVE</text>
-  return <ModalHex {...{ hex, text, }} />
+function Move({ place, hex, close, moves, }) {
+  function onClick(e) {
+    e.stopPropagation()
+    close()
+    moves.move(hex)
+  }
+  return <ModalHex {...{ place, text: 'MOVE', onClick }} />
 }
 
-function Hunt({ hex }) {
-  const text = <text x={10} y={30} className='menu'>HUNT</text>
-  return <ModalHex {...{ hex, text, }} />
+function Hunt({ place, hex, close, moves, }) {
+  function onClick(e) {
+    e.stopPropagation()
+    close()
+    moves.attack(hex)
+  }
+  return <ModalHex {...{ place, text: 'HUNT', }} />
 }
 
-function Highlight({ hex }) {
-  const { x, y } = hex.toPoint()
+function Highlight({ place }) {
+  const { x, y } = place.toPoint()
   return (
     <g transform={`translate(${x} ${y})`}>
       <use xlinkHref='#highlight' className='highlight' />
@@ -38,12 +42,12 @@ function Highlight({ hex }) {
   )
 }
 
-function ModalHex({ hex, text }) {
-  const { x, y } = hex.toPoint()
+function ModalHex({ place, text, onClick, }) {
+  const { x, y } = place.toPoint()
   return (
-    <g transform={`translate(${x} ${y})`}>
+    <g transform={`translate(${x} ${y})`} onClick={onClick}>
       <use xlinkHref='#highlight' className='menu' />
-      {text}
+      <text x={10} y={30} className='menu'>{text}</text>
     </g>
   )
 }
