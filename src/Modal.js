@@ -25,7 +25,7 @@ function X({ close, }) {
     close()
   }
   return (
-    <g transform={`translate(100 0)`} onClick={onClick} style={{ pointerEvents: 'fill' }}>
+    <g transform={`translate(100 0)`} onClick={onClick}>
       <rect width='20' height="20" rx="0" fill="white" stroke="black" />
       <text x='5' y='15'>X</text>
     </g>
@@ -46,7 +46,7 @@ function Mark() {
 
   return (
     <g transform={`translate(5 50)`} onClick={onClick}>
-      <rect width='50' height="30" rx="0" fill="none" stroke="black" />
+      <rect width='50' height="30" rx="0" fill="white" stroke="black" />
       <text x='5' y='20'>Mark</text>
     </g>
   )
