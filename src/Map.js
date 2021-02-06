@@ -1,7 +1,10 @@
 import Tile from './Tile'
+import Modal from './Modal'
 import { cartesianToId } from './maps/util'
+import { useState, } from 'react'
 
 export default function Map({ ctx, G, G: { map, gridData, }, playerID, moves, }) {
+  const [modal, setModal] = useState('')
   const {
     grid,
     fullGrid,
@@ -21,7 +24,12 @@ export default function Map({ ctx, G, G: { map, gridData, }, playerID, moves, })
     const hexCoordinates = Grid.pointToHex(x, y)
     const hex = grid.get(hexCoordinates)
     if (hex) {
+      console.log(hex)
+      const { x: mx, y: my, } = hex.toPoint()
+      setModal(<Modal {...{ id: hex.id, x: mx, y: my, }} />)
       moves.move(hex)
+    } else {
+      setModal('')
     }
   }
 
@@ -49,6 +57,7 @@ export default function Map({ ctx, G, G: { map, gridData, }, playerID, moves, })
       <rect width='100%' height='100%' fill='white' />
       <rect width='100%' height='100%' fill='url(#stripes)' />
       {hexSVGs}
+      {modal}
     </svg>
   )
 }
