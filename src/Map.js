@@ -4,7 +4,7 @@ import { cartesianToId } from './maps/util'
 import { useState, } from 'react'
 
 export default function Map({ G, G: { map, gridData, }, playerID, moves, }) {
-  const [modal, setModal] = useState('')
+  const [modal, setModal] = useState({ id: null, comp: '' })
   const self = G.players[playerID]
   const {
     grid,
@@ -12,6 +12,10 @@ export default function Map({ G, G: { map, gridData, }, playerID, moves, }) {
     Grid,
     corners,
   } = gridData
+
+  function close() {
+    setModal({ id: null, comp: '' })
+  }
 
   function onClick({ clientX, clientY }) {
     const svg = document.getElementById(`map${playerID}`)
@@ -25,17 +29,19 @@ export default function Map({ G, G: { map, gridData, }, playerID, moves, }) {
     const hexCoordinates = Grid.pointToHex(x, y)
     const hex = grid.get(hexCoordinates)
     if (hex) {
-      console.log(hex)
-      const { x: mx, y: my, } = hex.toPoint()
-      setModal(<Modal {...{ self, moves, hex, x: mx, y: my, close: () => setModal('') }} />)
+      if (hex.id === modal.id) { // clicking already open hex will close it
+        close()
+      } else {
+        setModal({ id: hex.id, comp: <Modal {...{ self, moves, hex, fullGrid, close, }} /> })
+      }
     } else {
-      setModal('')
+      close()
     }
   }
 
   const hexSVGs = grid.map(hex => {
     const { x, y } = hex.toPoint()
-    const cartesian = hex.cartesian()
+    const cartesian = hex.coordinates()
     const id = cartesianToId(cartesian.x, cartesian.y)
 
     const current = self.hex.id === id
@@ -49,6 +55,9 @@ export default function Map({ G, G: { map, gridData, }, playerID, moves, }) {
         <symbol id='hex'>
           <polygon points={corners.map(({ x, y }) => `${x},${y}`).join(' ')} stroke='grey' strokeWidth='2' />
         </symbol>
+        <symbol id='highlight'>
+          <polygon points={corners.map(({ x, y }) => `${x},${y}`).join(' ')} stroke='red' strokeWidth='3' />
+        </symbol>
         <pattern id="stripes" width="10" height="10" patternTransform="rotate(-40 0 0)" patternUnits="userSpaceOnUse">
           <line x1="0" y1="0" x2="0" y2="10" stroke='darkgrey' strokeWidth='1.5' />
         </pattern>
@@ -56,7 +65,7 @@ export default function Map({ G, G: { map, gridData, }, playerID, moves, }) {
       <rect width='100%' height='100%' fill='white' />
       <rect width='100%' height='100%' fill='url(#stripes)' />
       {hexSVGs}
-      {modal}
+      {modal.comp}
     </svg>
   )
 }

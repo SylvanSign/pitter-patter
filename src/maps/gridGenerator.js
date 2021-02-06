@@ -13,7 +13,7 @@ export default function gridGenerator(map) {
   const fullGrid = Grid.rectangle({ width: 24, height: 15 })
   const hexes = fullGrid
     .map(hex => {
-      const { x, y } = hex.cartesian()
+      const { x, y } = hex.coordinates()
       const id = cartesianToId(x, y)
       const config = MAPS[map][id]
       if (config) {

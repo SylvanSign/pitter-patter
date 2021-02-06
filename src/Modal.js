@@ -1,68 +1,49 @@
-export default function Modal({ self, moves, hex, x, y, close, }) {
-  const move = self.reachable.has(hex) ? <Move {...{ moves, hex, close, }} /> : ''
+export default function Modal({ self, moves, fullGrid, hex, close, }) {
+  // TODO delete
+  window.hex = hex
+  window.fullGrid = fullGrid
+  // TODO end delete
+  const [note, move, hunt] = fullGrid.neighborsOf(hex, ['S', 'SE', 'NE'])
   return (
-    <g transform={`translate(${x} ${y})`} onClick={e => e.stopPropagation()}>
-      <rect width="120" height="100" rx="0" fill="white" stroke="black" />
-      <Id id={hex.id} />
-      <Mark />
-      {move}
-      <X close={close} />
+    <g>
+      <Note hex={note} />
+      <Move hex={move} />
+      {/* <Hunt hex={hunt} /> */}
+      <Highlight hex={hex} />
     </g>
   )
 }
 
-function HexShape({ className, x, y, current, moveCandidate }) {
+function Note({ hex }) {
+  const text = <text x={10} y={30} className='menu'>NOTE</text>
+  return <ModalHex {...{ hex, text, }} />
+}
+
+function Move({ hex }) {
+  const text = <text x={10} y={30} className='menu'>MOVE</text>
+  return <ModalHex {...{ hex, text, }} />
+}
+
+function Hunt({ hex }) {
+  const text = <text x={10} y={30} className='menu'>HUNT</text>
+  return <ModalHex {...{ hex, text, }} />
+}
+
+function Highlight({ hex }) {
+  const { x, y } = hex.toPoint()
   return (
     <g transform={`translate(${x} ${y})`}>
-      <use xlinkHref='#hex' className={className} />
+      <use xlinkHref='#highlight' className='highlight' />
     </g>
   )
 }
 
-function X({ close, }) {
-  function onClick(e) {
-    e.stopPropagation()
-    close()
-  }
+function ModalHex({ hex, text }) {
+  const { x, y } = hex.toPoint()
   return (
-    <g transform={`translate(100 0)`} onClick={onClick}>
-      <rect width='20' height="20" rx="0" fill="white" stroke="black" />
-      <text x='5' y='15'>X</text>
-    </g>
-  )
-}
-
-function Id({ id, }) {
-  return (
-    <text x='5' y='20'>{id}</text>
-  )
-}
-
-function Mark() {
-  function onClick(e) {
-    e.stopPropagation()
-    alert('Mark')
-  }
-
-  return (
-    <g transform={`translate(5 50)`} onClick={onClick}>
-      <rect width='50' height="30" rx="0" fill="white" stroke="black" />
-      <text x='5' y='20'>Mark</text>
-    </g>
-  )
-}
-
-function Move({ moves, hex, close, }) {
-  function onClick(e) {
-    e.stopPropagation()
-    close()
-    moves.move(hex)
-  }
-
-  return (
-    <g transform={`translate(55 50)`} onClick={onClick}>
-      <rect width='50' height="30" rx="0" fill="none" stroke="black" />
-      <text x='5' y='20'>Move</text>
+    <g transform={`translate(${x} ${y})`}>
+      <use xlinkHref='#highlight' className='menu' />
+      {text}
     </g>
   )
 }

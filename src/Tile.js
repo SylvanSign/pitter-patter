@@ -83,7 +83,7 @@ function DangerHex({ x, y, label, current, moveCandidate }) {
   return (
     <g>
       <HexShape {...{ className: 'danger', x, y, current, moveCandidate }} />
-      <svg viewBox="0 0 134 116" width='60' height='60' x={x} y={y - 5}>
+      <svg viewBox="0 0 134 116" width='60' height='60' x={x} y={y - 4}>
         <path d="M10.469,39.925l-10.432,18.074l10.432,18.083l10.432,-18.083l-10.432,-18.074Z" style={{ fill: 'grey', fillRule: 'nonzero' }} />
         <path d="M123.531,39.925l-10.432,18.074l10.432,18.083l10.432,-18.083l-10.432,-18.074Z" style={{ fill: 'grey', fillRule: 'nonzero' }} />
         <path d="M23.085,97.921l10.432,18.078l20.87,0l-10.438,-18.078l-20.864,0Z" style={{ fill: 'grey', fillRule: 'nonzero' }} />

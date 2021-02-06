@@ -37,3 +37,17 @@ use.can-move {
   fill: lightblue;
   opacity: 70%;
 }
+
+use.menu {
+  fill: black;
+}
+
+text.menu {
+  font-family: 'Roboto Mono', monospace;
+  font-size: medium;
+  fill: white;
+}
+
+use.highlight {
+  fill: none;
+}
