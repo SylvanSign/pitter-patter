@@ -12,12 +12,14 @@ export default function Modal({ self, moves, fullGrid, hex, close, }) {
 }
 
 function Note({ place, }) {
-  return <ModalHex {...{ place, text: 'NOTE', }} />
+  function onClick(e) {
+    // note(hex)
+  }
+  return <ModalHex {...{ place, text: 'NOTE', onClick }} />
 }
 
 function Move({ place, hex, close, moves, }) {
   function onClick(e) {
-    e.stopPropagation()
     close()
     moves.move(hex)
   }
@@ -26,7 +28,6 @@ function Move({ place, hex, close, moves, }) {
 
 function Hunt({ place, hex, close, moves, }) {
   function onClick(e) {
-    e.stopPropagation()
     close()
     moves.attack(hex)
   }
