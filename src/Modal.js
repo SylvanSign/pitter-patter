@@ -1,19 +1,28 @@
-export default function Modal({ id, x, y, }) {
+export default function Modal({ self, moves, hex, x, y, close, }) {
+  const move = self.reachable.has(hex) ? <Move {...{ moves, hex, close, }} /> : ''
   return (
     <g transform={`translate(${x} ${y})`} onClick={e => e.stopPropagation()}>
-      <rect width="120" height="100" rx="10" fill="white" stroke="black" />
-      <Id id={id} />
+      <rect width="120" height="100" rx="0" fill="white" stroke="black" />
+      <X close={close} />
+      <Id id={hex.id} />
       <Mark />
-      <Move />
+      {move}
+    </g>
+  )
+}
+
+function X({ close, }) {
+  return (
+    <g transform={`translate(100 0)`} onClick={close}>
+      <rect width='20' height="20" rx="0" fill="none" stroke="black" />
+      <text x='5' y='15'>X</text>
     </g>
   )
 }
 
 function Id({ id, }) {
   return (
-    <g transform={`translate(45 0)`}>
-      <text x='5' y='20'>{id}</text>
-    </g>
+    <text x='5' y='20'>{id}</text>
   )
 }
 
@@ -31,10 +40,11 @@ function Mark() {
   )
 }
 
-function Move() {
+function Move({ moves, hex, close, }) {
   function onClick(e) {
     e.stopPropagation()
-    alert('Move')
+    close()
+    moves.move(hex)
   }
 
   return (

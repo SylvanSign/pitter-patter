@@ -23,6 +23,7 @@ export default function App() {
   return (
     <div>
       <C playerID='0' />
+      <C playerID='1' />
     </div>
   )
 }

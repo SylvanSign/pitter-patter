@@ -26,16 +26,14 @@ const Game = {
     const gridData = gridGenerator(map)
 
     const humanHex = gridData.grid.get(idToCartesian(mapConfig[HEX_TYPES.human]))
-    const humanReachable = reachableHexes(gridData.grid, humanHex, 1)
 
     const alienHex = gridData.grid.get(idToCartesian(mapConfig[HEX_TYPES.alien]))
-    const alienReachable = reachableHexes(gridData.grid, alienHex, 2)
 
     const { playOrder, } = ctx
     const [humans, aliens] = pickRoles(ctx, playOrder)
     const players = setupPlayers(
-      { humans, humanHex, humanReachable, },
-      { aliens, alienHex, alienReachable, },
+      { humans, humanHex, },
+      { aliens, alienHex, },
     )
 
     const dangerDeck = makeDangerDeck(ctx)
@@ -54,13 +52,12 @@ const Game = {
   },
 
   endIf(G, ctx) {
-    // const currentPlayer = G.players[ctx.currentPlayer]
-    // if (currentPlayer.role === 'human') {
-    //   const hexType = G.mapConfig[currentPlayer.hex.id]
-    //   if (hexType > 0 || hexType < 5) {
-    //     return { winner: ctx.currentPlayer }; // TODO flesh this out
-    //   }
-    // }
+    if (G.players[ctx.currentPlayer].role === 'human') {
+      const hexType = G.mapConfig[G.players[ctx.currentPlayer].hex.id]
+      if (hexType > 0 || hexType < 5) {
+        return { winner: ctx.currentPlayer }; // TODO flesh this out
+      }
+    }
 
     // TODO handle player elimination
     if (ctx.turn / ctx.numPlayers > 40) {
@@ -75,15 +72,14 @@ const Game = {
     // moveLimit: 2, // must move, then either silent, draw, or attack
 
     onBegin(G, ctx) {
-      const currentPlayer = G.players[ctx.currentPlayer]
-      currentPlayer.reachable = reachableHexes(G.gridData.grid, currentPlayer.hex, currentPlayer.speed)
+      const self = G.players[ctx.currentPlayer]
+      self.reachable = reachableHexes(G.gridData.grid, self.hex, self.speed)
     },
   },
 
   moves: {
     move(G, ctx, hex) {
-      const currentPlayer = G.players[ctx.currentPlayer]
-      if (hex === currentPlayer.hex) {
+      if (hex === G.players[ctx.currentPlayer].hex) {
         return INVALID_MOVE
       }
 
@@ -95,12 +91,12 @@ const Game = {
         default: // proceed
       }
 
-      if (!currentPlayer.reachable.has(hex)) {
+      if (!G.players[ctx.currentPlayer].reachable.has(hex)) {
         return INVALID_MOVE
       }
 
-      currentPlayer.hex = hex
-      currentPlayer.reachable = new Set() // TODO clean this reachable thing up
+      G.players[ctx.currentPlayer].hex = hex
+      G.players[ctx.currentPlayer].reachable = new Set() // TODO clean this reachable thing up
 
       switch (hex.type) {
         case HEX_TYPES.silent:
@@ -146,8 +142,8 @@ function pickRoles(ctx, playOrder) {
 }
 
 function setupPlayers(
-  { humans, humanHex, humanReachable, },
-  { aliens, alienHex, alienReachable, },
+  { humans, humanHex, },
+  { aliens, alienHex, },
 ) {
   let players = {}
 
@@ -156,7 +152,7 @@ function setupPlayers(
       role: 'human',
       hex: humanHex,
       speed: 1,
-      reachable: humanReachable,
+      reachable: new Set(),
     }
     return players
   }, players)
@@ -166,7 +162,7 @@ function setupPlayers(
       role: 'alien',
       hex: alienHex,
       speed: 2,
-      reachable: alienReachable,
+      reachable: new Set(),
     }
     return players
   }, players)

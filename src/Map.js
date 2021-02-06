@@ -3,8 +3,9 @@ import Modal from './Modal'
 import { cartesianToId } from './maps/util'
 import { useState, } from 'react'
 
-export default function Map({ ctx, G, G: { map, gridData, }, playerID, moves, }) {
+export default function Map({ G, G: { map, gridData, }, playerID, moves, }) {
   const [modal, setModal] = useState('')
+  const self = G.players[playerID]
   const {
     grid,
     fullGrid,
@@ -26,8 +27,7 @@ export default function Map({ ctx, G, G: { map, gridData, }, playerID, moves, })
     if (hex) {
       console.log(hex)
       const { x: mx, y: my, } = hex.toPoint()
-      setModal(<Modal {...{ id: hex.id, x: mx, y: my, }} />)
-      moves.move(hex)
+      setModal(<Modal {...{ self, moves, hex, x: mx, y: my, close: () => setModal('') }} />)
     } else {
       setModal('')
     }
@@ -38,9 +38,8 @@ export default function Map({ ctx, G, G: { map, gridData, }, playerID, moves, })
     const cartesian = hex.cartesian()
     const id = cartesianToId(cartesian.x, cartesian.y)
 
-    const currentPlayer = G.players[playerID]
-    const current = currentPlayer.hex.id === id
-    const moveCandidate = currentPlayer.reachable.has(hex)
+    const current = self.hex.id === id
+    const moveCandidate = self.reachable.has(hex)
     return <Tile {...{ key: id, current, moveCandidate, map, id, x, y }} />
   })
 
