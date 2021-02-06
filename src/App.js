@@ -17,6 +17,7 @@ const C = Client({
   game: wrappedGameDef({ map: 'galilei' }),
   board: Board,
   multiplayer: Local(),
+  debug: false,
 })
 
 export default function App() {
