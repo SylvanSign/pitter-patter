@@ -51,18 +51,22 @@ export default function Map({ G, G: { map, gridData, }, playerID, moves, }) {
     return <Tile {...{ key: id, current, moveCandidate, hasNote, map, id, x, y }} />
   })
 
+  const points = corners.map(({ x, y }) => `${x},${y}`).join(' ')
   return (
     <svg id={`map${playerID}`} onClick={onClick} viewBox={`0 0 ${fullGrid.pointWidth()} ${fullGrid.pointHeight()}`}>
       <defs>
         <symbol id='hex'>
-          <polygon points={corners.map(({ x, y }) => `${x},${y}`).join(' ')} stroke='grey' strokeWidth='2' />
+          <polygon points={points} stroke='grey' strokeWidth='2' />
         </symbol>
         <symbol id='highlight'>
-          <polygon points={corners.map(({ x, y }) => `${x},${y}`).join(' ')} stroke='gold' strokeWidth='3' />
+          <polygon points={points} stroke='gold' strokeWidth='3' />
         </symbol>
         <symbol id='note'>
-          <polygon points={corners.map(({ x, y }) => `${x},${y}`).join(' ')} stroke='black' strokeWidth='5' fill='none' transform='scale(0.6) translate(19 16)' />
+          <polygon points={points} stroke='red' strokeWidth='5' fill='none' transform='scale(0.6) translate(19 16)' />
         </symbol>
+        {/* <symbol id='note'>
+          <text x={corners[0].x - 35} y={corners[0].y + 5}>?</text>
+        </symbol> */}
         <pattern id="stripes" width="10" height="10" patternTransform="rotate(-40 0 0)" patternUnits="userSpaceOnUse">
           <line x1="0" y1="0" x2="0" y2="10" stroke='darkgrey' strokeWidth='1.5' />
         </pattern>
