@@ -71,7 +71,7 @@ export default function Map({ G, G: { map, gridData, }, playerID, moves, }) {
           <line x1="0" y1="0" x2="0" y2="10" stroke='darkgrey' strokeWidth='1.5' />
         </pattern>
       </defs>
-      <rect width='100%' height='100%' fill='white' />
+      {/* <rect width='100%' height='100%' fill='white' /> */}
       <rect width='100%' height='100%' fill='url(#stripes)' />
       {hexSVGs}
       {modal.comp}

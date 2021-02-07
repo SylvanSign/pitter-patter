@@ -13,12 +13,16 @@ function wrapGameDefinition(game) {
 }
 const wrappedGameDef = wrapGameDefinition(Game)
 
+// TODO remove this params stuff
+const urlParams = new URLSearchParams(window.location.search);
+const myParam = urlParams.get('d'); // disable debug with ?d=1
+
 const C = Client({
   game: wrappedGameDef({ map: 'galilei' }),
   board: Board,
   multiplayer: Local(),
   numPlayers: 2,
-  debug: false,
+  debug: !myParam,
 })
 
 export default function App() {

@@ -1,3 +1,5 @@
+import { HEX_TYPES } from "./maps/util"
+
 export default function Modal({ self, moves, fullGrid, hex, close, setNotes, }) {
   const [
     note,

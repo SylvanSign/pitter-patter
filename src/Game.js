@@ -22,7 +22,7 @@ const Game = {
   //   "events": {}
   // }
   setup(ctx, setupData) {
-    const [map, mapConfig] = Object.entries(MAPS)[2];// TODO make this selectable (from setupData?)
+    const [map, mapConfig] = ctx.random.Shuffle(Object.entries(MAPS))[0];// TODO make this selectable (from setupData?)
     const gridData = gridGenerator(map)
 
     const humanHex = gridData.grid.get(idToCartesian(mapConfig[HEX_TYPES.human]))
@@ -48,6 +48,7 @@ const Game = {
       dangerDiscard: [],
       gridData,
       mapConfig,
+      clues: {},
     }
   },
 
@@ -69,7 +70,7 @@ const Game = {
   turn: {
     order: TurnOrder.CUSTOM_FROM('playOrder'), // TODO handle player elimination
     // TODO use stages to enforce this and allow other players to take notes when not current player?
-    // moveLimit: 2, // must move, then either silent, draw, or attack
+    moveLimit: 1, // must move, then either silent, draw, or attack
 
     onBegin(G, ctx) {
       const self = G.players[ctx.currentPlayer]
@@ -113,16 +114,33 @@ const Game = {
             console.log('failed launch!')
           }
       }
-      ctx.events.endTurn()
     },
-    silent(G, ctx) {
-      // ctx.events.endTurn()
-    },
-    draw(G, ctx) {
-      // ctx.events.endTurn()
-    },
-    attack(G, ctx) {
-      // ctx.events.endTurn()
+    attack(G, ctx, hex) {
+      // TODO factor out shared movement code with move and attack
+      if (G.players[ctx.currentPlayer].role !== 'alien') {
+        return INVALID_MOVE
+      }
+
+      if (hex === G.players[ctx.currentPlayer].hex) {
+        return INVALID_MOVE
+      }
+
+      switch (G.mapConfig[hex.id]) {
+        case HEX_TYPES.human:
+          return INVALID_MOVE
+        case HEX_TYPES.alien:
+          return INVALID_MOVE
+        default: // proceed
+      }
+
+      if (!G.players[ctx.currentPlayer].reachable.has(hex)) {
+        return INVALID_MOVE
+      }
+
+      G.players[ctx.currentPlayer].hex = hex
+      G.players[ctx.currentPlayer].reachable = new Set() // TODO clean this reachable thing up
+      // TODO attack logic
+      alert('attack')
     },
   },
 }
@@ -132,7 +150,11 @@ function drawDangerCard(G, ctx) {
     G.dangerDeck = ctx.random.Shuffle(G.dangerDiscard.splice(0))
   }
   const dangerCard = G.dangerDeck.pop()
-  G.dangerDiscard.push(dangerCard)
+  if (dangerCard === 'silent' || dangerCard === 'item') {
+    G.players[ctx.currentPlayer].hand.push(dangerCard)
+  } else {
+    G.dangerDiscard.push(dangerCard)
+  }
   return dangerCard
 }
 
@@ -153,6 +175,7 @@ function setupPlayers(
       hex: humanHex,
       speed: 1,
       reachable: new Set(),
+      hand: [],
     }
     return players
   }, players)
@@ -163,6 +186,7 @@ function setupPlayers(
       hex: alienHex,
       speed: 2,
       reachable: new Set(),
+      hand: [],
     }
     return players
   }, players)
