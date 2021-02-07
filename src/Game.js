@@ -22,7 +22,7 @@ const Game = {
   //   "events": {}
   // }
   setup(ctx, setupData) {
-    const [map, mapConfig] = Object.entries(MAPS)[0];// TODO make this selectable (from setupData?)
+    const [map, mapConfig] = Object.entries(MAPS)[2];// TODO make this selectable (from setupData?)
     const gridData = gridGenerator(map)
 
     const humanHex = gridData.grid.get(idToCartesian(mapConfig[HEX_TYPES.human]))
@@ -103,14 +103,14 @@ const Game = {
           break;
         case HEX_TYPES.danger:
           const dangerCard = drawDangerCard(G, ctx)
-          alert(dangerCard)
+          console.log(dangerCard)
           break;
         default: // escape pod
           const escapeCard = G.escapeDeck.pop()
           if (escapeCard === 'success') {
-            alert('successful escape!')
+            console.log('successful escape!')
           } else { // 'fail'
-            alert('failed launch!')
+            console.log('failed launch!')
           }
       }
       ctx.events.endTurn()

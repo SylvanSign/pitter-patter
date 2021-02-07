@@ -1,5 +1,5 @@
 export default function Modal({ self, moves, fullGrid, hex, close, }) {
-  const [note, move, hunt] = fullGrid.neighborsOf(hex, ['S', 'SE', 'NE'])
+  const [note, move, hunt] = fullGrid.neighborsOf(hex).filter(n => n)
   const moveComp = self.reachable.has(hex) ? <Move {...{ place: move, hex, moves, close }} /> : ''
   return (
     <g onClick={e => e.stopPropagation()}>

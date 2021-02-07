@@ -10,7 +10,7 @@ export default function gridGenerator(map) {
   const Grid = Honeycomb.defineGrid(HexData)
   const Hex = Grid.Hex
 
-  const fullGrid = Grid.rectangle({ width: 24, height: 15 })
+  const fullGrid = Grid.rectangle({ width: 23, height: 14 })
   const hexes = fullGrid
     .map(hex => {
       const { x, y } = hex.coordinates()

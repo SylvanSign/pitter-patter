@@ -66,6 +66,7 @@ export function reachableHexes(grid, start, movement) {
   for (let k = 1; k <= movement; ++k) {
     fringes.push([])
     for (const hex of fringes[k - 1]) {
+      console.log(hex)
       for (const neighbor of grid.neighborsOf(hex)) {
         if (neighbor && neighbor.accessible && !visited.has(neighbor)) {
           visited.add(neighbor)
