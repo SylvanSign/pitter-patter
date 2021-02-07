@@ -9,6 +9,8 @@ export const HEX_TYPES = Object.freeze({
 
 export function generateHexesFromConfig(hexConfig) {
   const baseConfig = {
+    width: hexConfig.width,
+    height: hexConfig.height,
     [HEX_TYPES.human]: hexConfig[HEX_TYPES.human],
     [HEX_TYPES.alien]: hexConfig[HEX_TYPES.alien],
     [HEX_TYPES.escape]: hexConfig[HEX_TYPES.escape],
@@ -42,7 +44,6 @@ export function generateHexesFromConfig(hexConfig) {
         hexes[typeConfig[4]] = 4
         break
       default:
-        throw new Error('Map invalid!')
     }
     return hexes
   }, baseConfig))
@@ -66,7 +67,6 @@ export function reachableHexes(grid, start, movement) {
   for (let k = 1; k <= movement; ++k) {
     fringes.push([])
     for (const hex of fringes[k - 1]) {
-      console.log(hex)
       for (const neighbor of grid.neighborsOf(hex)) {
         if (neighbor && neighbor.accessible && !visited.has(neighbor)) {
           visited.add(neighbor)

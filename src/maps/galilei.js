@@ -1,6 +1,8 @@
 import { HEX_TYPES, generateHexesFromConfig } from './util'
 
 const HEXES = generateHexesFromConfig({
+  width: 23,
+  height: 14,
   [HEX_TYPES.human]: 'L08',
   [HEX_TYPES.alien]: 'L06',
   [HEX_TYPES.escape]: {

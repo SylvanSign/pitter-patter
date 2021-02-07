@@ -10,12 +10,13 @@ export default function gridGenerator(map) {
   const Grid = Honeycomb.defineGrid(HexData)
   const Hex = Grid.Hex
 
-  const fullGrid = Grid.rectangle({ width: 23, height: 14 })
+  const mapConfig = MAPS[map]
+  const fullGrid = Grid.rectangle({ width: mapConfig.width, height: mapConfig.height })
   const hexes = fullGrid
     .map(hex => {
       const { x, y } = hex.coordinates()
       const id = cartesianToId(x, y)
-      const config = MAPS[map][id]
+      const config = mapConfig[id]
       if (config) {
         return Hex(x, y, { id, type: config, accessible: !(config === HEX_TYPES.human || config === HEX_TYPES.alien), escape: config > 0 || config < 5 })
       }
