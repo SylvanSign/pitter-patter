@@ -4,7 +4,7 @@ import { cartesianToId } from './maps/util'
 import { useState, } from 'react'
 
 export default function Map({ G, G: { map, gridData, }, playerID, moves, }) {
-  const [notes, setNotes] = useState({})
+  const [notes, setNotes] = useState({ F07: 'yo' })
   const [modal, setModal] = useState({ id: null, comp: '' })
   const self = G.players[playerID]
   const {
@@ -60,8 +60,8 @@ export default function Map({ G, G: { map, gridData, }, playerID, moves, }) {
         <symbol id='highlight'>
           <polygon points={corners.map(({ x, y }) => `${x},${y}`).join(' ')} stroke='gold' strokeWidth='3' />
         </symbol>
-        <symbol id='move'>
-          <polygon points={corners.map(({ x, y }) => `${x},${y}`).join(' ')} strok='none' fill='lightblue' />
+        <symbol id='note'>
+          <polygon points={corners.map(({ x, y }) => `${x},${y}`).join(' ')} stroke='black' strokeWidth='5' fill='none' transform='scale(0.8) translate(7 6)' />
         </symbol>
         <pattern id="stripes" width="10" height="10" patternTransform="rotate(-40 0 0)" patternUnits="userSpaceOnUse">
           <line x1="0" y1="0" x2="0" y2="10" stroke='darkgrey' strokeWidth='1.5' />

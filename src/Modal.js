@@ -1,12 +1,16 @@
 export default function Modal({ self, moves, fullGrid, hex, close, }) {
-  const [note, move, hunt] = fullGrid.neighborsOf(hex).filter(n => n)
+  const [
+    // note, // TODO add note functionality
+    move,
+    attack,
+  ] = fullGrid.neighborsOf(hex).filter(n => n)
   const moveComp = self.reachable.has(hex) ? <Move {...{ place: move, hex, moves, close }} /> : ''
-  const huntComp = moveComp && self.role === 'alien' ? <Hunt {...{ place: hunt, hex, moves, close }} /> : ''
+  const attackComp = moveComp && self.role === 'alien' ? <Attack {...{ place: attack, hex, moves, close }} /> : ''
   return (
     <g onClick={e => e.stopPropagation()}>
-      <Note place={note} />
+      {/* <Note place={note} /> */}
       {moveComp}
-      {huntComp}
+      {attackComp}
       <Highlight place={hex} />
     </g>
   )
@@ -33,7 +37,7 @@ function Move({ place, hex, close, moves, }) {
   return <ModalHex {...{ place, svg, onClick, }} />
 }
 
-function Hunt({ place, hex, close, moves, }) {
+function Attack({ place, hex, close, moves, }) {
   function onClick(e) {
     close()
     moves.attack(hex)
