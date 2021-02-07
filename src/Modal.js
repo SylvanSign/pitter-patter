@@ -10,7 +10,7 @@ export default function Modal({ self, moves, fullGrid, hex, close, setNotes, }) 
   const attackComp = moveComp && self.role === 'alien' ? <Attack {...{ place: attack, hex, moves, close }} /> : ''
   return (
     <g onClick={e => e.stopPropagation()}>
-      <Note place={note} hex={hex} setNotes={setNotes} />
+      <Note {...{ place: note, hex, close, setNotes }} />
       {moveComp}
       {attackComp}
       <Highlight place={hex} />
@@ -18,8 +18,9 @@ export default function Modal({ self, moves, fullGrid, hex, close, setNotes, }) 
   )
 }
 
-function Note({ place, hex, setNotes, }) {
+function Note({ place, hex, close, setNotes, }) {
   function onClick() {
+    close()
     setNotes(notes => {
       return { ...notes, [hex.id]: !notes[hex.id] }
     })

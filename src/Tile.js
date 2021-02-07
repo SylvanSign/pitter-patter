@@ -50,7 +50,7 @@ function EscapeHex({ x, y, label, current, moveCandidate, hasNote }) {
     <g>
       <HexShape {...{ className: 'key', x, y, current, moveCandidate, hasNote }} />
       <text transform={`translate(${x + 20} ${y + 35})`} className='key'>{label}</text>
-      <svg viewBox="0 0 134 116" width='60' height='60' x={x} y={y - 5}>
+      <svg viewBox="0 0 134 116" width='60' height='60' x={x - 0.8} y={y - 4.5}>
         <path d="M94.427,106.959l-46.254,-0.011l0,-9.349l40.856,0.011l20.423,-35.37l8.102,4.668l-23.127,40.051Z" style={{ fill: 'white', fillRule: 'nonzero' }} />
         <path d="M24.543,53.766l-8.097,-4.674l23.127,-40.051l46.243,0.011l0,9.349l-40.851,-0.006l-20.422,35.371Z" style={{ fill: 'white', fillRule: 'nonzero' }} />
       </svg>

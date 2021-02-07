@@ -63,23 +63,21 @@ export function idToCartesian(id) {
 export function reachableHexes(grid, start, movement) {
   const visited = new Set([start]); // set of hexes
   const fringes = [[start]] // array of arrays of hexes
+  const ignoreEscapes = movement > 1 // aliens cannot enter nor pass through escapes
 
   for (let k = 1; k <= movement; ++k) {
     fringes.push([])
     for (const hex of fringes[k - 1]) {
       for (const neighbor of grid.neighborsOf(hex)) {
-        if (neighbor && neighbor.accessible && !visited.has(neighbor)) {
+        if (neighbor
+          && neighbor.accessible
+          && !(ignoreEscapes && neighbor.escape)
+          && !visited.has(neighbor)) {
           visited.add(neighbor)
           fringes[k].push(neighbor)
         }
       }
     }
-  }
-
-  if (movement > 1) { // TODO better check for alien?
-    [...visited]
-      .filter(v => v.escape)
-      .forEach(v => visited.delete(v))
   }
   visited.delete(start); // TODO? must move every turn
   return visited
