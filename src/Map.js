@@ -4,6 +4,7 @@ import { cartesianToId } from './maps/util'
 import { useState, } from 'react'
 
 export default function Map({ G, G: { map, gridData, }, playerID, moves, }) {
+  const [notes, setNotes] = useState({})
   const [modal, setModal] = useState({ id: null, comp: '' })
   const self = G.players[playerID]
   const {
@@ -28,7 +29,7 @@ export default function Map({ G, G: { map, gridData, }, playerID, moves, }) {
     const { x, y } = point.matrixTransform(svg.getScreenCTM().inverse())
     const hexCoordinates = Grid.pointToHex(x, y)
     const hex = grid.get(hexCoordinates)
-    if (hex) {
+    if (hex && hex.accessible) {
       if (hex.id === modal.id) { // clicking already open hex will close it
         close()
       } else {
@@ -46,7 +47,8 @@ export default function Map({ G, G: { map, gridData, }, playerID, moves, }) {
 
     const current = self.hex.id === id
     const moveCandidate = self.reachable.has(hex)
-    return <Tile {...{ key: id, current, moveCandidate, map, id, x, y }} />
+    const hasNote = notes[id]
+    return <Tile {...{ key: id, current, moveCandidate, hasNote, map, id, x, y }} />
   })
 
   return (
@@ -56,7 +58,10 @@ export default function Map({ G, G: { map, gridData, }, playerID, moves, }) {
           <polygon points={corners.map(({ x, y }) => `${x},${y}`).join(' ')} stroke='grey' strokeWidth='2' />
         </symbol>
         <symbol id='highlight'>
-          <polygon points={corners.map(({ x, y }) => `${x},${y}`).join(' ')} stroke='red' strokeWidth='3' />
+          <polygon points={corners.map(({ x, y }) => `${x},${y}`).join(' ')} stroke='gold' strokeWidth='3' />
+        </symbol>
+        <symbol id='move'>
+          <polygon points={corners.map(({ x, y }) => `${x},${y}`).join(' ')} strok='none' fill='lightblue' />
         </symbol>
         <pattern id="stripes" width="10" height="10" patternTransform="rotate(-40 0 0)" patternUnits="userSpaceOnUse">
           <line x1="0" y1="0" x2="0" y2="10" stroke='darkgrey' strokeWidth='1.5' />

@@ -28,8 +28,8 @@ use.key {
   fill: black;
 }
 
-use.clicked {
-  fill: red;
+use.current {
+  fill: gold;
   opacity: 70%;
 }
 
@@ -39,13 +39,7 @@ use.can-move {
 }
 
 use.menu {
-  fill: black;
-}
-
-text.menu {
-  font-family: 'Roboto Mono', monospace;
-  font-size: medium;
-  fill: white;
+  fill: gold;
 }
 
 use.highlight {

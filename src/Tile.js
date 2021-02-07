@@ -1,14 +1,14 @@
 import MAPS from './maps'
 import { HEX_TYPES } from './maps/util'
 
-export default function Tile({ map, id, x, y, current, moveCandidate }) {
+export default function Tile({ map, id, x, y, current, moveCandidate, hasNote, }) {
   const hexInfo = MAPS[map][id]
 
   switch (hexInfo) {
     case HEX_TYPES.silent:
-      return <SilentHex {...{ x, y, label: id, current, moveCandidate }} />
+      return <SilentHex {...{ x, y, label: id, current, moveCandidate, hasNote, }} />
     case HEX_TYPES.danger:
-      return <DangerHex {...{ x, y, label: id, current, moveCandidate }} />
+      return <DangerHex {...{ x, y, label: id, current, moveCandidate, hasNote, }} />
     case HEX_TYPES.human:
       return <HumanHex {...{ x, y, current }} />
     case HEX_TYPES.alien:
@@ -18,7 +18,7 @@ export default function Tile({ map, id, x, y, current, moveCandidate }) {
     case 2:
     case 3:
     case 4:
-      return <EscapeHex {...{ x, y, label: hexInfo, current, moveCandidate }} />
+      return <EscapeHex {...{ x, y, label: hexInfo, current, moveCandidate, }} />
     // empty
     default:
       throw new Error('Map component should not try to render empty hexes!')
@@ -27,7 +27,7 @@ export default function Tile({ map, id, x, y, current, moveCandidate }) {
 
 function HexShape({ className, x, y, current, moveCandidate }) {
   // TODO use better indicator (symbol based like styled inner ring?) that doesn't disrupt primary coloring of base tiles
-  let movementClass = current ? 'clicked'
+  let movementClass = current ? 'current'
     : moveCandidate ? 'can-move'
       : ''
   return (
