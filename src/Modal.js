@@ -1,6 +1,6 @@
 export default function Modal({ self, moves, fullGrid, hex, close, }) {
   const [
-    // note, // TODO add note functionality
+    note,
     move,
     attack,
   ] = fullGrid.neighborsOf(hex).filter(n => n)
@@ -8,7 +8,7 @@ export default function Modal({ self, moves, fullGrid, hex, close, }) {
   const attackComp = moveComp && self.role === 'alien' ? <Attack {...{ place: attack, hex, moves, close }} /> : ''
   return (
     <g onClick={e => e.stopPropagation()}>
-      {/* <Note place={note} /> */}
+      <Note place={note} />
       {moveComp}
       {attackComp}
       <Highlight place={hex} />

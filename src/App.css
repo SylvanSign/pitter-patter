@@ -30,12 +30,12 @@ use.key {
 
 use.current {
   fill: gold;
-  opacity: 70%;
+  /* opacity: 70%; */
 }
 
 use.can-move {
   fill: lightblue;
-  opacity: 70%;
+  /* opacity: 70%; */
 }
 
 use.menu {
