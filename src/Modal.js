@@ -1,16 +1,25 @@
 import { HEX_TYPES } from "./maps/util"
 
 export default function Modal({ self, moves, fullGrid, hex, close, setNotes, }) {
+  const reachable = self.reachable.has(hex)
+  const escape = typeof hex.type === 'number'
+
+  if (escape && (self.role === 'alient' || !reachable)) {
+    return null;
+  }
+
   const [
     note,
     move,
     attack,
   ] = fullGrid.neighborsOf(hex).filter(n => n)
-  const moveComp = self.reachable.has(hex) ? <Move {...{ place: move, hex, moves, close }} /> : ''
+  const moveComp = reachable ? <Move {...{ place: move, hex, moves, close }} /> : ''
   const attackComp = moveComp && self.role === 'alien' ? <Attack {...{ place: attack, hex, moves, close }} /> : ''
+  const noteComp = escape ? '' : <Note {...{ place: note, hex, close, setNotes }} />
+
   return (
     <g onClick={e => e.stopPropagation()}>
-      <Note {...{ place: note, hex, close, setNotes }} />
+      {noteComp}
       {moveComp}
       {attackComp}
       <Highlight place={hex} />

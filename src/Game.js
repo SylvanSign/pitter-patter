@@ -55,7 +55,7 @@ const Game = {
   endIf(G, ctx) {
     if (G.players[ctx.currentPlayer].role === 'human') {
       const hexType = G.mapConfig[G.players[ctx.currentPlayer].hex.id]
-      if (hexType > 0 || hexType < 5) {
+      if (typeof hexType === 'number') {
         return { winner: ctx.currentPlayer }; // TODO flesh this out
       }
     }
