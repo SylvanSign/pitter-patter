@@ -1,11 +1,12 @@
 export default function Modal({ self, moves, fullGrid, hex, close, }) {
   const [note, move, hunt] = fullGrid.neighborsOf(hex).filter(n => n)
   const moveComp = self.reachable.has(hex) ? <Move {...{ place: move, hex, moves, close }} /> : ''
+  const huntComp = moveComp && self.role === 'alien' ? <Hunt {...{ place: hunt, hex, moves, close }} /> : ''
   return (
     <g onClick={e => e.stopPropagation()}>
       <Note place={note} />
       {moveComp}
-      <Hunt {...{ place: hunt, hex, moves, close }} />
+      {huntComp}
       <Highlight place={hex} />
     </g>
   )

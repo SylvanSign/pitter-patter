@@ -22,7 +22,7 @@ const Game = {
   //   "events": {}
   // }
   setup(ctx, setupData) {
-    const [map, mapConfig] = Object.entries(MAPS)[3];// TODO make this selectable (from setupData?)
+    const [map, mapConfig] = Object.entries(MAPS)[2];// TODO make this selectable (from setupData?)
     const gridData = gridGenerator(map)
 
     const humanHex = gridData.grid.get(idToCartesian(mapConfig[HEX_TYPES.human]))
