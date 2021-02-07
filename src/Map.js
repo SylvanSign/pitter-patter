@@ -4,7 +4,7 @@ import { cartesianToId } from './maps/util'
 import { useState, } from 'react'
 
 export default function Map({ G, G: { map, gridData, }, playerID, moves, }) {
-  const [notes, setNotes] = useState({ H07: 'yo' })
+  const [notes, setNotes] = useState({})
   const [modal, setModal] = useState({ id: null, comp: '' })
   const self = G.players[playerID]
   const {
@@ -33,7 +33,7 @@ export default function Map({ G, G: { map, gridData, }, playerID, moves, }) {
       if (hex.id === modal.id) { // clicking already open hex will close it
         close()
       } else {
-        setModal({ id: hex.id, comp: <Modal {...{ self, moves, hex, fullGrid, close, }} /> })
+        setModal({ id: hex.id, comp: <Modal {...{ self, moves, hex, fullGrid, close, setNotes, }} /> })
       }
     } else {
       close()
