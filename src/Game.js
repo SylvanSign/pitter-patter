@@ -98,7 +98,8 @@ const Game = {
 
   moves: {
     move(G, ctx, hex) {
-      if (hex === G.players[ctx.currentPlayer].hex) {
+      const currentPlayerData = G.players[ctx.currentPlayer]
+      if (hex === currentPlayerData.hex) {
         return INVALID_MOVE
       }
 
@@ -110,12 +111,12 @@ const Game = {
         default: // proceed
       }
 
-      if (!G.players[ctx.currentPlayer].reachable.has(hex)) {
+      if (!currentPlayerData.reachable.has(hex)) {
         return INVALID_MOVE
       }
 
-      G.players[ctx.currentPlayer].hex = hex
-      G.players[ctx.currentPlayer].reachable = new Set() // TODO clean this reachable thing up
+      currentPlayerData.hex = hex
+      currentPlayerData.reachable = new Set() // TODO clean this reachable thing up
 
       switch (hex.type) {
         case HEX_TYPES.silent:
@@ -135,11 +136,12 @@ const Game = {
     },
     attack(G, ctx, hex) {
       // TODO factor out shared movement code with move and attack
-      if (G.players[ctx.currentPlayer].role !== 'alien') {
+      const currentPlayerData = G.players[ctx.currentPlayer]
+      if (currentPlayerData.role !== 'alien') {
         return INVALID_MOVE
       }
 
-      if (hex === G.players[ctx.currentPlayer].hex) {
+      if (hex === currentPlayerData.hex) {
         return INVALID_MOVE
       }
 
@@ -151,17 +153,17 @@ const Game = {
         default: // proceed
       }
 
-      if (!G.players[ctx.currentPlayer].reachable.has(hex)) {
+      if (!currentPlayerData.reachable.has(hex)) {
         return INVALID_MOVE
       }
 
-      G.players[ctx.currentPlayer].hex = hex
-      G.players[ctx.currentPlayer].reachable = new Set() // TODO clean this reachable thing up
+      currentPlayerData.hex = hex
+      currentPlayerData.reachable = new Set() // TODO clean this reachable thing up
       // TODO attack logic
       for (const [playerID, data] of Object.entries(G.players)) {
         if (playerID !== ctx.currentPlayer) {
           if (data.hex === hex) {
-            eliminate(data, G, playerID)
+            eliminate(data, G, playerID, currentPlayerData)
           }
         }
       }
@@ -169,7 +171,7 @@ const Game = {
   },
 }
 
-function eliminate(data, G, playerIDToEliminate) {
+function eliminate(data, G, playerIDToEliminate, currentPlayerData) {
   switch (data.role) {
     case 'alien':
       // Find index of player to remove.
@@ -188,6 +190,7 @@ function eliminate(data, G, playerIDToEliminate) {
       break
     case 'human':
       G.players[playerIDToEliminate] = freshAlien(G.alienHex)
+      currentPlayerData.speed = 3
       break
     default:
       throw new Error('Role other than alien or human!')
