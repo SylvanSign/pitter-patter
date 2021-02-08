@@ -43,6 +43,7 @@ const Game = {
       map,
       players,
       playOrder: ctx.random.Shuffle(playOrder),
+      playOrderPos: 0,
       escapeDeck,
       dangerDeck,
       dangerDiscard: [],
@@ -68,13 +69,32 @@ const Game = {
   },
 
   turn: {
-    order: TurnOrder.CUSTOM_FROM('playOrder'), // TODO handle player elimination
     // TODO use stages to enforce this and allow other players to take notes when not current player?
     moveLimit: 1, // must move, then either silent, draw, or attack
 
+    order: {
+      // Calculate the first player.
+      first(G, ctx) {
+        const playerID = G.playOrder[G.playOrderPos]
+        return ctx.playOrder.indexOf(playerID)
+      },
+
+      // Calculate the next player.
+      next(G, ctx) {
+        // Look up the next player’s ID from the custom order.
+        const playerID = G.playOrder[G.playOrderPos]
+        // Find the position of the ID in boardgame.io’s play order.
+        return ctx.playOrder.indexOf(playerID)
+      },
+    },
     onBegin(G, ctx) {
       const self = G.players[ctx.currentPlayer]
       self.reachable = reachableHexes(G.gridData.grid, self.hex, self.speed)
+    },
+
+    // Increment the position in the play order at the end of the turn.
+    onEnd(G) {
+      G.playOrderPos = (G.playOrderPos + 1) % G.playOrder.length
     },
   },
 
@@ -101,11 +121,11 @@ const Game = {
 
       switch (hex.type) {
         case HEX_TYPES.silent:
-          break;
+          break
         case HEX_TYPES.danger:
           const dangerCard = drawDangerCard(G, ctx)
           console.log(dangerCard)
-          break;
+          break
         default: // escape pod
           const escapeCard = G.escapeDeck.pop()
           if (escapeCard === 'success') {
@@ -140,9 +160,27 @@ const Game = {
       G.players[ctx.currentPlayer].hex = hex
       G.players[ctx.currentPlayer].reachable = new Set() // TODO clean this reachable thing up
       // TODO attack logic
-      alert('attack')
+      for (const [playerID, data] of Object.entries(G.players)) {
+        if (playerID !== ctx.currentPlayer) {
+          if (data.hex === hex) {
+            killPlayer(data)
+          }
+        }
+      }
     },
   },
+}
+
+function killPlayer(data) {
+  switch (data.role) {
+    case 'alien':
+
+      break
+    case 'human':
+      break
+    default:
+      throw new Error('Role other than alien or human!')
+  }
 }
 
 function drawDangerCard(G, ctx) {

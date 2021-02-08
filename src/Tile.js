@@ -27,17 +27,19 @@ export default function Tile({ map, id, x, y, current, moveCandidate, hasNote, }
 
 function HexShape({ className, x, y, current, moveCandidate, hasNote }) {
   // TODO use better indicator (symbol based like styled inner ring?) that doesn't disrupt primary coloring of base tiles
-  let movementClass = current ? 'current'
+  const movementClass = current ? 'current'
     : moveCandidate ? 'can-move'
       : ''
-  let noteMarker = hasNote ?
+  const noteMarker = hasNote ?
     <use xlinkHref='#note' />
     : ''
   return (
     <g transform={`translate(${x} ${y})`}>
       <use xlinkHref='#hex' className={className} />
       {movementClass ?
-        <use xlinkHref='#hex' className={movementClass} transform='scale(0.6) translate(19 16)' />
+        <g>
+          <use xlinkHref='#hex' className={movementClass} transform='scale(0.6) translate(19 16)' />
+        </g>
         : ''
       }
       {noteMarker}
@@ -48,6 +50,7 @@ function HexShape({ className, x, y, current, moveCandidate, hasNote }) {
 function EscapeHex({ x, y, label, current, moveCandidate, hasNote }) {
   return (
     <g>
+      <title>Escape Pod</title>
       <HexShape {...{ className: 'key', x, y, current, moveCandidate, hasNote }} />
       <text transform={`translate(${x + 20} ${y + 35})`} className='key'>{label}</text>
       <svg viewBox="0 0 134 116" width='60' height='60' x={x - 0.8} y={y - 4.5}>
@@ -61,6 +64,7 @@ function EscapeHex({ x, y, label, current, moveCandidate, hasNote }) {
 function HumanHex({ x, y, current }) {
   return (
     <g>
+      <title>Human Spawn</title>
       <HexShape {...{ className: 'key', x, y, current }} />
       <svg viewBox="0 0 134 116" width='60' height='60' x={x} y={y - 5}>
         <path d="M67.009,100.979l-33.996,-19.624l0,-56.517l16.998,-9.817l4.067,7.058l-12.921,7.456l0,47.117l25.852,14.927l25.834,-14.927l0,-47.117l-12.912,-7.456l4.072,-7.058l16.984,9.817l0,56.517l-33.978,19.624Z" style={{ fill: 'white', fillRule: 'nonzero' }} />
@@ -73,6 +77,7 @@ function HumanHex({ x, y, current }) {
 function AlienHex({ x, y, current }) {
   return (
     <g>
+      <title>Alien Spawn</title>
       <HexShape {...{ className: 'key', x, y, current }} />
       <svg viewBox="0 0 134 116" width='60' height='60' x={x} y={y - 5}>
         <path d="M66.995,44.187l-31.918,-18.101l4.015,-7.086l27.903,15.826l27.908,-15.826l4.02,7.086l-31.928,18.101Z" style={{ fill: 'white', fillRule: 'nonzero' }} />
@@ -85,6 +90,7 @@ function AlienHex({ x, y, current }) {
 function DangerHex({ x, y, label, current, moveCandidate, hasNote }) {
   return (
     <g>
+      <title>Dangerous Sector (Noise Risk)</title>
       <HexShape {...{ className: 'danger', x, y, current, moveCandidate, hasNote }} />
       <svg viewBox="0 0 134 116" width='60' height='60' x={x} y={y - 4}>
         <path d="M10.469,39.925l-10.432,18.074l10.432,18.083l10.432,-18.083l-10.432,-18.074Z" style={{ fill: 'grey', fillRule: 'nonzero' }} />
@@ -102,6 +108,7 @@ function DangerHex({ x, y, label, current, moveCandidate, hasNote }) {
 function SilentHex({ x, y, label, current, moveCandidate, hasNote }) {
   return (
     <g>
+      <title>Silent Sector</title>
       <HexShape {...{ className: 'silent', x, y, current, moveCandidate, hasNote }} />
       <text x={x + 15} y={y + 32} className='silent'>{label}</text>
     </g>
