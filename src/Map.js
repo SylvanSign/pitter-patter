@@ -45,7 +45,7 @@ export default function Map({ G, G: { map, gridData, }, playerID, moves, }) {
     const cartesian = hex.coordinates()
     const id = cartesianToId(cartesian.x, cartesian.y)
 
-    const current = self.hex.id === id
+    const current = self.hex.id === id && !self.dead
     const moveCandidate = self.reachable.has(hex)
     const hasNote = notes[id]
     return <Tile {...{ key: id, current, moveCandidate, hasNote, map, id, x, y }} />

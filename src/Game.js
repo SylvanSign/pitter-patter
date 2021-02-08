@@ -31,16 +31,14 @@ const Game = {
 
     const { playOrder, } = ctx
     const [humans, aliens] = pickRoles(ctx, playOrder)
-    const players = setupPlayers(
-      { humans, humanHex, },
-      { aliens, alienHex, },
-    )
+    const players = setupPlayers({ humans, humanHex, }, { aliens, alienHex, })
 
     const dangerDeck = makeDangerDeck(ctx)
     const escapeDeck = makeEscapeDeck(ctx)
 
     return {
       map,
+      alienHex,
       players,
       playOrder: ctx.random.Shuffle(playOrder),
       playOrderPos: 0,
@@ -163,7 +161,7 @@ const Game = {
       for (const [playerID, data] of Object.entries(G.players)) {
         if (playerID !== ctx.currentPlayer) {
           if (data.hex === hex) {
-            killPlayer(data)
+            eliminate(data, G, playerID)
           }
         }
       }
@@ -171,16 +169,33 @@ const Game = {
   },
 }
 
-function killPlayer(data) {
+function eliminate(data, G, playerIDToEliminate) {
   switch (data.role) {
     case 'alien':
-
+      // Find index of player to remove.
+      const index = G.playOrder.indexOf(playerIDToEliminate)
+      // The move should be invalid if we can’t find the player to remove.
+      if (index < 0) {
+        return INVALID_MOVE
+      }
+      // Remove the player from G.playOrder.
+      G.playOrder.splice(index, 1)
+      // Decrement position if the eliminated position is lower in the order.
+      if (index < G.playOrderPos) {
+        --G.playOrderPos
+      }
+      G.players[playerIDToEliminate].dead = true
       break
     case 'human':
+      G.players[playerIDToEliminate] = freshAlien(G.alienHex)
       break
     default:
       throw new Error('Role other than alien or human!')
   }
+}
+
+function killPlayer(data) {
+
 }
 
 function drawDangerCard(G, ctx) {
@@ -201,35 +216,48 @@ function pickRoles(ctx, playOrder) {
   return [shuffled, shuffled.splice(shuffled.length / 2)]
 }
 
-function setupPlayers(
-  { humans, humanHex, },
-  { aliens, alienHex, },
-) {
+function setupPlayers({ humans, humanHex, }, { aliens, alienHex, }) {
   let players = {}
 
   humans.reduce((players, p) => {
-    players[p] = {
-      role: 'human',
-      hex: humanHex,
-      speed: 1,
-      reachable: new Set(),
-      hand: [],
-    }
+    players[p] = freshHuman(humanHex)
     return players
   }, players)
 
   aliens.reduce((players, p) => {
-    players[p] = {
-      role: 'alien',
-      hex: alienHex,
-      speed: 2,
-      reachable: new Set(),
-      hand: [],
-    }
+    players[p] = freshAlien(alienHex)
     return players
   }, players)
 
   return players
+}
+
+function freshHuman(hex) {
+  return {
+    ...freshPlayer(hex),
+    role: 'human',
+    speed: 1,
+    reachable: new Set(),
+    hand: [],
+  }
+}
+
+function freshAlien(hex) {
+  return {
+    ...freshPlayer(hex),
+    role: 'alien',
+    speed: 2,
+    reachable: new Set(),
+    hand: [],
+  }
+}
+
+function freshPlayer(hex) {
+  return {
+    hex,
+    reachable: new Set(),
+    hand: [],
+  }
 }
 
 function makeDangerDeck(ctx) {
