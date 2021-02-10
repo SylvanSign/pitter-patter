@@ -47,7 +47,6 @@ const Game = {
       dangerDiscard: [],
       gridData,
       mapConfig,
-      clues: {},
     }
   },
 
@@ -120,17 +119,18 @@ const Game = {
 
       switch (hex.type) {
         case HEX_TYPES.silent:
+          G.clue = 'Silent Sector'
           break
         case HEX_TYPES.danger:
           const dangerCard = drawDangerCard(G, ctx)
-          console.log(dangerCard)
+          G.clue = dangerCard
           break
         default: // escape pod
           const escapeCard = G.escapeDeck.pop()
           if (escapeCard === 'success') {
-            console.log('successful escape!')
+            G.clue = 'successful escape!'
           } else { // 'fail'
-            console.log('failed launch!')
+            G.clue = 'failed launch!'
           }
       }
     },
@@ -160,13 +160,16 @@ const Game = {
       currentPlayerData.hex = hex
       currentPlayerData.reachable = new Set() // TODO clean this reachable thing up
       // TODO attack logic
+      const clues = ['There has been an attack!']
       for (const [playerID, data] of Object.entries(G.players)) {
         if (playerID !== ctx.currentPlayer) {
           if (data.hex === hex) {
             eliminate(data, G, playerID, currentPlayerData)
+            clues.push(`Player ${playerID} has been killed!`)
           }
         }
       }
+      G.clue = clues.join(' ')
     },
   },
 }

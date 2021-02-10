@@ -1,11 +1,20 @@
 import Tile from './Tile'
 import Modal from './Modal'
 import { cartesianToId } from './maps/util'
-import { useState, } from 'react'
+import { useState, useEffect, } from 'react'
 
-export default function Map({ G, G: { map, gridData, }, playerID, moves, }) {
+export default function Map({ G, G: { map, gridData, }, playerID, moves, ctx, }) {
   const [notes, setNotes] = useState({})
   const [modal, setModal] = useState({ id: null, comp: '' })
+
+  useEffect(() => {
+    if (G.clue) {
+      const utterance = new SpeechSynthesisUtterance(G.clue)
+      // const voice = speechSynthesis.getVoices()
+      speechSynthesis.speak(utterance)
+    }
+  }, [G.clue, ctx.turn])
+
   const self = G.players[playerID]
   const {
     grid,
