@@ -8,7 +8,7 @@ export default function Map({ G, G: { map, gridData, }, playerID, moves, ctx, })
   const [modal, setModal] = useState({ id: null, comp: '' })
 
   useEffect(() => {
-    if (G.clue) {
+    if (G.clue && playerID === '0') { // TODO remove playerID check
       const utterance = new SpeechSynthesisUtterance(G.clue)
       // const voice = speechSynthesis.getVoices()
       speechSynthesis.speak(utterance)

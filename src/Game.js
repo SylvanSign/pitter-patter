@@ -119,18 +119,18 @@ const Game = {
 
       switch (hex.type) {
         case HEX_TYPES.silent:
-          G.clue = 'Silent Sector'
+          G.clue = `Player ${ctx.currentPlayer} is in a silent sector...`
           break
         case HEX_TYPES.danger:
           const dangerCard = drawDangerCard(G, ctx)
-          G.clue = dangerCard
+          G.clue = `Player ${ctx.currentPlayer} is in a dangerous sector, and you hear ${dangerCard}`
           break
         default: // escape pod
           const escapeCard = G.escapeDeck.pop()
           if (escapeCard === 'success') {
-            G.clue = 'successful escape!'
+            G.clue = `Player ${ctx.currentPlayer} has successfully launched out of escape pod ${hex.type}`
           } else { // 'fail'
-            G.clue = 'failed launch!'
+            G.clue = `Player ${ctx.currentPlayer} has failed to launch escape pod ${hex.id}`
           }
       }
     },
@@ -160,7 +160,7 @@ const Game = {
       currentPlayerData.hex = hex
       currentPlayerData.reachable = new Set() // TODO clean this reachable thing up
       // TODO attack logic
-      const clues = ['There has been an attack!']
+      const clues = [`There has been an attack on sector ${hex.id}`]
       for (const [playerID, data] of Object.entries(G.players)) {
         if (playerID !== ctx.currentPlayer) {
           if (data.hex === hex) {
@@ -209,7 +209,7 @@ function drawDangerCard(G, ctx) {
     G.dangerDeck = ctx.random.Shuffle(G.dangerDiscard.splice(0))
   }
   const dangerCard = G.dangerDeck.pop()
-  if (dangerCard === 'silent' || dangerCard === 'item') {
+  if (dangerCard === 'silence' || dangerCard === 'item') {
     G.players[ctx.currentPlayer].hand.push(dangerCard)
   } else {
     G.dangerDiscard.push(dangerCard)
@@ -270,10 +270,10 @@ function makeDangerDeck(ctx) {
   const deck = [
     ...Array(27).fill('you'),
     ...Array(27).fill('any'),
-    ...Array(34).fill('silent'), // see TODO below
+    ...Array(34).fill('silence'), // see TODO below
     // TODO actually differentiate items
     // ...Array(17).fill('item'),
-    // ...Array(17).fill('silent'),
+    // ...Array(17).fill 'silence'),
   ]
 
   return ctx.random.Shuffle(deck)

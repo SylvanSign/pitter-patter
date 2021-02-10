@@ -21,7 +21,7 @@ const C = Client({
   game: wrappedGameDef({ map: 'galilei' }),
   board: Board,
   multiplayer: Local(),
-  numPlayers: 2,
+  numPlayers: 4,
   debug: !myParam,
 })
 
@@ -30,6 +30,8 @@ export default function App() {
     <div>
       <C playerID='0' />
       <C playerID='1' />
+      <C playerID='2' />
+      <C playerID='3' />
     </div>
   )
 }
