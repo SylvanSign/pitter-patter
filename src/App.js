@@ -22,7 +22,7 @@ const C = Client({
   board: Board,
   multiplayer: Local(),
   numPlayers: 1,
-  debug: !myParam,
+  debug: !!myParam,
 })
 
 export default function App() {

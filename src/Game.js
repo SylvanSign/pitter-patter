@@ -22,7 +22,7 @@ const Game = {
   //   "events": {}
   // }
   setup(ctx, setupData) {
-    const [map, mapConfig] = Object.entries(MAPS)[0];// TODO make this selectable (from setupData?)
+    const [map, mapConfig] = Object.entries(MAPS)[2];// TODO make this selectable (from setupData?)
     const gridData = gridGenerator(map)
 
     const humanHex = gridData.grid.get(idToCartesian(mapConfig[HEX_TYPES.human]))
@@ -142,6 +142,11 @@ const Game = {
           }
       }
     },
+    noise(G, ctx, hex) {
+      const currentPlayerData = G.players[ctx.currentPlayer]
+      G.clue = `Player ${ctx.currentPlayer} is in a dangerous sector, and you hear ${dangerCard}`
+      ctx.events.endTurn()
+    },
     attack(G, ctx, hex) {
       // TODO factor out shared movement code with move and attack
       const currentPlayerData = G.players[ctx.currentPlayer]
@@ -168,7 +173,7 @@ const Game = {
       currentPlayerData.hex = hex
       currentPlayerData.reachable = new Set() // TODO clean this reachable thing up
       // TODO attack logic
-      const clues = [`There has been an attack on sector ${hex.id}`]
+      const clues = [`Player ${ctx.currentPlayer} has attacked sector ${hex.id}`]
       for (const [playerID, data] of Object.entries(G.players)) {
         if (playerID !== ctx.currentPlayer) {
           if (data.hex === hex) {
@@ -228,7 +233,7 @@ function drawDangerCard(G, ctx) {
 function pickRoles(ctx, playOrder) {
   const shuffled = ctx.random.Shuffle(playOrder)
   // return [shuffled, shuffled.splice(shuffled.length / 2)]
-  return [shuffled, []] // TODO remove
+  return [[], shuffled, []] // TODO remove
 }
 
 function setupPlayers({ humans, humanHex, }, { aliens, alienHex, }) {
