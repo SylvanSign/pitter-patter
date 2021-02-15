@@ -66,7 +66,7 @@ const Game = {
 
   turn: {
     // TODO use stages to enforce this and allow other players to take notes when not current player?
-    moveLimit: 1, // must move, then either silent, draw, or attack
+    // moveLimit: 1, // must move, then either silent, draw, or attack
 
     order: {
       // Calculate the first player.
@@ -123,7 +123,21 @@ const Game = {
           break
         case HEX_TYPES.danger:
           const dangerCard = drawDangerCard(G, ctx)
-          G.clue = `Player ${ctx.currentPlayer} is in a dangerous sector, and you hear ${dangerCard}`
+          switch (dangerCard) {
+            case 'silence':
+              G.clue = `Player ${ctx.currentPlayer} is in a dangerous sector, but you don't hear anything...`
+              ctx.events.endTurn()
+              break
+            case 'you':
+              G.clue = `Player ${ctx.currentPlayer} is in a dangerous sector. You hear a noise in ${hex.id}`
+              ctx.events.endTurn()
+              break
+            case 'any':
+              G.promptNoise = true
+              break
+            default:
+              throw new Error('Unexpected dangerCard value')
+          }
           break
         default: // escape pod
           const escapeCard = G.escapeDeck.pop()
@@ -143,8 +157,22 @@ const Game = {
       }
     },
     noise(G, ctx, hex) {
+      // handle invalid moves
+      const config = G.mapConfig[hex.id]
+      switch (config) {
+        case HEX_TYPES.human:
+          return INVALID_MOVE
+        case HEX_TYPES.alien:
+          return INVALID_MOVE
+        default:
+          if (config > 0 || config < 5) {
+            return INVALID_MOVE
+          }
+      }
+
       const currentPlayerData = G.players[ctx.currentPlayer]
-      G.clue = `Player ${ctx.currentPlayer} is in a dangerous sector, and you hear ${dangerCard}`
+      G.clue = `Player ${ctx.currentPlayer} is in a dangerous sector. You hear a noise in ${hex.id}`
+      G.promptNoise = false
       ctx.events.endTurn()
     },
     attack(G, ctx, hex) {
@@ -211,10 +239,6 @@ function eliminate(data, G, playerIDToEliminate, currentPlayerData) {
     default:
       throw new Error('Role other than alien or human!')
   }
-}
-
-function killPlayer(data) {
-
 }
 
 function drawDangerCard(G, ctx) {

@@ -3,7 +3,7 @@ import Modal from './Modal'
 import { cartesianToId } from './maps/util'
 import { useState, } from 'react'
 
-export default function Map({ G, G: { map, gridData, }, playerID, moves, ctx, }) {
+export default function Map({ G, G: { map, gridData, promptNoise, }, playerID, moves, }) {
   const [notes, setNotes] = useState({})
   const [modal, setModal] = useState({ id: null, comp: '' })
 
@@ -30,14 +30,23 @@ export default function Map({ G, G: { map, gridData, }, playerID, moves, ctx, })
     const { x, y } = point.matrixTransform(svg.getScreenCTM().inverse())
     const hexCoordinates = Grid.pointToHex(x, y)
     const hex = grid.get(hexCoordinates)
-    if (hex && hex.accessible) {
-      if (hex.id === modal.id) { // clicking already open hex will close it
-        close()
-      } else {
-        setModal({ id: hex.id, comp: <Modal {...{ self, moves, hex, fullGrid, close, setNotes, }} /> })
-      }
+
+    handleClick(hex, promptNoise)
+  }
+
+  function handleClick(hex, promptNoise) {
+    if (promptNoise) {
+      moves.noise(hex)
     } else {
-      close()
+      if (hex && hex.accessible) {
+        if (hex.id === modal.id) { // clicking already open hex will close it
+          close()
+        } else {
+          setModal({ id: hex.id, comp: <Modal {...{ self, moves, hex, fullGrid, close, setNotes, }} /> })
+        }
+      } else {
+        close()
+      }
     }
   }
 
