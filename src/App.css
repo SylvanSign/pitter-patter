@@ -1,9 +1,12 @@
 svg {
   user-select: none;
   width: 100vw;
-  height: 90vh;
+  height: 80vh;
 }
 
+h1 {
+  text-align: center;
+}
 
 text.danger, text.silent {
   font-family: 'Roboto Mono', monospace;

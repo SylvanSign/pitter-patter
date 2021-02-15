@@ -1,4 +1,5 @@
 import Map from './Map'
+import ClueDisplay from './ClueDisplay'
 import { useEffect } from 'react'
 
 export default function Game(props) { // props from boardgame.io/react
@@ -13,6 +14,7 @@ export default function Game(props) { // props from boardgame.io/react
     <div>
       {/* TODO add MapSelector somehow? */}
       <Map {...props} />
+      <ClueDisplay {...props} />
     </div>
   )
 }
