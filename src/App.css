@@ -29,6 +29,28 @@ use.key {
   fill: black;
 }
 
+text.fail {
+  font-family: 'Roboto Mono', monospace;
+  font-size: xx-large;
+  fill: white;
+}
+
+use.fail {
+  fill: red;
+}
+
+text.success {
+  font-family: 'Roboto Mono', monospace;
+  font-size: xx-large;
+  fill: white;
+  opacity: 50%;
+}
+
+use.success {
+  fill: green;
+  opacity: 50%;
+}
+
 use.current {
   fill: gold;
   /* opacity: 70%; */

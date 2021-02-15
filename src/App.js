@@ -29,9 +29,6 @@ export default function App() {
   return (
     <div>
       <C playerID='0' />
-      <C playerID='1' />
-      <C playerID='2' />
-      <C playerID='3' />
     </div>
   )
 }

@@ -57,7 +57,8 @@ export default function Map({ G, G: { map, gridData, }, playerID, moves, ctx, })
     const current = self.hex.id === id && !self.dead
     const moveCandidate = self.reachable.has(hex)
     const hasNote = notes[id]
-    return <Tile {...{ key: id, current, moveCandidate, hasNote, map, id, x, y }} />
+    const status = hex.status
+    return <Tile {...{ key: id, current, moveCandidate, hasNote, map, id, x, y, status, }} />
   })
 
   const points = corners.map(({ x, y }) => `${x},${y}`).join(' ')

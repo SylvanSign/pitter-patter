@@ -22,7 +22,7 @@ const Game = {
   //   "events": {}
   // }
   setup(ctx, setupData) {
-    const [map, mapConfig] = ctx.random.Shuffle(Object.entries(MAPS))[0];// TODO make this selectable (from setupData?)
+    const [map, mapConfig] = Object.entries(MAPS)[3];// TODO make this selectable (from setupData?)
     const gridData = gridGenerator(map)
 
     const humanHex = gridData.grid.get(idToCartesian(mapConfig[HEX_TYPES.human]))
@@ -51,18 +51,17 @@ const Game = {
   },
 
   endIf(G, ctx) {
-    if (G.players[ctx.currentPlayer].role === 'human') {
-      const hexType = G.mapConfig[G.players[ctx.currentPlayer].hex.id]
-      if (typeof hexType === 'number') {
-        return { winner: ctx.currentPlayer }; // TODO flesh this out
-      }
-    }
+    // if (G.players[ctx.currentPlayer].role === 'human') {
+    //   const hexType = G.mapConfig[G.players[ctx.currentPlayer].hex.id]
+    //   if (typeof hexType === 'number') {
+    //     return { winner: ctx.currentPlayer }; // TODO flesh this out
+    //   }
+    // }
 
-    // TODO handle player elimination
-    if (ctx.turn / ctx.numPlayers > 40) {
-      return { winner: ctx.currentPlayer } // TODO fix this
-    }
-
+    // // TODO handle player elimination
+    // if (ctx.turn / ctx.numPlayers > 40) {
+    //   return { winner: ctx.currentPlayer } // TODO fix this
+    // }
   },
 
   turn: {
@@ -120,6 +119,7 @@ const Game = {
       switch (hex.type) {
         case HEX_TYPES.silent:
           G.clue = `Player ${ctx.currentPlayer} is in a silent sector...`
+          ctx.events.endTurn()
           break
         case HEX_TYPES.danger:
           const dangerCard = drawDangerCard(G, ctx)
@@ -129,8 +129,16 @@ const Game = {
           const escapeCard = G.escapeDeck.pop()
           if (escapeCard === 'success') {
             G.clue = `Player ${ctx.currentPlayer} has successfully launched out of escape pod ${hex.type}`
+            console.log('successful escape!')
+            hex.status = 'success'
+            hex.accessible = false
+            ctx.events.endTurn()
           } else { // 'fail'
             G.clue = `Player ${ctx.currentPlayer} has failed to launch escape pod ${hex.id}`
+            console.log('failed launch!')
+            hex.status = 'fail'
+            hex.accessible = false
+            ctx.events.endTurn()
           }
       }
     },
@@ -219,7 +227,8 @@ function drawDangerCard(G, ctx) {
 
 function pickRoles(ctx, playOrder) {
   const shuffled = ctx.random.Shuffle(playOrder)
-  return [shuffled, shuffled.splice(shuffled.length / 2)]
+  // return [shuffled, shuffled.splice(shuffled.length / 2)]
+  return [shuffled, []] // TODO remove
 }
 
 function setupPlayers({ humans, humanHex, }, { aliens, alienHex, }) {
@@ -281,8 +290,11 @@ function makeDangerDeck(ctx) {
 
 function makeEscapeDeck(ctx) {
   const deck = [
+    // 'fail',
+    // ...Array(4).fill('success'),
+    // TODO remove these
     'fail',
-    ...Array(4).fill('success'),
+    'success',
   ]
 
   return ctx.random.Shuffle(deck)
