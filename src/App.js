@@ -21,7 +21,7 @@ const C = Client({
   game: wrappedGameDef({ map: 'galilei' }),
   board: Board,
   multiplayer: Local(),
-  numPlayers: 4,
+  numPlayers: 1,
   debug: !myParam,
 })
 
