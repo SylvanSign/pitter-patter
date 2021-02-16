@@ -1,34 +1,21 @@
 import './App.css'
 import Board from './Board'
 import Game from './Game'
-import { Client } from 'boardgame.io/react'
-import { Local } from 'boardgame.io/multiplayer';
-
-// TODO remove this wrapper stuff when we switch to Multiplayer
-function wrapGameDefinition(game) {
-  return setupData => ({
-    ...game,
-    setup: ctx => game.setup(ctx, setupData)
-  })
-}
-const wrappedGameDef = wrapGameDefinition(Game)
+import { Lobby } from 'boardgame.io/react'
 
 // TODO remove this params stuff
 const urlParams = new URLSearchParams(window.location.search);
-const myParam = urlParams.get('d'); // disable debug with ?d=1
-
-const C = Client({
-  game: wrappedGameDef({ map: 'galilei' }),
-  board: Board,
-  multiplayer: Local(),
-  numPlayers: 1,
-  debug: !!myParam,
-})
+const debug = urlParams.get('d'); // disable debug with ?d=1
 
 export default function App() {
   return (
-    <div>
-      <C playerID='0' />
-    </div>
+    <Lobby
+      gameServer={`http://${window.location.hostname}:8000`}
+      lobbyServer={`http://${window.location.hostname}:8000`}
+      gameComponents={[
+        { game: Game, board: Board }
+      ]}
+      debug={!!debug}
+    />
   )
 }

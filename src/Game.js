@@ -5,22 +5,9 @@ import { HEX_TYPES, idToCartesian, reachableHexes } from './maps/util'
 
 // TODO generally, remove all console.logs
 const Game = {
-  // TODO remove this comment
-  // ctx = {
-  //   "numPlayers": 2,
-  //   "turn": 0,
-  //   "currentPlayer": "0",
-  //   "playOrder": [
-  //     "0",
-  //     "1"
-  //   ],
-  //   "playOrderPos": 0,
-  //   "phase": null,
-  //   "activePlayers": null,
-  //   "random": {},
-  //   "log": {},
-  //   "events": {}
-  // }
+  name: 'Pitter-Patter',
+  minPlayers: 2,
+  maxPlayers: 8,
   setup(ctx, setupData) {
     const [map, mapConfig] = Object.entries(MAPS)[2];// TODO make this selectable (from setupData?)
     const gridData = gridGenerator(map)
