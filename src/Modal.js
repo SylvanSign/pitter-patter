@@ -1,7 +1,7 @@
 import { HEX_TYPES } from "./maps/util"
 
 export default function Modal({ self, moves, fullGrid, hex, close, setNotes, }) {
-  const reachable = self.reachable.has(hex)
+  const reachable = !!self.reachable.find(r => r.id === hex.id)
   const escape = typeof hex.type === 'number'
 
   if (escape && (self.role === 'alient' || !reachable)) {

@@ -3,17 +3,17 @@ import gridGenerator from './maps/gridGenerator'
 import MAPS from './maps'
 import { HEX_TYPES, idToCartesian, reachableHexes } from './maps/util'
 
+
+const [map, mapConfig] = Object.entries(MAPS)[2];// TODO make this selectable (from setupData?)
+export const gridData = gridGenerator(map)
+
 // TODO generally, remove all console.logs
 const Game = {
   name: 'Pitter-Patter',
   minPlayers: 2,
   maxPlayers: 8,
   setup(ctx, setupData) {
-    const [map, mapConfig] = Object.entries(MAPS)[2];// TODO make this selectable (from setupData?)
-    const gridData = gridGenerator(map)
-
     const humanHex = gridData.grid.get(idToCartesian(mapConfig[HEX_TYPES.human]))
-
     const alienHex = gridData.grid.get(idToCartesian(mapConfig[HEX_TYPES.alien]))
 
     const { playOrder, } = ctx
@@ -32,7 +32,6 @@ const Game = {
       escapeDeck,
       dangerDeck,
       dangerDiscard: [],
-      gridData,
       mapConfig,
     }
   },
@@ -72,7 +71,7 @@ const Game = {
     },
     onBegin(G, ctx) {
       const self = G.players[ctx.currentPlayer]
-      self.reachable = reachableHexes(G.gridData.grid, self.hex, self.speed)
+      self.reachable = reachableHexes(gridData.grid, gridData.Hex, self.hex, self.speed)
     },
 
     // Increment the position in the play order at the end of the turn.
@@ -96,12 +95,12 @@ const Game = {
         default: // proceed
       }
 
-      if (!currentPlayerData.reachable.has(hex)) {
+      if (!currentPlayerData.reachable.find(r => r.id === hex.id)) {
         return INVALID_MOVE
       }
 
       currentPlayerData.hex = hex
-      currentPlayerData.reachable = new Set() // TODO clean this reachable thing up
+      currentPlayerData.reachable = [] // TODO clean this reachable thing up
 
       switch (hex.type) {
         case HEX_TYPES.silent:
@@ -181,12 +180,12 @@ const Game = {
         default: // proceed
       }
 
-      if (!currentPlayerData.reachable.has(hex)) {
+      if (!currentPlayerData.reachable.find(r => r.id === hex.id)) {
         return INVALID_MOVE
       }
 
       currentPlayerData.hex = hex
-      currentPlayerData.reachable = new Set() // TODO clean this reachable thing up
+      currentPlayerData.reachable = [] // TODO clean this reachable thing up
       // TODO attack logic
       const clues = [`Player ${ctx.currentPlayer} has attacked sector ${hex.id}`]
       for (const [playerID, data] of Object.entries(G.players)) {
@@ -243,8 +242,7 @@ function drawDangerCard(G, ctx) {
 
 function pickRoles(ctx, playOrder) {
   const shuffled = ctx.random.Shuffle(playOrder)
-  // return [shuffled, shuffled.splice(shuffled.length / 2)]
-  return [[], shuffled, []] // TODO remove
+  return [shuffled, shuffled.splice(shuffled.length / 2)]
 }
 
 function setupPlayers({ humans, humanHex, }, { aliens, alienHex, }) {
@@ -268,7 +266,7 @@ function freshHuman(hex) {
     ...freshPlayer(hex),
     role: 'human',
     speed: 1,
-    reachable: new Set(),
+    reachable: [],
     hand: [],
   }
 }
@@ -278,7 +276,7 @@ function freshAlien(hex) {
     ...freshPlayer(hex),
     role: 'alien',
     speed: 2,
-    reachable: new Set(),
+    reachable: [],
     hand: [],
   }
 }
@@ -286,7 +284,7 @@ function freshAlien(hex) {
 function freshPlayer(hex) {
   return {
     hex,
-    reachable: new Set(),
+    reachable: [],
     hand: [],
   }
 }
@@ -306,11 +304,8 @@ function makeDangerDeck(ctx) {
 
 function makeEscapeDeck(ctx) {
   const deck = [
-    // 'fail',
-    // ...Array(4).fill('success'),
-    // TODO remove these
     'fail',
-    'success',
+    ...Array(4).fill('success'),
   ]
 
   return ctx.random.Shuffle(deck)

@@ -60,7 +60,7 @@ export function idToCartesian(id) {
 }
 
 // from https://www.redblobgames.com/grids/hexagons/#range-obstacles
-export function reachableHexes(grid, start, movement) {
+export function reachableHexes(grid, Hex, start, movement) {
   const visited = new Set([start]); // set of hexes
   const fringes = [[start]] // array of arrays of hexes
   const ignoreEscapes = movement > 1 // aliens cannot enter nor pass through escapes
@@ -68,7 +68,7 @@ export function reachableHexes(grid, start, movement) {
   for (let k = 1; k <= movement; ++k) {
     fringes.push([])
     for (const hex of fringes[k - 1]) {
-      for (const neighbor of grid.neighborsOf(hex)) {
+      for (const neighbor of grid.neighborsOf(new Hex(hex))) {
         if (neighbor
           && neighbor.accessible
           && !(ignoreEscapes && neighbor.escape)
@@ -80,5 +80,5 @@ export function reachableHexes(grid, start, movement) {
     }
   }
   visited.delete(start); // TODO? must move every turn
-  return visited
+  return Array.from(visited)
 }

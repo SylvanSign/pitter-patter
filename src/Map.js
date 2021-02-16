@@ -3,18 +3,12 @@ import Modal from './Modal'
 import { cartesianToId } from './maps/util'
 import { useState, } from 'react'
 
-export default function Map({ G, G: { map, gridData, promptNoise, }, playerID, moves, }) {
+export default function Map({ G, playerID, moves, grid, fullGrid, Grid, corners }) {
   const [notes, setNotes] = useState({})
   const [modal, setModal] = useState({ id: null, comp: '' })
 
+  const { map, promptNoise, } = G
   const self = G.players[playerID]
-  const {
-    grid,
-    fullGrid,
-    Grid,
-    corners,
-  } = gridData
-
   function close() {
     setModal({ id: null, comp: '' })
   }
@@ -50,13 +44,14 @@ export default function Map({ G, G: { map, gridData, promptNoise, }, playerID, m
     }
   }
 
+  console.log(self.reachable)
   const hexSVGs = grid.map(hex => {
     const { x, y } = hex.toPoint()
     const cartesian = hex.coordinates()
     const id = cartesianToId(cartesian.x, cartesian.y)
 
     const current = self.hex.id === id && !self.dead
-    const moveCandidate = self.reachable.has(hex)
+    const moveCandidate = !!self.reachable.find(r => r.id === hex.id)
     const hasNote = notes[id]
     const status = hex.status
     return <Tile {...{ key: id, current, moveCandidate, hasNote, map, id, x, y, status, }} />

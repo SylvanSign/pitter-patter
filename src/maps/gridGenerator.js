@@ -28,6 +28,7 @@ export default function gridGenerator(map) {
   return {
     grid,
     Grid,
+    Hex,
     fullGrid,
     corners: HexData().corners(),
   }
