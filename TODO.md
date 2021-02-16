@@ -1,16 +1,14 @@
-- [x] parse configs for default map
-- [x] scale everything to fit on screen, useEffect track window size and react to that?
-- [x] use boardgame.io
-  - [x] start singleplayer just to get basic moves down
-  - [ ] clickable hexes to take notes about speculated info
-  - [ ] automatically track known info including relevant players (noises, attacks, current location of self, items/roles revealed, etc.)
-  - [ ] add basic roles + attack
-  - [ ] add items
-  - [ ] add abilities
-- [ ] maybe use https://github.com/delucis/bgio-effects ?
+# Definitely Do
+- [ ] automatically track known info including relevant players (noises, attacks, current location of self, items/roles revealed, etc.)
+- [ ] add basic roles + attack
+- [ ] add items
+- [ ] add abilities
 - [ ] add all other maps
   - [ ] make selectable in lobby
+- [ ] make Text-to-Speech selectable & allow muting/volume?
+
+# Maybe do
+- [ ] maybe use https://github.com/delucis/bgio-effects ?
 - [ ] lobby options for map, powers, items, house rules, scenarios, etc
 - [ ] light/dark mode support for CSS?
-  - [ ] colorblind-friendly colors
-- [ ] text-to-speech voices (see MDN speech )
+- [ ] colorblind-friendly colors
