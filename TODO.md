@@ -1,5 +1,10 @@
 # Definitely Do
 - [ ] automatically track known info including relevant players (noises, attacks, current location of self, items/roles revealed, etc.)
+- [ ] count rounds correctly (taking into account player elim)
+- [ ] show current round # on screen (maybe above map?). Maybe show current player too
+- [ ] game end conditions (round > 40 || no more humans)
+
+# Do after MVP
 - [ ] add basic roles + attack
 - [ ] add items
 - [ ] add abilities
