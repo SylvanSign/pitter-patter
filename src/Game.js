@@ -190,13 +190,14 @@ const Game = {
       const clues = [`Player ${ctx.currentPlayer} has attacked sector ${hex.id}`]
       for (const [playerID, data] of Object.entries(G.players)) {
         if (playerID !== ctx.currentPlayer) {
-          if (data.hex === hex) {
+          if (data.hex.id === hex.id) {
             eliminate(data, G, playerID, currentPlayerData)
             clues.push(`Player ${playerID} has been killed!`)
           }
         }
       }
-      G.clue = clues.join(' ')
+      G.clue = clues.join('. ')
+      ctx.events.endTurn()
     },
   },
 }
