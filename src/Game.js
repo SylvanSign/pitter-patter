@@ -33,6 +33,7 @@ const Game = {
       dangerDeck,
       dangerDiscard: [],
       mapConfig,
+      escapes: [...Array(4).fill(null)]
     }
   },
 
@@ -71,7 +72,7 @@ const Game = {
     },
     onBegin(G, ctx) {
       const self = G.players[ctx.currentPlayer]
-      self.reachable = reachableHexes(gridData.grid, gridData.Hex, self.hex, self.speed)
+      self.reachable = reachableHexes(gridData.grid, gridData.Hex, G.escapes, self.hex, self.speed)
     },
 
     // Increment the position in the play order at the end of the turn.
@@ -130,15 +131,11 @@ const Game = {
           const escapeCard = G.escapeDeck.pop()
           if (escapeCard === 'success') {
             G.clue = `Player ${ctx.currentPlayer} has successfully launched out of escape pod ${hex.type}`
-            console.log('successful escape!')
-            hex.status = 'success'
-            hex.accessible = false
+            G.escapes[hex.type] = 'success'
             ctx.events.endTurn()
           } else { // 'fail'
             G.clue = `Player ${ctx.currentPlayer} has failed to launch escape pod ${hex.id}`
-            console.log('failed launch!')
-            hex.status = 'fail'
-            hex.accessible = false
+            G.escapes[hex.type] = 'fail'
             ctx.events.endTurn()
           }
       }

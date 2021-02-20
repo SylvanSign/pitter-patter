@@ -48,10 +48,10 @@ function HexShape({ className, x, y, current, moveCandidate, hasNote }) {
 }
 
 function EscapeHex({ x, y, label, current, moveCandidate, hasNote, status, }) {
-  const gone = status === 'gone'
+  const fail = status === 'fail'
   const className = status ? status : 'key'
   return (
-    gone ? '' :
+    fail ? '' :
       <g>
         <title>Escape Pod</title>
         <HexShape {...{ className, x, y, current, moveCandidate, hasNote }} />

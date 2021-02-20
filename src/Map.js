@@ -38,7 +38,7 @@ export default function Map({ G, playerID, moves, grid, fullGrid, Grid, corners 
     if (promptNoise) {
       moves.noise(hex)
     } else {
-      if (hex && hex.accessible) {
+      if (hex && hex.accessible && !G.escapes[hex.type]) {
         if (hex.id === modal.id) { // clicking already open hex will close it
           close()
         } else {
@@ -50,7 +50,6 @@ export default function Map({ G, playerID, moves, grid, fullGrid, Grid, corners 
     }
   }
 
-  console.log(self.reachable)
   const hexSVGs = grid.map(hex => {
     const { x, y } = hex.toPoint()
     const cartesian = hex.coordinates()
@@ -59,7 +58,7 @@ export default function Map({ G, playerID, moves, grid, fullGrid, Grid, corners 
     const current = self.hex.id === id && !self.dead
     const moveCandidate = !!self.reachable.find(r => r.id === hex.id)
     const hasNote = notes[id]
-    const status = hex.status
+    const status = G.escapes[hex.type]
     return <Tile {...{ key: id, current, moveCandidate, hasNote, map, id, x, y, status, }} />
   })
 
