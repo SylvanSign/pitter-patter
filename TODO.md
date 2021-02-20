@@ -7,6 +7,7 @@
 - [ ] game end conditions (round > 40 || no more humans)
 
 # Do after MVP
+- [ ] add spectator support (when playerID === undefined, show everyone, maybe style humans/aliens separately?)
 - [ ] add basic roles + attack
 - [ ] add items
 - [ ] add abilities

@@ -24,6 +24,7 @@ const Game = {
     const escapeDeck = makeEscapeDeck(ctx)
 
     return {
+      round: 1,
       map,
       alienHex,
       players,
@@ -78,6 +79,9 @@ const Game = {
     // Increment the position in the play order at the end of the turn.
     onEnd(G) {
       G.playOrderPos = (G.playOrderPos + 1) % G.playOrder.length
+      if (G.playOrderPos === 0) {
+        ++G.round
+      }
     },
   },
 
