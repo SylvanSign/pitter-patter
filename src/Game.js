@@ -305,7 +305,8 @@ function makeDangerDeck(ctx) {
 function makeEscapeDeck(ctx) {
   const deck = [
     'fail',
-    ...Array(4).fill('success'),
+    ...Array(4).fill('fail'), // TODO remove
+    // ...Array(4).fill('success'),
   ]
 
   return ctx.random.Shuffle(deck)

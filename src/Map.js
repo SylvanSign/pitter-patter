@@ -3,7 +3,7 @@ import Modal from './Modal'
 import { cartesianToId } from './maps/util'
 import { useEffect, useState, } from 'react'
 
-export default function Map({ G, playerID, moves, grid, fullGrid, Grid, corners }) {
+export default function Map({ G, playerID, moves, grid, fullGrid, Grid, corners, ctx: { currentPlayer, }, }) {
   const [notes, setNotes] = useState({})
   const [modal, setModal] = useState({ id: null, comp: '' })
 
@@ -35,7 +35,7 @@ export default function Map({ G, playerID, moves, grid, fullGrid, Grid, corners 
   }
 
   function handleClick(hex, promptNoise) {
-    if (promptNoise) {
+    if (promptNoise && playerID === currentPlayer) {
       moves.noise(hex)
     } else {
       if (hex && hex.accessible && !G.escapes[hex.type]) {
