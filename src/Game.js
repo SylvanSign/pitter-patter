@@ -242,7 +242,7 @@ function drawDangerCard(G, ctx) {
 
 function pickRoles(ctx, playOrder) {
   const shuffled = ctx.random.Shuffle(playOrder)
-  return [shuffled, shuffled.splice(shuffled.length / 2)]
+  return [shuffled, []]
 }
 
 function setupPlayers({ humans, humanHex, }, { aliens, alienHex, }) {

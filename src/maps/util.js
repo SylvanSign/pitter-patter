@@ -74,7 +74,7 @@ export function reachableHexes(grid, Hex, escapes, start, movement) {
           && neighbor.accessible
           && !(neighbor.escape && ignoreEscapes)
           && !visited.has(neighbor)
-          && !escapes[hex.type]
+          && !escapes[neighbor.type]
           && neighbor.id !== start.id) {
           visited.add(neighbor)
           fringes[k].push(neighbor)
