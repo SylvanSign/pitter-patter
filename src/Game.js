@@ -191,7 +191,12 @@ const Game = {
         if (playerID !== ctx.currentPlayer) {
           if (data.hex.id === hex.id) {
             eliminate(data, G, playerID, currentPlayerData)
-            clues.push(`Player ${playerID} has been killed!`)
+            clues.push(`The ${data.role} player ${playerID} has been killed!`)
+            if (data.role === 'human') {
+              clues.push(`They have respawned as an alien at ${G.alienHex}.`)
+            } else {
+              clues.push(`They have been eliminated.`)
+            }
           }
         }
       }
@@ -242,7 +247,7 @@ function drawDangerCard(G, ctx) {
 
 function pickRoles(ctx, playOrder) {
   const shuffled = ctx.random.Shuffle(playOrder)
-  return [shuffled, []]
+  return [shuffled, shuffled.splice(shuffled.length / 2)]
 }
 
 function setupPlayers({ humans, humanHex, }, { aliens, alienHex, }) {
