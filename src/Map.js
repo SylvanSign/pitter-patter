@@ -1,11 +1,17 @@
 import Tile from './Tile'
 import Modal from './Modal'
 import { cartesianToId } from './maps/util'
-import { useState, } from 'react'
+import { useEffect, useState, } from 'react'
 
 export default function Map({ G, playerID, moves, grid, fullGrid, Grid, corners }) {
   const [notes, setNotes] = useState({})
   const [modal, setModal] = useState({ id: null, comp: '' })
+
+  useEffect(() => {
+    setNotes(notes => {
+      return { ...notes, [G.noise]: true }
+    })
+  }, [G.noise])
 
   const { map, promptNoise, } = G
   const self = G.players[playerID]

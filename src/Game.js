@@ -116,6 +116,7 @@ const Game = {
               break
             case 'you':
               G.clue = `Player ${ctx.currentPlayer} is in a dangerous sector. You hear a noise in ${hex.id}`
+              G.noise = hex.id
               ctx.events.endTurn()
               break
             case 'any':
@@ -158,6 +159,7 @@ const Game = {
 
       const currentPlayerData = G.players[ctx.currentPlayer]
       G.clue = `Player ${ctx.currentPlayer} is in a dangerous sector. You hear a noise in ${hex.id}`
+      G.noise = hex.id
       G.promptNoise = false
       ctx.events.endTurn()
     },

@@ -1,5 +1,7 @@
 # Definitely Do
-- [ ] automatically track known info including relevant players (noises, attacks, current location of self, items/roles revealed, etc.)
+- [x] automatically track known info including relevant players (noises, attacks, current location of self, items/roles revealed, etc.)
+- [ ] bugfix escape pod status not being tracked in G
+- [ ] when player killed, reveal what role they are and whether they respawn as alien
 - [ ] count rounds correctly (taking into account player elim)
 - [ ] show current round # on screen (maybe above map?). Maybe show current player too
 - [ ] game end conditions (round > 40 || no more humans)

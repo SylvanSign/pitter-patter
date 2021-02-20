@@ -4,8 +4,9 @@ export default function ClueDisplay({ G: { clue, promptNoise, }, ctx: { turn, cu
   const text = (promptNoise && currentPlayer === playerID) ? 'Select any sector to make a noise there' : clue
 
   useEffect(() => {
-    if (clue && playerID === '0') { // TODO remove playerID check
-      const utterance = new SpeechSynthesisUtterance(text)
+    if (clue && playerID === '0') { // TODO remove playerID checkd
+      // for some reason `speechSynthesis.speak(new SpeechSynthesisUtterance('I08'))` or with any other number gets pronounced weirdly on my phone...
+      const utterance = new SpeechSynthesisUtterance(text.replace('I0', 'I 0 '))
       // const voice = speechSynthesis.getVoices()
       speechSynthesis.cancel()
       speechSynthesis.speak(utterance)
