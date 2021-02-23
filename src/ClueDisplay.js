@@ -1,7 +1,11 @@
 import { useEffect } from "react"
 
-export default function ClueDisplay({ G: { clue, promptNoise, }, ctx: { turn, currentPlayer, }, playerID, }) {
-  const text = (promptNoise && currentPlayer === playerID) ? 'Select any sector to make a noise there' : clue
+export default function ClueDisplay({ G: { clue, promptNoise, }, ctx: { turn, currentPlayer, gameover, }, playerID, }) {
+  const text = gameover ?
+    `Winner(s) are ${gameover.winner}`
+    : (promptNoise && currentPlayer === playerID) ?
+      'Select any sector to make a noise there'
+      : clue
 
   // useEffect(() => {
   //   if (clue && playerID === '0') { // TODO remove playerID checkd

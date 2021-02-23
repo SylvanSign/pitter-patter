@@ -21,7 +21,7 @@ export default function Map({ G, playerID, moves, grid, fullGrid, Grid, corners,
 
   function onClick({ clientX, clientY }) {
     const svg = document.getElementById(`map${playerID}`)
-    const point = svg.createSVGPoint(); // TODO should this be done once, outside of click handler?
+    const point = svg.createSVGPoint() // TODO should this be done once, outside of click handler?
 
     point.x = clientX
     point.y = clientY

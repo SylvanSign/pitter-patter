@@ -82,6 +82,6 @@ export function reachableHexes(grid, Hex, escapes, start, movement) {
       }
     }
   }
-  visited.delete(startHex); // TODO? must move every turn
+  visited.delete(startHex) // TODO? must move every turn
   return Array.from(visited)
 }

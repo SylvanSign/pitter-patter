@@ -4,7 +4,7 @@ import MAPS from './maps'
 import { HEX_TYPES, idToCartesian, reachableHexes } from './maps/util'
 
 
-const [map, mapConfig] = Object.entries(MAPS)[2];// TODO make this selectable (from setupData?)
+const [map, mapConfig] = Object.entries(MAPS)[2] // TODO make this selectable (from setupData?)
 export const gridData = gridGenerator(map)
 
 // TODO generally, remove all console.logs
@@ -40,15 +40,17 @@ const Game = {
   },
 
   endIf(G, ctx) {
-    // if (G.players[ctx.currentPlayer].role === 'human') {
-    //   const hexType = G.mapConfig[G.players[ctx.currentPlayer].hex.id]
-    //   if (typeof hexType === 'number') {
-    //     return { winner: ctx.currentPlayer }; // TODO flesh this out
-    //   }
-    // }
+    if (G.round > 40) { // TODO should be 40
+      return { winner: G.winners } // TODO fix this
+    }
 
-    if (G.round > 40) {
-      return { winner: ctx.currentPlayer } // TODO fix this
+    const humansLeft =
+      G.playOrder
+        .map(id => G.players[id].role)
+        .filter(r => r === 'human')
+        .length
+    if (humansLeft === 0) {
+      return { winner: G.winners } // TODO fix this
     }
   },
 
@@ -195,6 +197,7 @@ const Game = {
       currentPlayerData.reachable = [] // TODO clean this reachable thing up
       // TODO attack logic
       const clues = [`Player ${ctx.currentPlayer} has attacked sector ${hex.id}`]
+      G.noise = hex.id
       for (const [playerID, data] of Object.entries(G.players)) {
         if (playerID !== ctx.currentPlayer) {
           if (data.hex.id === hex.id) {
@@ -322,8 +325,7 @@ function makeDangerDeck(ctx) {
 function makeEscapeDeck(ctx) {
   const deck = [
     'fail',
-    ...Array(4).fill('fail'), // TODO remove
-    // ...Array(4).fill('success'),
+    ...Array(4).fill('success'),
   ]
 
   return ctx.random.Shuffle(deck)

@@ -5,7 +5,7 @@ export default function Modal({ self, moves, fullGrid, hex, close, setNotes, }) 
   const escape = typeof hex.type === 'number'
 
   if (escape && (self.role === 'alient' || !reachable)) {
-    return null;
+    return null
   }
 
   const [
