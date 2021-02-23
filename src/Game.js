@@ -34,7 +34,8 @@ const Game = {
       dangerDeck,
       dangerDiscard: [],
       mapConfig,
-      escapes: [...Array(4).fill(null)]
+      escapes: [...Array(4).fill(null)],
+      winners: [],
     }
   },
 
@@ -46,10 +47,9 @@ const Game = {
     //   }
     // }
 
-    // // TODO handle player elimination
-    // if (ctx.turn / ctx.numPlayers > 40) {
-    //   return { winner: ctx.currentPlayer } // TODO fix this
-    // }
+    if (G.round > 40) {
+      return { winner: ctx.currentPlayer } // TODO fix this
+    }
   },
 
   turn: {
@@ -136,6 +136,8 @@ const Game = {
           if (escapeCard === 'success') {
             G.clue = `Player ${ctx.currentPlayer} has successfully launched out of escape pod ${hex.type}`
             G.escapes[hex.type] = 'success'
+            G.winners.push(ctx.currentPlayer)
+            remove(G, ctx.currentPlayer)
             ctx.events.endTurn()
           } else { // 'fail'
             G.clue = `Player ${ctx.currentPlayer} has failed to launch escape pod ${hex.id}`
@@ -146,6 +148,9 @@ const Game = {
     },
     noise(G, ctx, hex) {
       // handle invalid moves
+      if (!hex) {
+        return INVALID_MOVE
+      }
       const config = G.mapConfig[hex.id]
       switch (config) {
         case HEX_TYPES.human:
@@ -158,7 +163,6 @@ const Game = {
           }
       }
 
-      const currentPlayerData = G.players[ctx.currentPlayer]
       G.clue = `Player ${ctx.currentPlayer} is in a dangerous sector. You hear a noise in ${hex.id}`
       G.noise = hex.id
       G.promptNoise = false
@@ -213,19 +217,7 @@ const Game = {
 function eliminate(data, G, playerIDToEliminate, currentPlayerData) {
   switch (data.role) {
     case 'alien':
-      // Find index of player to remove.
-      const index = G.playOrder.indexOf(playerIDToEliminate)
-      // The move should be invalid if we can’t find the player to remove.
-      if (index < 0) {
-        return INVALID_MOVE
-      }
-      // Remove the player from G.playOrder.
-      G.playOrder.splice(index, 1)
-      // Decrement position if the eliminated position is lower in the order.
-      if (index < G.playOrderPos) {
-        --G.playOrderPos
-      }
-      G.players[playerIDToEliminate].dead = true
+      remove(G, playerIDToEliminate)
       break
     case 'human':
       G.players[playerIDToEliminate] = freshAlien(G.alienHex)
@@ -234,6 +226,22 @@ function eliminate(data, G, playerIDToEliminate, currentPlayerData) {
     default:
       throw new Error('Role other than alien or human!')
   }
+}
+
+function remove(G, playerIDToEliminate) {
+  // Find index of player to remove.
+  const index = G.playOrder.indexOf(playerIDToEliminate)
+  // The move should be invalid if we can’t find the player to remove.
+  if (index < 0) {
+    return INVALID_MOVE
+  }
+  // Remove the player from G.playOrder.
+  G.playOrder.splice(index, 1)
+  // Decrement position if the eliminated position is lower in the order.
+  if (index < G.playOrderPos) {
+    --G.playOrderPos
+  }
+  G.players[playerIDToEliminate].dead = true
 }
 
 function drawDangerCard(G, ctx) {

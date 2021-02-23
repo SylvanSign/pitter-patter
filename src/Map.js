@@ -31,7 +31,9 @@ export default function Map({ G, playerID, moves, grid, fullGrid, Grid, corners,
     const hexCoordinates = Grid.pointToHex(x, y)
     const hex = grid.get(hexCoordinates)
 
-    handleClick(hex, promptNoise)
+    if (hex) {
+      handleClick(hex, promptNoise)
+    }
   }
 
   function handleClick(hex, promptNoise) {
