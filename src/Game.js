@@ -156,8 +156,8 @@ const Game = {
       const config = G.mapConfig[hex.id]
       switch (config) {
         case HEX_TYPES.human:
-          return INVALID_MOVE
         case HEX_TYPES.alien:
+        case HEX_TYPES.silent:
           return INVALID_MOVE
         default:
           if (config > 0 || config < 5) {

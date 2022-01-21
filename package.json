@@ -6,6 +6,7 @@
     "boardgame.io": "^0.43.2",
     "esm": "^3.2.25",
     "honeycomb-grid": "^3.1.7",
+    "koa-static": "^5.0.0",
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
     "react-scripts": "4.0.1"
