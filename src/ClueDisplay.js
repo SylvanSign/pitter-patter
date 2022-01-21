@@ -4,7 +4,7 @@ export default function ClueDisplay({ G: { round, clue, promptNoise, }, ctx: { c
   const text = gameover ?
     gameoverText(gameover.winner)
     : (promptNoise && currentPlayer === playerID) ?
-      'Select any sector to make a noise there'
+      'Select any dangerous sector to make a noise there'
       : clue
 
   // useEffect(() => {
