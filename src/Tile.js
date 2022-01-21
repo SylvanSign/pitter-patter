@@ -101,7 +101,7 @@ function DangerHex({ x, y, label, current, moveCandidate, hasNote }) {
         <path d="M79.612,116l20.865,-0.02l10.442,-18.063l-20.875,0.005l-10.432,18.078Z" style={{ fill: 'grey', fillRule: 'nonzero' }} />
         <path d="M23.085,18.078l20.864,0l10.438,-18.074l-20.87,0l-10.432,18.074Z" style={{ fill: 'grey', fillRule: 'nonzero' }} />
       </svg>
-      <text x={x + 15} y={y + 30} className='danger'>{label}</text>
+      {/* <text x={x + 15} y={y + 30} className='danger'>{label}</text> */}
     </g>
   )
 }
@@ -111,7 +111,7 @@ function SilentHex({ x, y, label, current, moveCandidate, hasNote }) {
     <g>
       <title>Silent Sector</title>
       <HexShape {...{ className: 'silent', x, y, current, moveCandidate, hasNote }} />
-      <text x={x + 15} y={y + 32} className='silent'>{label}</text>
+      {/* <text x={x + 15} y={y + 32} className='silent'>{label}</text> */}
     </g>
   )
 }

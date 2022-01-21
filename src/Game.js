@@ -4,7 +4,7 @@ import MAPS from './maps'
 import { HEX_TYPES, idToCartesian, reachableHexes } from './maps/util'
 
 
-const [map, mapConfig] = Object.entries(MAPS)[2] // TODO make this selectable (from setupData?)
+const [map, mapConfig] = Object.entries(MAPS)[0] // TODO make this selectable (from setupData?)
 export const gridData = gridGenerator(map)
 
 // TODO generally, remove all console.logs

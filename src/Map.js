@@ -80,8 +80,9 @@ export default function Map({ G, playerID, moves, grid, fullGrid, Grid, corners,
         {/* <symbol id='note'>
           <text x={corners[0].x - 35} y={corners[0].y + 5}>?</text>
         </symbol> */}
-        <pattern id="stripes" width="10" height="10" patternTransform="rotate(-40 0 0)" patternUnits="userSpaceOnUse">
-          <line x1="0" y1="0" x2="0" y2="10" stroke='darkgrey' strokeWidth='1.5' />
+        <pattern id="stripes" width="10" height="10" patternTransform="rotate(40 0 0)" patternUnits="userSpaceOnUse">
+          <line x1="0" y1="0" x2="0" y2="10" stroke='black' strokeWidth='20' />
+          <line x1="0.5" y1="0" x2="0" y2="1.5" stroke='darkgrey' strokeWidth='2' />
         </pattern>
       </defs>
       {/* <rect width='100%' height='100%' fill='white' /> */}
