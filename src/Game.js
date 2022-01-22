@@ -1,16 +1,16 @@
-import { TurnOrder, INVALID_MOVE } from 'boardgame.io/core'
+import { INVALID_MOVE } from 'boardgame.io/core'
 import gridGenerator from './maps/gridGenerator'
 import MAPS from './maps'
 import { HEX_TYPES, idToCartesian, reachableHexes } from './maps/util'
 
 
-const [map, mapConfig] = Object.entries(MAPS)[0] // TODO make this selectable (from setupData?)
+const [map, mapConfig] = Object.entries(MAPS)[3] // TODO make this selectable (from setupData?)
 export const gridData = gridGenerator(map)
 
 // TODO generally, remove all console.logs
 const Game = {
   name: 'Pitter-Patter',
-  minPlayers: 2,
+  minPlayers: 1, // TODO should be at least 2...
   maxPlayers: 8,
   setup(ctx, setupData) {
     const humanHex = gridData.grid.get(idToCartesian(mapConfig[HEX_TYPES.human]))

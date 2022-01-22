@@ -1,4 +1,4 @@
-import { useEffect } from "react"
+// import { useEffect } from "react"
 
 export default function ClueDisplay({ G: { round, clue, promptNoise, }, ctx: { currentPlayer, gameover, }, playerID, }) {
   const text = gameover ?
@@ -7,6 +7,7 @@ export default function ClueDisplay({ G: { round, clue, promptNoise, }, ctx: { c
       'Select any dangerous sector to make a noise there'
       : clue
 
+  // TODO checkbox to enable this or something?
   // useEffect(() => {
   //   if (clue) {
   //     // for some reason `speechSynthesis.speak(new SpeechSynthesisUtterance('I08'))` or with any other number gets pronounced weirdly on my phone...
