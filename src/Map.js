@@ -80,13 +80,20 @@ export default function Map({ G, playerID, moves, grid, fullGrid, Grid, corners,
         {/* <symbol id='note'>
           <text x={corners[0].x - 35} y={corners[0].y + 5}>?</text>
         </symbol> */}
-        <pattern id="stripes" width="10" height="10" patternTransform="rotate(40 0 0)" patternUnits="userSpaceOnUse">
-          <line x1="0" y1="0" x2="0" y2="10" stroke='rgb(36, 36, 36)' strokeWidth='20' />
-          <line x1="0.5" y1="0" x2="0" y2="1.5" stroke='darkgrey' strokeWidth='2' />
+        <pattern id="stars" width="420" height="420" patternUnits="userSpaceOnUse">
+          <svg xmlns="http://www.w3.org/2000/svg">
+            <filter id="filter">
+              <feTurbulence seed="4815162342" baseFrequency="0.2" />
+              <feColorMatrix values="0 0 0 9 -4
+                                     0 0 0 9 -4
+                                     0 0 0 9 -4
+                                     0 0 0 9 1"/>
+            </filter>
+            <rect width="100%" height="100%" filter="url(#filter)" />
+          </svg>
         </pattern>
       </defs>
-      {/* <rect width='100%' height='100%' fill='white' /> */}
-      <rect width='100%' height='100%' fill='url(#stripes)' />
+      <rect width='100%' height='100%' fill='url(#stars)' />
       {hexSVGs}
       {modal.comp}
     </svg>
