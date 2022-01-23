@@ -4,7 +4,7 @@ import MAPS from './maps'
 import { HEX_TYPES, idToCartesian, reachableHexes } from './maps/util'
 
 
-const [map, mapConfig] = Object.entries(MAPS)[2] // TODO make this selectable (from setupData?)
+const [map, mapConfig] = Object.entries(MAPS)[4] // TODO make this selectable (from setupData?)
 export const gridData = gridGenerator(map)
 
 // TODO generally, remove all console.logs
@@ -325,7 +325,7 @@ function makeDangerDeck(ctx) {
 function makeEscapeDeck(ctx) {
   const deck = [
     'fail',
-    ...Array(4).fill('success'),
+    ...Array(4).fill('success'), // TODO this should depend on how many escape pods in map
   ]
 
   return ctx.random.Shuffle(deck)

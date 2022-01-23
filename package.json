@@ -12,7 +12,8 @@
     "react-scripts": "4.0.1"
   },
   "scripts": {
-    "start": "npm run serve & react-scripts start & wait",
+    "start": "react-scripts start",
+    "start-with-server": "npm run serve & react-scripts start & wait",
     "build": "react-scripts build",
     "eject": "react-scripts eject",
     "serve": "node -r esm src/server.js"
