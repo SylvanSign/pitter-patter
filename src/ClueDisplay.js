@@ -28,7 +28,7 @@ function gameoverText(winners) {
     case 0:
       return 'Not a single human survived!'
     case 1:
-      return `Only human ${winners[0]} got out alive!`
+      return `Human ${winners[0]} got out alive!`
     default:
       return `Humans ${winners} got out alive!`
   }

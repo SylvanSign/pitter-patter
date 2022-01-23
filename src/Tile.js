@@ -1,6 +1,9 @@
 import MAPS from './maps'
 import { HEX_TYPES } from './maps/util'
 
+const COORDS_ENABLED = true;
+const COORDS_OPACITY = "80%";
+
 export default function Tile({ map, id, x, y, current, moveCandidate, hasNote, status, }) {
   const hexInfo = MAPS[map][id]
 
@@ -53,7 +56,7 @@ function EscapeHex({ x, y, label, current, moveCandidate, hasNote, status, }) {
     <g>
       <title>Escape Pod</title>
       <HexShape {...{ className, x, y, current, moveCandidate, hasNote }} />
-      <text transform={`translate(${x + 20} ${y + 35})`} className={className}>{label}</text>
+      <text transform={`translate(${x + 20} ${y + 37})`} className={className}>{label}</text>
       <svg viewBox="0 0 134 116" width='60' height='60' x={x - 0.8} y={y - 4.5}>
         <path d="M94.427,106.959l-46.254,-0.011l0,-9.349l40.856,0.011l20.423,-35.37l8.102,4.668l-23.127,40.051Z" style={{ fill: 'white', fillRule: 'nonzero' }} />
         <path d="M24.543,53.766l-8.097,-4.674l23.127,-40.051l46.243,0.011l0,9.349l-40.851,-0.006l-20.422,35.371Z" style={{ fill: 'white', fillRule: 'nonzero' }} />
@@ -101,7 +104,11 @@ function DangerHex({ x, y, label, current, moveCandidate, hasNote }) {
         <path d="M79.612,116l20.865,-0.02l10.442,-18.063l-20.875,0.005l-10.432,18.078Z" style={{ fill: 'grey', fillRule: 'nonzero' }} />
         <path d="M23.085,18.078l20.864,0l10.438,-18.074l-20.87,0l-10.432,18.074Z" style={{ fill: 'grey', fillRule: 'nonzero' }} />
       </svg>
-      {/* <text x={x + 15} y={y + 30} className='danger'>{label}</text> */}
+      {
+        COORDS_ENABLED
+          ? <text x={x + 15} y={y + 30} className='danger' opacity={COORDS_OPACITY}>{label}</text>
+          : ''
+      }
     </g>
   )
 }
@@ -111,7 +118,11 @@ function SilentHex({ x, y, label, current, moveCandidate, hasNote }) {
     <g>
       <title>Silent Sector</title>
       <HexShape {...{ className: 'silent', x, y, current, moveCandidate, hasNote }} />
-      {/* <text x={x + 15} y={y + 32} className='silent'>{label}</text> */}
+      {
+        COORDS_ENABLED
+          ? <text x={x + 15} y={y + 32} className='silent' opacity={COORDS_OPACITY}>{label}</text>
+          : ''
+      }
     </g>
   )
 }
