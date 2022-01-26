@@ -6,7 +6,7 @@ import { Client } from 'boardgame.io/react'
 
 // TODO remove this params stuff
 const urlParams = new URLSearchParams(window.location.search)
-const debug = urlParams.get('d') // disable debug with ?d=1
+const debug = urlParams.get('d') // enable debug with ?d=1
 
 const App = Client({ game: Game, board: Board, debug: !!debug });
 
