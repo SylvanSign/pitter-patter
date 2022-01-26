@@ -1,15 +1,45 @@
 import { useEffect, useRef, useState } from "react"
-import io from 'socket.io-client'
+import { io } from 'socket.io-client'
+
+const socket = io(`http://${window.location.hostname}:8000/lobby`)
+
+function useSessionStorageState(key) {
+    const [state, setState] = useState(sessionStorage.getItem(key))
+    const setterWithStorage = arg => {
+        let updatedState;
+        if (typeof state === 'function') {
+            updatedState = arg(state);
+        } else {
+            updatedState = arg;
+        }
+        sessionStorage.setItem(key, updatedState);
+        setState(updatedState);
+    }
+    return [state, setterWithStorage]
+}
 
 export default function Home() {
-    const [name, setName] = useState(sessionStorage.getItem('name'))
+    const [name, setName] = useSessionStorageState('name')
+    const [room, setRoom] = useSessionStorageState('room')
+    const [id, setId] = useSessionStorageState('id')
     const nameRef = useRef()
 
     useEffect(() => {
-
-    }, [])
+        if (!id) {
+            socket.emit('need-id')
+            socket.once('id', ({ id }) => {
+                console.log(`setting id to ${id}`)
+                setId(id)
+            })
+        }
+    }, [id])
 
     if (name) {
+        if (room) {
+            return (
+                <h2>{room}</h2>
+            )
+        }
         const onClickNameChange = e => {
             e.preventDefault()
             setName(null)
@@ -20,8 +50,10 @@ export default function Home() {
         }
 
         const onClickNewGame = e => {
-            alert('TODO')
-            let socket = new io({ upgrade: false, transports: ['websocket'], reconnection: true, forceNew: false });
+            socket.emit('new')
+            socket.once('joined', ({ room }) => {
+                setRoom(room)
+            })
         }
 
         return (
@@ -37,7 +69,6 @@ export default function Home() {
             e.preventDefault()
             const value = nameRef.current.value.toUpperCase()
             setName(value)
-            sessionStorage.setItem('name', value)
         }
         return (
             <>
