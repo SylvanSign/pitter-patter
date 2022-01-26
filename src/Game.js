@@ -7,7 +7,11 @@ const [map, mapConfig] = Object.entries(MAPS)[4] // TODO make this selectable (f
 export const gridData = gridGenerator(map)
 
 function makeSerializable(data) {
-  return JSON.parse(JSON.stringify(data))
+  if (process.env.NODE_ENV === 'production') {
+    return data;
+  } else {
+    return JSON.parse(JSON.stringify(data))
+  }
 }
 
 // TODO generally, remove all console.logs

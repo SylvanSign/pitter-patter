@@ -9,8 +9,8 @@ enableMapSet()
 
 ReactDOM.render(
   <React.StrictMode>
-    <App />
-    {/* <Home /> */}
+    {/* <App />  */}
+    <Home />
   </React.StrictMode>,
   document.getElementById('root')
 )
