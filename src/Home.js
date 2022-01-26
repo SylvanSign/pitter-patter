@@ -18,6 +18,17 @@ function useSessionStorageState(key) {
     return [state, setterWithStorage]
 }
 
+function Lobby({ room, players }) {
+    return (
+        <>
+            <h1>{room}</h1>
+            <ul>
+                {players.map(p => <li key={p.id}>{p.name}</li>)}
+            </ul>
+        </>
+    )
+}
+
 export default function Home() {
     const [name, setName] = useSessionStorageState('name')
     const [room, setRoom] = useSessionStorageState('room')
@@ -37,7 +48,7 @@ export default function Home() {
     if (name) {
         if (room) {
             return (
-                <h2>{room}</h2>
+                <Lobby room={room} players={[{ name, id }]} />
             )
         }
         const onClickNameChange = e => {
