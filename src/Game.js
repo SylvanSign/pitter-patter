@@ -3,9 +3,12 @@ import gridGenerator from './maps/gridGenerator'
 import MAPS from './maps'
 import { HEX_TYPES, idToCartesian, reachableHexes } from './maps/util'
 
-
 const [map, mapConfig] = Object.entries(MAPS)[4] // TODO make this selectable (from setupData?)
 export const gridData = gridGenerator(map)
+
+function makeSerializable(data) {
+  return JSON.parse(JSON.stringify(data))
+}
 
 // TODO generally, remove all console.logs
 const Game = {
@@ -23,20 +26,20 @@ const Game = {
     const dangerDeck = makeDangerDeck(ctx)
     const escapeDeck = makeEscapeDeck(ctx)
 
-    return {
+    return makeSerializable({
       round: 1,
       map,
-      alienHex,
-      players,
+      alienHex: alienHex,
+      players: players,
       playOrder: ctx.random.Shuffle(playOrder),
       playOrderPos: 0,
       escapeDeck,
       dangerDeck,
       dangerDiscard: [],
       mapConfig,
-      escapes: [...Array(4).fill(null)],
+      escapes: [],
       winners: [],
-    }
+    })
   },
 
   endIf(G, ctx) {
@@ -75,7 +78,7 @@ const Game = {
     },
     onBegin(G, ctx) {
       const self = G.players[ctx.currentPlayer]
-      self.reachable = reachableHexes(gridData.grid, gridData.Hex, G.escapes, self.hex, self.speed)
+      self.reachable = makeSerializable(reachableHexes(gridData.grid, gridData.Hex, G.escapes, self.hex, self.speed))
     },
 
     // Increment the position in the play order at the end of the turn.
@@ -106,7 +109,7 @@ const Game = {
         return INVALID_MOVE
       }
 
-      currentPlayerData.hex = hex
+      currentPlayerData.hex = makeSerializable(hex)
       currentPlayerData.reachable = [] // TODO clean this reachable thing up
 
       switch (hex.type) {
@@ -193,7 +196,7 @@ const Game = {
         return INVALID_MOVE
       }
 
-      currentPlayerData.hex = hex
+      currentPlayerData.hex = makeSerializable(hex)
       currentPlayerData.reachable = [] // TODO clean this reachable thing up
       // TODO attack logic
       const clues = [`Player ${ctx.currentPlayer} has attacked sector ${hex.id}`]

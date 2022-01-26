@@ -4,17 +4,20 @@ import serve from 'koa-static'
 import Game from './Game'
 
 const server = Server({ games: [Game] })
-const PORT = process.env.PORT || 8000
+const SERVER_PORT = process.env.SERVER_PORT || 8000
 
 // Build path relative to the server.js file
-const frontEndAppBuildPath = path.resolve(__dirname, '../build')
-server.app.use(serve(frontEndAppBuildPath))
+server.app.use(serve(path.resolve(__dirname, '../build')))
 
-server.run(PORT, () => {
-    server.app.use(
-        async (ctx, next) => await serve(frontEndAppBuildPath)(
-            Object.assign(ctx, { path: 'index.html' }),
-            next
-        )
-    )
-});
+// server.router.get('/foo', (ctx, next) => {
+//     console.log(server.app._io)
+// })
+
+server.run(SERVER_PORT);
+
+server.app._io.on('connection', socket => {
+    console.log(`connection ${socket.id}`)
+    socket.on('disconnect', () => {
+        console.log(`disconnect ${socket.id}`)
+    })
+})
