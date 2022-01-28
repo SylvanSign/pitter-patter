@@ -29,40 +29,80 @@ const io = new SocketIOServer({
 })
 io.listen(process.env.SOCKET_IO_SERVER_PORT || 8001)
 
+const innKeeper = new InnKeeper()
+
 io.on('connection', socket => {
     socket.data = {}
     socket.on('disconnect', () => {
-        console.log(`disconnect ${socket.data ? socket.data.id : socket.id}`)
+        const id = socket.data.id
+        innKeeper.checkout(id)
     })
 
     socket.on('need-id', () => {
         const id = randomUUID()
         socket.data.id = id
-        console.log(`just gave id to ${socket.data.id}`)
         socket.emit('id', { id })
     })
 
-    socket.on('have-id', ({ id }) => {
-        socket.data.id = id
-        console.log(`got have-id request from ${socket.data.id}`)
+    socket.on('have-id', ({ id, name }) => {
+        socket.data = { id, name }
+        const room = innKeeper.room(id)
+        if (room)
+            join(socket, room)
     })
 
     socket.on('new', ({ name }) => {
         socket.data.name = name
         const room = getRoom()
-        console.log(`Joining *new* room ${room}`)
-        socket.join(room)
-        socket.emit('joined', { room })
+        join(socket, room)
     })
 
     socket.on('join', async ({ name, room }) => {
         socket.data.name = name
-        console.log(`Joining room ${room}`)
-        await socket.join(room)
-        socket.emit('joined', { room })
-        const inRoom = await io.in(room).fetchSockets()
-        const names = inRoom.map(s => s.data.name)
-        console.log(names)
-        io.in(room).emit('update', { names })
+        join(socket, room)
     })
 })
+
+async function join(socket, room) {
+    innKeeper.checkin(socket.data.id, room)
+    socket.join(room)
+    socket.emit('joined', { room })
+    const inRoom = await io.in(room).fetchSockets()
+    const names = innKeeper.map(s => s.data.name)
+    io.in(room).emit('update', { state: names })
+}
+
+class InnKeeper {
+    constructor() {
+        this._rooms = new Map()
+        this._stuff = new Map()
+    }
+
+    checkin(stuff, room) {
+        const { id } = stuff
+        this._rooms.set(id, room)
+        this._stuff.set(room, this._stuff[room] || new Map())
+        this._stuff.get(room).set(id, stuff)
+    }
+
+    checkout(id) {
+        if (!id)
+            return
+
+        const room = this._rooms.get(id)
+        this._rooms.delete(id)
+
+        this._stuff.get(room).delete(id)
+        if (!this._stuff.get(room).size) {
+            this._stuff.delete(room)
+        }
+    }
+
+    room(id) {
+        return this._rooms.get(id)
+    }
+
+    stuff(room) {
+        return this._stuff.get(room)
+    }
+}
