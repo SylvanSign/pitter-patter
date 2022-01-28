@@ -1,5 +1,6 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
+import { BrowserRouter } from "react-router-dom"
 import './index.css'
 import App from './App'
 import Home from './Home'
@@ -9,8 +10,8 @@ enableMapSet()
 
 ReactDOM.render(
   <React.StrictMode>
-    {/* <App />  */}
     <Home />
+    {/* <App />  */}
   </React.StrictMode>,
   document.getElementById('root')
 )

@@ -71,14 +71,3 @@ use.menu {
 use.highlight {
   fill: none;
 }
-
-
-body {
-  margin: 0;
-  font-family: 'Roboto Mono', monospace;
-  background-color:black;
-}
-
-* {
-  color: rgb(204, 204, 204);
-}

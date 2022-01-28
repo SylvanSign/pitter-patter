@@ -99,3 +99,14 @@
      margin: 2rem 1rem;
    }
  }
+
+
+body {
+  margin: 0;
+  font-family: 'Roboto Mono', monospace;
+  background-color:black;
+}
+
+* {
+  color: rgb(204, 204, 204);
+}

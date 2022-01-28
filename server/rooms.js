@@ -2,7 +2,7 @@ import fs from 'fs'
 
 const rooms =
   fs.readFileSync('./server/rooms.txt', 'utf8')
-    .split('\n')
+    .split('\n').slice(0, 1) // TODO remove
 if (rooms[rooms.length - 1] === '') {
   rooms.pop()
 }
