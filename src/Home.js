@@ -1,7 +1,8 @@
 import { useEffect, useRef, useState } from "react"
 import { io } from 'socket.io-client'
 
-const socket = io(`http://${window.location.hostname}:8000/lobby`)
+const socket = io(`http://${window.location.hostname}:8001`)
+window.s = socket // TODO remove this
 
 function useSessionStorageState(key) {
     const [state, setState] = useState(sessionStorage.getItem(key))
@@ -18,12 +19,12 @@ function useSessionStorageState(key) {
     return [state, setterWithStorage]
 }
 
-function Lobby({ room, players }) {
+function Lobby({ room, names }) {
     return (
         <>
             <h1>{room}</h1>
             <ul>
-                {players.map(p => <li key={p.id}>{p.name}</li>)}
+                {names.map(p => <li key={p}>{p}</li>)}
             </ul>
         </>
     )
@@ -32,11 +33,14 @@ function Lobby({ room, players }) {
 export default function Home() {
     const [name, setName] = useSessionStorageState('name')
     const [room, setRoom] = useSessionStorageState('room')
+    const [names, setNames] = useState([])
     const [id, setId] = useSessionStorageState('id')
     const nameRef = useRef()
 
     useEffect(() => {
-        if (!id) {
+        if (id) {
+            socket.emit('have-id', { id })
+        } else {
             socket.emit('need-id')
             socket.once('id', ({ id }) => {
                 console.log(`setting id to ${id}`)
@@ -48,7 +52,7 @@ export default function Home() {
     if (name) {
         if (room) {
             return (
-                <Lobby room={room} players={[{ name, id }]} />
+                <Lobby room={room} names={names} />
             )
         }
         const onClickNameChange = e => {
@@ -61,9 +65,12 @@ export default function Home() {
         }
 
         const onClickNewGame = e => {
-            socket.emit('new')
+            socket.emit('new', { name })
             socket.once('joined', ({ room }) => {
                 setRoom(room)
+            })
+            socket.on('update', ({ names }) => {
+                setNames(names)
             })
         }
 
