@@ -5,7 +5,8 @@ import { Server as SocketIOServer } from 'socket.io'
 import Game from '../src/Game'
 
 import { getRoom } from './rooms'
-import { randomUUID } from 'crypto';
+import { randomUUID } from 'crypto'
+import InnKeeper from './Innkeeper'
 
 const server = Server({
     games: [Game],
@@ -64,45 +65,10 @@ io.on('connection', socket => {
 })
 
 async function join(socket, room) {
-    innKeeper.checkin(socket.data.id, room)
+    innKeeper.checkin(socket.data, room)
     socket.join(room)
     socket.emit('joined', { room })
     const inRoom = await io.in(room).fetchSockets()
     const names = innKeeper.map(s => s.data.name)
     io.in(room).emit('update', { state: names })
-}
-
-class InnKeeper {
-    constructor() {
-        this._rooms = new Map()
-        this._stuff = new Map()
-    }
-
-    checkin(stuff, room) {
-        const { id } = stuff
-        this._rooms.set(id, room)
-        this._stuff.set(room, this._stuff[room] || new Map())
-        this._stuff.get(room).set(id, stuff)
-    }
-
-    checkout(id) {
-        if (!id)
-            return
-
-        const room = this._rooms.get(id)
-        this._rooms.delete(id)
-
-        this._stuff.get(room).delete(id)
-        if (!this._stuff.get(room).size) {
-            this._stuff.delete(room)
-        }
-    }
-
-    room(id) {
-        return this._rooms.get(id)
-    }
-
-    stuff(room) {
-        return this._stuff.get(room)
-    }
 }
