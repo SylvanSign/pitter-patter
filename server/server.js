@@ -58,7 +58,10 @@ io.on('connection', socket => {
     })
 
     socket.on('join', ({ name, room, id }) => {
-        join(socket, name, room, id)
+        if (innKeeper.open(room))
+            join(socket, name, room, id)
+        else
+            socket.emit('invalid-room')
     })
 })
 

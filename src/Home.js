@@ -13,6 +13,7 @@ import { io } from 'socket.io-client'
 const socket = io(`http://${window.location.hostname}:8001`)
 
 function Room({ id, setId, name }) {
+    const nav = useNavigate()
     const [lobby, setLobby] = useState([])
     let { room } = useParams()
     room = room.toUpperCase()
@@ -30,8 +31,12 @@ function Room({ id, setId, name }) {
                 sessionStorage.setItem('room', room)
                 setId(id)
             })
+            socket.once('invalid-room', () => {
+                nav("/", { state: room })
+            })
             return () => {
                 socket.off('joined')
+                socket.off('invalid-room')
             }
         } else {
             socket.emit('room-check', { room, id, name })
