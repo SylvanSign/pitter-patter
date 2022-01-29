@@ -99,3 +99,44 @@ export default function Map({ G, playerID, moves, grid, fullGrid, Grid, corners,
     </svg>
   )
 }
+
+export function MapArt({ grid, fullGrid, map, corners }) {
+  const hexSVGs = grid.map(hex => {
+    const { x, y } = hex.toPoint()
+    const cartesian = hex.coordinates()
+    const id = cartesianToId(cartesian.x, cartesian.y)
+
+    return <Tile {...{ key: id, map, id, x, y, }} />
+  })
+
+  const points = corners.map(({ x, y }) => `${x},${y}`).join(' ')
+  return (
+    <svg viewBox={`0 0 ${fullGrid.pointWidth()} ${fullGrid.pointHeight()}`}>
+      <defs>
+        <symbol id='hex'>
+          <polygon points={points} stroke='grey' strokeWidth='2' />
+        </symbol>
+        <symbol id='highlight'>
+          <polygon points={points} stroke='gold' strokeWidth='3' />
+        </symbol>
+        <symbol id='note'>
+          <polygon points={points} stroke='red' strokeWidth='5' fill='none' transform='scale(0.6) translate(19 16)' />
+        </symbol>
+        <pattern id="stars" width="420" height="420" patternUnits="userSpaceOnUse">
+          <svg xmlns="http://www.w3.org/2000/svg">
+            <filter id="filter">
+              <feTurbulence seed="4815162342" baseFrequency="0.2" />
+              <feColorMatrix values="0 0 0 9 -4
+                                     0 0 0 9 -4
+                                     0 0 0 9 -4
+                                     0 0 0 9 1"/>
+            </filter>
+            <rect width="100%" height="100%" filter="url(#filter)" />
+          </svg>
+        </pattern>
+      </defs>
+      <rect width='100%' height='100%' fill='url(#stars)' />
+      {hexSVGs}
+    </svg>
+  )
+}

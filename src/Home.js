@@ -9,9 +9,71 @@ import {
     useLocation,
 } from "react-router-dom"
 import { io } from 'socket.io-client'
+import App from './App'
 
 const socket = io(`http://${window.location.hostname}:8001`)
 window.s = socket // TODO remove this
+
+function Room({ id, setId, name }) {
+    const [lobby, setLobby] = useState([])
+    let { room } = useParams()
+    room = room.toUpperCase()
+
+    const [valid, setValid] = useState(undefined)
+
+    useEffect(() => () => { socket.emit('left-room') }, [])
+
+    useEffect(() => {
+        socket.once('joined', ({ room, id }) => {
+            sessionStorage.setItem('room', room)
+            setId(id)
+        })
+
+        return () => {
+            socket.off('joined')
+        }
+    }, [setId])
+
+    useEffect(() => {
+        socket.emit('room-check', { room, id, name })
+        socket.once('room-check', ({ valid }) => setValid(valid))
+
+        return () => {
+            socket.off('room-check')
+        }
+    }, [room, id, name])
+
+    useEffect(() => {
+        socket.on('update', ({ data }) => {
+            console.log('update was called')
+            setLobby(data)
+        })
+
+        return () => {
+            socket.off('update')
+        }
+    }, [])
+
+    switch (valid) {
+        case undefined:
+            return null
+        case false:
+            return <Navigate to={'/'} state={room} />
+        case true:
+            return (
+                <>
+                    <h1>{room}</h1>
+                    <ul>
+                        {lobby.map(p => <li key={p.id}>{p.name}</li>)}
+                    </ul>
+                    <App />
+                </>
+            )
+        default:
+            throw new Error(`Unexpected state for 'valid': ${valid}`)
+
+    }
+}
 
 function ErrorMsg({ error }) {
     if (!error)
@@ -92,66 +154,6 @@ function Join({ id, name }) {
             </form>
         </>
     )
-}
-
-function Room({ id, setId, name }) {
-    const [lobby, setLobby] = useState([])
-    let { room } = useParams()
-    room = room.toUpperCase()
-
-    const [valid, setValid] = useState(undefined)
-
-    useEffect(() => () => { socket.emit('left-room') }, [])
-
-    useEffect(() => {
-        socket.once('joined', ({ room, id }) => {
-            sessionStorage.setItem('room', room)
-            setId(id)
-        })
-
-        return () => {
-            socket.off('joined')
-        }
-    }, [setId])
-
-    useEffect(() => {
-        socket.emit('room-check', { room, id, name })
-        socket.once('room-check', ({ valid }) => setValid(valid))
-
-        return () => {
-            socket.off('room-check')
-        }
-    }, [room, id, name])
-
-    useEffect(() => {
-        socket.on('update', ({ data }) => {
-            console.log('update was called')
-            setLobby(data)
-        })
-
-        return () => {
-            socket.off('update')
-        }
-    }, [])
-
-    switch (valid) {
-        case undefined:
-            return null
-        case false:
-            return <Navigate to={'/'} state={room} />
-        case true:
-            return (
-                <>
-                    <h1>{room}</h1>
-                    <ul>
-                        {lobby.map(p => <li key={p.id}>{p.name}</li>)}
-                    </ul>
-                </>
-            )
-        default:
-            throw new Error(`Unexpected state for 'valid': ${valid}`)
-
-    }
 }
 
 function GameSelector({ name, setId }) {
