@@ -10,11 +10,9 @@ import InnKeeper from './Innkeeper'
 
 const server = Server({
     games: [Game],
-    // origins: [
-    //     'http://localhost:3000',
-    //     'http://localhost:8001',
-    //     Origins.LOCALHOST_IN_DEVELOPMENT,
-    // ],
+    origins: [
+        Origins.LOCALHOST_IN_DEVELOPMENT,
+    ],
 })
 // Build path relative to the server.js file
 server.app.use(serve(path.resolve(__dirname, '../build')))
@@ -34,10 +32,18 @@ const innKeeper = new InnKeeper()
 
 io.on('connection', socket => {
     socket.data = {}
-    socket.on('disconnect', () => {
+
+    const handleDisconnect = () => {
         const id = socket.data.id
+        const room = innKeeper.room(id)
         innKeeper.checkout(id)
-    })
+        if (room) {
+            io.in(room).emit('update', { data: innKeeper.stuffs(room) })
+        }
+    }
+
+    socket.on('disconnect', handleDisconnect)
+    socket.on('left-room', handleDisconnect)
 
     socket.on('room-check', ({ room, name, id }) => {
         const valid = innKeeper.open(room)
