@@ -6,6 +6,8 @@ import {
     useLocation,
 } from "react-router-dom"
 import { LobbyClient } from 'boardgame.io/client'
+import MAPS from './maps'
+
 
 const lobbyClient = new LobbyClient({ server: `http://${window.location.hostname}:8000` })
 window.l = lobbyClient // TODO remove
@@ -29,16 +31,38 @@ export default function Room({ socket, id, setId, name }) {
 function Lobby({ socket, room }) {
     useRoomLeaverNotifier(socket)
     const lobby = useLobbyUpdater(socket)
+    const [map, setMap] = useState(Object.keys[0])
     const enoughPlayers = lobby.length > 1
 
     return (
         <>
             <h1>{room}</h1>
-            <button disabled={!enoughPlayers}>{enoughPlayers ? 'BEGIN THE GAME' : 'NEED ANOTHER PLAYER...'}</button>
+            <MapSelector map={map} setMap={setMap} />
+            {' '}
+            <label htmlFor="startButton">REQUIRES AT LEAST 2 PLAYERS</label>
+            <button id='startButton' disabled={!enoughPlayers}>START GAME</button>
             <ul>
                 {lobby.map(p => <li key={p.id}>{p.name}</li>)}
             </ul>
         </>
+    )
+}
+
+function MapSelector({ map, setMap }) {
+    const options = Object.entries(MAPS).map(([name, _]) => <option key={name} value={name}>{name}</option>)
+
+    function onChange(e) {
+        setMap(e.target.value)
+    }
+
+    return (
+        <div>
+            <label htmlFor='mapSelector' style={{ display: 'inline-block' }}>Select Map</label>
+            {' '}
+            <select id='mapSelector' value={map} onChange={onChange}>
+                {options}
+            </select>
+        </div>
     )
 }
 
