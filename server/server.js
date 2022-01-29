@@ -12,6 +12,7 @@ const server = Server({
     games: [Game],
     origins: [
         '*',
+        Origins.LOCALHOST_IN_DEVELOPMENT,
     ],
 })
 // Build path relative to the server.js file
@@ -23,6 +24,7 @@ const io = new SocketIOServer({
     cors: {
         origins: [
             '*',
+            Origins.LOCALHOST_IN_DEVELOPMENT,
         ],
     },
 })
