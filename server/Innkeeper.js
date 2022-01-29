@@ -25,15 +25,15 @@ export default class InnKeeper {
       return
 
     const room = this._rooms.get(id)
-    // this._rooms.delete(id) // TODO?
+    this._rooms.delete(id) // TODO?
 
     const connected = this._stuff.get(room).connected
     connected.delete(id)
 
     if (!connected.size) {
       // TODO also cleanup other room resources like the associated Boardgame.io Game?
-
       clearTimeout(this._timeoutRefs.get(room))
+
       const ref = setTimeout(() => {
         console.log(`checking on ${room}`)
         if (!connected.size) {
@@ -41,7 +41,8 @@ export default class InnKeeper {
           this._stuff.delete(room)
         }
         this._timeoutRefs.delete(room)
-      }, 3_000)
+      }, 10_000)
+
       this._timeoutRefs.set(room, ref)
     }
   }
@@ -50,8 +51,8 @@ export default class InnKeeper {
     return this._rooms.get(id)
   }
 
-  hasStuff(room, id) {
-    return this._stuff.has(room) && this._stuff.get(room).data.has(id)
+  open(room) {
+    return this._stuff.has(room)
   }
 
   stuff(room) {

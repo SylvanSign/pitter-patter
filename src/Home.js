@@ -33,8 +33,8 @@ export default function Home() {
             <Routes>
                 <Route path="/" element={<Landing name={name} setName={setName} setId={setId} />} />
                 <Route path="/name" element={<NameSelector setName={setName} />} />
-                <Route path="/join" element={<Join id={id} />} />
-                <Route path="/rooms/:room" element={<Room name={name} id={id} />} />
+                <Route path="/join" element={<Join name={name} id={id} />} />
+                <Route path="/rooms/:room" element={<Room name={name} id={id} setId={setId} />} />
                 <Route path="*" element={<Navigate to={"/"} replace={true} />} />
             </Routes>
         </BrowserRouter>
@@ -55,7 +55,7 @@ function Landing({ name, setName, setId }) {
     )
 }
 
-function Join({ id }) {
+function Join({ id, name }) {
     const nav = useNavigate()
     const roomRef = useRef()
     const [error, setError] = useState()
@@ -68,7 +68,7 @@ function Join({ id }) {
         e.preventDefault()
         setDisabled(true)
         const room = roomRef.current.value.toUpperCase()
-        socket.emit('room-check', { room, id })
+        socket.emit('room-check', { room, id, name })
         socket.once('room-check', ({ valid }) => {
             if (valid) {
                 nav(`/rooms/${room}`)
@@ -95,11 +95,23 @@ function Join({ id }) {
     )
 }
 
-function Room({ id, name }) {
+function Room({ id, setId, name }) {
     const [lobby, setLobby] = useState([])
     const { room } = useParams()
 
     const [valid, setValid] = useState(undefined)
+
+    useEffect(() => {
+        socket.once('joined', ({ room, id }) => {
+            sessionStorage.setItem('room', room)
+            setId(id)
+        })
+
+        return () => {
+            socket.off('joined')
+        }
+    }, [setId])
+
     useEffect(() => {
         socket.emit('room-check', { room, id, name })
         socket.once('room-check', ({ valid }) => setValid(valid))
@@ -142,6 +154,8 @@ function Room({ id, name }) {
 
 function GameSelector({ name, setId }) {
     const nav = useNavigate()
+
+    useEffect(() => () => { socket.off('joined') })
 
     const onClickNameChange = e => {
         e.preventDefault()
