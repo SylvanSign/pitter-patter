@@ -39,29 +39,33 @@ io.on('connection', socket => {
         innKeeper.checkout(id)
     })
 
-    socket.on('need-id', () => {
-        const id = randomUUID()
-        socket.data.id = id
-        socket.emit('id', { id })
+    socket.on('room-check', ({ room }) => {
+        socket.emit('room-check', { valid: innKeeper.hasStuff(room) })
     })
 
-    socket.on('have-id', ({ id, name }) => {
-        socket.data = { id, name }
-        const room = innKeeper.room(id)
-        if (room)
-            join(socket, room)
-    })
+    // socket.on('need-id', () => {
+    //     const id = randomUUID()
+    //     socket.data.id = id
+    //     socket.emit('id', { id })
+    // })
 
-    socket.on('new', ({ name }) => {
-        socket.data.name = name
-        const room = getRoom()
-        join(socket, room)
-    })
+    // socket.on('have-id', ({ id, name }) => {
+    //     socket.data = { id, name }
+    //     const room = innKeeper.room(id)
+    //     if (room)
+    //         join(socket, room)
+    // })
 
-    socket.on('join', async ({ name, room }) => {
-        socket.data.name = name
-        join(socket, room)
-    })
+    // socket.on('new', ({ name }) => {
+    //     socket.data.name = name
+    //     const room = getRoom()
+    //     join(socket, room)
+    // })
+
+    // socket.on('join', async ({ name, room }) => {
+    //     socket.data.name = name
+    //     join(socket, room)
+    // })
 })
 
 async function join(socket, room) {

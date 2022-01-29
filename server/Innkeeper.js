@@ -29,6 +29,10 @@ export default class InnKeeper {
     return this._rooms.get(id)
   }
 
+  hasStuff(room) {
+    return this._stuff.has(room)
+  }
+
   stuff(room) {
     return this._stuff.get(room)
   }
