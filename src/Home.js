@@ -34,7 +34,7 @@ export default function Home() {
                 <Route path="/" element={<Landing name={name} setName={setName} setId={setId} />} />
                 <Route path="/name" element={<NameSelector setName={setName} />} />
                 <Route path="/join" element={<Join id={id} />} />
-                <Route path="/rooms/:room" element={<Room id={id} />} />
+                <Route path="/rooms/:room" element={<Room name={name} id={id} />} />
                 <Route path="*" element={<Navigate to={"/"} replace={true} />} />
             </Routes>
         </BrowserRouter>
@@ -95,19 +95,19 @@ function Join({ id }) {
     )
 }
 
-function Room({ id }) {
+function Room({ id, name }) {
     const [lobby, setLobby] = useState([])
     const { room } = useParams()
 
     const [valid, setValid] = useState(undefined)
     useEffect(() => {
-        socket.emit('room-check', { room, id })
+        socket.emit('room-check', { room, id, name })
         socket.once('room-check', ({ valid }) => setValid(valid))
 
         return () => {
             socket.off('room-check')
         }
-    }, [room, id])
+    }, [room, id, name])
 
     useEffect(() => {
         socket.on('update', ({ data }) => {

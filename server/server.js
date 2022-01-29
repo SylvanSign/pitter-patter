@@ -39,13 +39,18 @@ io.on('connection', socket => {
         innKeeper.checkout(id)
     })
 
-    socket.on('room-check', ({ room, id }) => {
-        socket.emit('room-check', { valid: innKeeper.hasStuff(room, id) })
+    socket.on('room-check', ({ room, name, id }) => {
+        const valid = innKeeper.hasStuff(room, id)
+        if (valid) {
+            join(socket, id, name, room)
+        }
+        socket.emit('room-check', { valid })
     })
 
     socket.on('new', ({ name }) => {
         const room = getRoom()
-        join(socket, name, room)
+        const id = randomUUID()
+        join(socket, id, name, room)
     })
 
     // socket.on('need-id', () => {
@@ -67,8 +72,7 @@ io.on('connection', socket => {
     // })
 })
 
-async function join(socket, name, room) {
-    const id = randomUUID()
+async function join(socket, id, name, room) {
     const data = { name, id }
     socket.data = data
     innKeeper.checkin(data, room)
