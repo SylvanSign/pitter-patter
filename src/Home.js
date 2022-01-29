@@ -14,8 +14,60 @@ window.s = socket // TODO remove this
 
 export default function Home() {
     const [name, setName] = useSessionStorageState('name')
-    const [lobbyState, setLobbyState] = useState([])
+
+    if (!name) {
+        console.log('yikers')
+        return <BaseNameSelector setName={setName} />
+    }
+
+    return (
+        <BrowserRouter>
+            <Routes>
+                <Route path="/" element={<Landing name={name} setName={setName} />} />
+                <Route path="/name" element={<NameSelector setName={setName} />} />
+                <Route path="/join" element={<Join />} />
+                <Route path="/rooms/:room" element={<Room name={name} />} />
+                <Route path="*" element={<Navigate to={"/"} replace={true} />} />
+            </Routes>
+        </BrowserRouter>
+    )
+}
+
+function Landing({ name, setName, setRoom }) {
+    if (!name) {
+        return <NameSelector setName={setName} />
+    }
+    return <GameSelector name={name} setName={setName} />
+}
+
+function Join() {
+    const nav = useNavigate()
+    const roomRef = useRef()
+
+    const onSubmit = e => {
+        e.preventDefault()
+        const room = roomRef.current.value.toUpperCase()
+        nav(`/rooms/${room}`)
+    }
+    return (
+        <>
+            <h2>Join Room</h2>
+            <form onSubmit={onSubmit}>
+                <input autoCapitalize="none" autoComplete="off" autoCorrect="off" id="form_name"
+                    maxLength="4" minLength="4" name="form[name]" pattern="^[A-Za-z]{4}$" placeholder="ENTER 4-LETTER ROOM CODE"
+                    style={{ textTransform: 'uppercase' }} title="Room code will be one 4-letter word"
+                    type="text" autoFocus={true} required={true}
+                    ref={roomRef} />
+                <button type="submit">SUBMIT</button>
+            </form>
+        </>
+    )
+}
+
+function Room({ name }) {
     const [id, setId] = useSessionStorageState('id')
+    const [lobby, setLobby] = useState([])
+    const { room } = useParams()
 
     useEffect(() => {
         if (id) {
@@ -30,32 +82,18 @@ export default function Home() {
 
         socket.on('update', ({ state }) => {
             console.log('update was called')
-            setLobbyState(state)
+            setLobby(state)
         })
     }, [id])
 
     return (
-        <BrowserRouter>
-            <Routes>
-                <Route path="/" element={<Landing name={name} setName={setName} />} />
-                <Route path="/name" element={<NameSelector setName={setName} />} />
-                <Route path="/rooms/:room" element={<Room lobbyState={lobbyState} />} />
-                <Route path="*" element={<Navigate to={"/"} replace={true} />} />
-            </Routes>
-        </BrowserRouter>
+        <>
+            <h1>{room}</h1>
+            <ul>
+                {lobby.map(p => <li key={p.id}>{p.name}</li>)}
+            </ul>
+        </>
     )
-}
-
-function Landing({ name, setName, setRoom }) {
-    if (!name) {
-        return <NameSelector setName={setName} />
-    }
-    return <GameSelector name={name} setName={setName} />
-}
-
-function Room({ lobbyState }) {
-    const { room } = useParams()
-    return <Lobby room={room} lobbyState={lobbyState} />
 }
 
 function GameSelector({ name }) {
@@ -67,7 +105,7 @@ function GameSelector({ name }) {
     }
 
     const onClickJoinGame = e => {
-        alert('TODO')
+        nav("/join")
     }
 
     const onClickNewGame = e => {
@@ -88,27 +126,18 @@ function GameSelector({ name }) {
     )
 }
 
-function Lobby({ room, lobbyState }) {
-    return (
-        <>
-            <h1>{room}</h1>
-            <ul>
-                {lobbyState.map(p => <li key={p}>{p}</li>)}
-            </ul>
-        </>
-    )
-}
-
-function NameSelector({ setName }) {
-    const nav = useNavigate()
+function BaseNameSelector({ setName, afterSubmit }) {
     const nameRef = useRef()
 
     const onSubmit = e => {
         e.preventDefault()
-        const value = nameRef.current.value.toUpperCase()
-        setName(value)
-        nav("/")
+        const name = nameRef.current.value.toUpperCase()
+        setName(name)
+        if (afterSubmit) {
+            afterSubmit()
+        }
     }
+
     return (
         <>
             <h2>Enter a name</h2>
@@ -121,6 +150,14 @@ function NameSelector({ setName }) {
                 <button type="submit">SUBMIT</button>
             </form>
         </>
+    )
+}
+
+function NameSelector({ setName }) {
+    const nav = useNavigate()
+
+    return (
+        <BaseNameSelector setName={setName} afterSubmit={() => nav('/')} />
     )
 }
 
