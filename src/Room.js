@@ -29,10 +29,12 @@ export default function Room({ socket, id, setId, name }) {
 function Lobby({ socket, room }) {
     useRoomLeaverNotifier(socket)
     const lobby = useLobbyUpdater(socket)
+    const enoughPlayers = lobby.length > 1
 
     return (
         <>
             <h1>{room}</h1>
+            <button disabled={!enoughPlayers}>{enoughPlayers ? 'BEGIN THE GAME' : 'NEED ANOTHER PLAYER...'}</button>
             <ul>
                 {lobby.map(p => <li key={p.id}>{p.name}</li>)}
             </ul>
