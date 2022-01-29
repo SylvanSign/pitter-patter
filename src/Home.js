@@ -43,14 +43,17 @@ function Landing({ name, setName, setRoom }) {
 function Join() {
     const nav = useNavigate()
     const roomRef = useRef()
+    const [error, setError] = useState()
 
     const onSubmit = e => {
         e.preventDefault()
         const room = roomRef.current.value.toUpperCase()
         nav(`/rooms/${room}`)
     }
+
     return (
         <>
+            {error ? <p class="alert alert-danger" role="alert">Cannot find room {error}</p> : ''}
             <h2>Join Room</h2>
             <form onSubmit={onSubmit}>
                 <input autoCapitalize="none" autoComplete="off" autoCorrect="off" id="form_name"
@@ -70,16 +73,6 @@ function Room({ name }) {
     const { room } = useParams()
 
     useEffect(() => {
-        if (id) {
-            socket.emit('have-id', { id, name })
-        } else {
-            socket.emit('need-id')
-            socket.once('id', ({ id }) => {
-                console.log(`setting id to ${id}`)
-                setId(id)
-            })
-        }
-
         socket.on('update', ({ state }) => {
             console.log('update was called')
             setLobby(state)
