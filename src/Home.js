@@ -6,38 +6,62 @@ import {
     Navigate,
     useParams,
     useNavigate,
+    useLocation,
 } from "react-router-dom"
 import { io } from 'socket.io-client'
 
-const socket = io(`http://${window.location.hostname}:8001`)
-window.s = socket // TODO remove this
+
+function ErrorMsg({ error }) {
+    if (!error)
+        return null
+
+    return (
+        <>
+            <p className="alert alert-danger" role="alert">Could not find room {error}</p>
+        </>
+    )
+}
+
+
 
 export default function Home() {
     const [name, setName] = useSessionStorageState('name')
+    const [socket, setSocket] = useState()
 
-    if (!name) {
-        console.log('yikers')
+    useEffect(() => {
+        const sock = io(`http://${window.location.hostname}:8001`)
+        setSocket(sock)
+        window.s = sock // TODO remove this
+    }, [])
+
+    if (!name)
         return <BaseNameSelector setName={setName} />
-    }
 
     return (
         <BrowserRouter>
             <Routes>
-                <Route path="/" element={<Landing name={name} setName={setName} />} />
+                <Route path="/" element={<Landing name={name} setName={setName} socket={socket} />} />
                 <Route path="/name" element={<NameSelector setName={setName} />} />
                 <Route path="/join" element={<Join />} />
-                <Route path="/rooms/:room" element={<Room name={name} />} />
+                <Route path="/rooms/:room" element={<Room name={name} socket={socket} />} />
                 <Route path="*" element={<Navigate to={"/"} replace={true} />} />
             </Routes>
         </BrowserRouter>
     )
 }
 
-function Landing({ name, setName, setRoom }) {
+function Landing({ name, setName, socket }) {
+    const location = useLocation();
+
     if (!name) {
-        return <NameSelector setName={setName} />
+        return <BaseNameSelector setName={setName} />
     }
-    return <GameSelector name={name} setName={setName} />
+    return (
+        <>
+            <ErrorMsg error={location.state} />
+            <GameSelector name={name} setName={setName} socket={socket} />
+        </>
+    )
 }
 
 function Join() {
@@ -53,7 +77,7 @@ function Join() {
 
     return (
         <>
-            {error ? <p class="alert alert-danger" role="alert">Cannot find room {error}</p> : ''}
+            <ErrorMsg error={error} />
             <h2>Join Room</h2>
             <form onSubmit={onSubmit}>
                 <input autoCapitalize="none" autoComplete="off" autoCorrect="off" id="form_name"
@@ -67,29 +91,46 @@ function Join() {
     )
 }
 
-function Room({ name }) {
-    const [id, setId] = useSessionStorageState('id')
+function Room({ socket }) {
     const [lobby, setLobby] = useState([])
+    const [valid, setValid] = useState(undefined)
     const { room } = useParams()
+
+    useEffect(() => {
+        socket.emit('room-check', { room })
+        socket.once('room-check', ({ valid }) => setValid(valid))
+
+        return () => socket.off('room-check')
+    }, [room, socket])
 
     useEffect(() => {
         socket.on('update', ({ state }) => {
             console.log('update was called')
             setLobby(state)
         })
-    }, [id])
 
-    return (
-        <>
-            <h1>{room}</h1>
-            <ul>
-                {lobby.map(p => <li key={p.id}>{p.name}</li>)}
-            </ul>
-        </>
-    )
+        return () => socket.off('update')
+    }, [socket])
+
+    switch (valid) {
+        case undefined:
+            return null
+        case false:
+            return <Navigate to={'/'} state={room} />
+        case true:
+            return (
+                <>
+                    <h1>{room}</h1>
+                    <ul>
+                        {lobby.map(p => <li key={p.id}>{p.name}</li>)}
+                    </ul>
+                </>
+            )
+
+    }
 }
 
-function GameSelector({ name }) {
+function GameSelector({ name, socket }) {
     const nav = useNavigate()
 
     const onClickNameChange = e => {
@@ -119,6 +160,11 @@ function GameSelector({ name }) {
     )
 }
 
+function NameSelector({ setName }) {
+    const nav = useNavigate()
+    return <BaseNameSelector setName={setName} afterSubmit={() => nav('/')} />
+}
+
 function BaseNameSelector({ setName, afterSubmit }) {
     const nameRef = useRef()
 
@@ -143,14 +189,6 @@ function BaseNameSelector({ setName, afterSubmit }) {
                 <button type="submit">SUBMIT</button>
             </form>
         </>
-    )
-}
-
-function NameSelector({ setName }) {
-    const nav = useNavigate()
-
-    return (
-        <BaseNameSelector setName={setName} afterSubmit={() => nav('/')} />
     )
 }
 
