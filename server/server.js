@@ -11,7 +11,7 @@ import InnKeeper from './Innkeeper'
 const server = Server({
     games: [Game],
     origins: [
-        Origins.LOCALHOST_IN_DEVELOPMENT,
+        '*',
     ],
 })
 // Build path relative to the server.js file
@@ -22,7 +22,7 @@ server.run(process.env.SERVER_PORT || 8000);
 const io = new SocketIOServer({
     cors: {
         origins: [
-            Origins.LOCALHOST_IN_DEVELOPMENT,
+            '*',
         ],
     },
 })
