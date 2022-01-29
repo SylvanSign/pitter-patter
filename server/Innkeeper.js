@@ -21,7 +21,12 @@ export default class InnKeeper {
     this._stuff.get(room).delete(id)
     if (!this._stuff.get(room).size) {
       // TODO also cleanup other room resources like the associated Boardgame.io Game?
-      this._stuff.delete(room)
+      setTimeout(() => {
+        if (!this._stuff.get(room).size) {
+          console.log(`deleting ${room}`)
+          this._stuff.delete(room)
+        }
+      }, 3_000)
     }
   }
 
@@ -29,11 +34,15 @@ export default class InnKeeper {
     return this._rooms.get(id)
   }
 
-  hasStuff(room) {
-    return this._stuff.has(room)
+  hasStuff(room, id) {
+    return this._stuff.has(room) && this._stuff.get(room).has(id)
   }
 
   stuff(room) {
     return this._stuff.get(room)
+  }
+
+  stuffs(room) {
+    return [...this.stuff(room).values()]
   }
 }

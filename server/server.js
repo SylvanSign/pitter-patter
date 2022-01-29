@@ -39,8 +39,13 @@ io.on('connection', socket => {
         innKeeper.checkout(id)
     })
 
-    socket.on('room-check', ({ room }) => {
-        socket.emit('room-check', { valid: innKeeper.hasStuff(room) })
+    socket.on('room-check', ({ room, id }) => {
+        socket.emit('room-check', { valid: innKeeper.hasStuff(room, id) })
+    })
+
+    socket.on('new', ({ name }) => {
+        const room = getRoom()
+        join(socket, name, room)
     })
 
     // socket.on('need-id', () => {
@@ -56,23 +61,18 @@ io.on('connection', socket => {
     //         join(socket, room)
     // })
 
-    // socket.on('new', ({ name }) => {
-    //     socket.data.name = name
-    //     const room = getRoom()
-    //     join(socket, room)
-    // })
-
     // socket.on('join', async ({ name, room }) => {
     //     socket.data.name = name
     //     join(socket, room)
     // })
 })
 
-async function join(socket, room) {
-    innKeeper.checkin(socket.data, room)
+async function join(socket, name, room) {
+    const id = randomUUID()
+    const data = { name, id }
+    socket.data = data
+    innKeeper.checkin(data, room)
     socket.join(room)
-    socket.emit('joined', { room })
-    const inRoom = await io.in(room).fetchSockets()
-    const names = innKeeper.map(s => s.data.name)
-    io.in(room).emit('update', { state: names })
+    socket.emit('joined', { room, id })
+    io.in(room).emit('update', { data: innKeeper.stuffs(room) })
 }

@@ -18,15 +18,12 @@ function ErrorMsg({ error }) {
     if (!error)
         return null
 
-    return (
-        <>
-            <p className="alert alert-danger" role="alert">Could not find room {error}</p>
-        </>
-    )
+    return <p className="alert alert-danger" role="alert">Could not find room {error}</p>
 }
 
 export default function Home() {
     const [name, setName] = useSessionStorageState('name')
+    const [id, setId] = useSessionStorageState('id')
 
     if (!name)
         return <BaseNameSelector setName={setName} />
@@ -34,17 +31,17 @@ export default function Home() {
     return (
         <BrowserRouter>
             <Routes>
-                <Route path="/" element={<Landing name={name} setName={setName} />} />
+                <Route path="/" element={<Landing name={name} setName={setName} setId={setId} />} />
                 <Route path="/name" element={<NameSelector setName={setName} />} />
-                <Route path="/join" element={<Join />} />
-                <Route path="/rooms/:room" element={<Room />} />
+                <Route path="/join" element={<Join id={id} />} />
+                <Route path="/rooms/:room" element={<Room id={id} />} />
                 <Route path="*" element={<Navigate to={"/"} replace={true} />} />
             </Routes>
         </BrowserRouter>
     )
 }
 
-function Landing({ name, setName }) {
+function Landing({ name, setName, setId }) {
     const location = useLocation();
 
     if (!name) {
@@ -53,12 +50,12 @@ function Landing({ name, setName }) {
     return (
         <>
             <ErrorMsg error={location.state} />
-            <GameSelector name={name} />
+            <GameSelector name={name} setId={setId} />
         </>
     )
 }
 
-function Join() {
+function Join({ id }) {
     const nav = useNavigate()
     const roomRef = useRef()
     const [error, setError] = useState()
@@ -71,7 +68,7 @@ function Join() {
         e.preventDefault()
         setDisabled(true)
         const room = roomRef.current.value.toUpperCase()
-        socket.emit('room-check', { room })
+        socket.emit('room-check', { room, id })
         socket.once('room-check', ({ valid }) => {
             if (valid) {
                 nav(`/rooms/${room}`)
@@ -98,24 +95,24 @@ function Join() {
     )
 }
 
-function Room() {
+function Room({ id }) {
     const [lobby, setLobby] = useState([])
     const { room } = useParams()
 
     const [valid, setValid] = useState(undefined)
     useEffect(() => {
-        socket.emit('room-check', { room })
+        socket.emit('room-check', { room, id })
         socket.once('room-check', ({ valid }) => setValid(valid))
 
         return () => {
             socket.off('room-check')
         }
-    }, [room])
+    }, [room, id])
 
     useEffect(() => {
-        socket.on('update', ({ state }) => {
+        socket.on('update', ({ data }) => {
             console.log('update was called')
-            setLobby(state)
+            setLobby(data)
         })
 
         return () => {
@@ -143,7 +140,7 @@ function Room() {
     }
 }
 
-function GameSelector({ name, socket }) {
+function GameSelector({ name, setId }) {
     const nav = useNavigate()
 
     const onClickNameChange = e => {
@@ -157,8 +154,9 @@ function GameSelector({ name, socket }) {
 
     const onClickNewGame = e => {
         socket.emit('new', { name })
-        socket.once('joined', ({ room }) => {
+        socket.once('joined', ({ room, id }) => {
             sessionStorage.setItem('room', room)
+            setId(id)
             nav(`rooms/${room}`)
         })
     }
