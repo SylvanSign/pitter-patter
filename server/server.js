@@ -31,10 +31,12 @@ io.listen(process.env.SOCKET_IO_SERVER_PORT || 8001)
 const innKeeper = new InnKeeper()
 
 io.on('connection', socket => {
+    console.log(`Socket ${socket.id} connected`)
     socket.data = {}
 
     const handleDisconnect = () => {
         const id = socket.data.id
+        console.log(`Socket ${id} disconnected`)
         const room = innKeeper.room(id)
         innKeeper.checkout(id)
         if (room) {
@@ -46,10 +48,8 @@ io.on('connection', socket => {
     socket.on('left-room', handleDisconnect)
 
     socket.on('room-check', ({ room, name, id }) => {
+        console.log(`Room check for ${room} ${name} ${id}`)
         const valid = innKeeper.open(room)
-        if (valid) {
-            join(socket, name, room, id)
-        }
         socket.emit('room-check', { valid })
     })
 
@@ -57,8 +57,8 @@ io.on('connection', socket => {
         join(socket, name, getRoom())
     })
 
-    socket.on('join', async ({ name, room }) => {
-        join(socket, name, room)
+    socket.on('join', ({ name, room, id }) => {
+        join(socket, name, room, id)
     })
 })
 

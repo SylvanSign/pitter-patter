@@ -9,39 +9,46 @@ import {
     useLocation,
 } from "react-router-dom"
 import { io } from 'socket.io-client'
-import App from './App'
 
 const socket = io(`http://${window.location.hostname}:8001`)
-window.s = socket // TODO remove this
 
 function Room({ id, setId, name }) {
     const [lobby, setLobby] = useState([])
     let { room } = useParams()
     room = room.toUpperCase()
 
-    const [valid, setValid] = useState(undefined)
+    const location = useLocation();
+    const alreadyVerified = location.state || undefined
+    const [valid, setValid] = useState(alreadyVerified)
 
     useEffect(() => () => { socket.emit('left-room') }, [])
 
     useEffect(() => {
-        socket.once('joined', ({ room, id }) => {
-            sessionStorage.setItem('room', room)
-            setId(id)
-        })
-
-        return () => {
-            socket.off('joined')
+        if (alreadyVerified) {
+            socket.emit('join', { name, room, id })
+            socket.once('joined', ({ room, id }) => {
+                sessionStorage.setItem('room', room)
+                setId(id)
+            })
+            return () => {
+                socket.off('joined')
+            }
+        } else {
+            socket.emit('room-check', { room, id, name })
+            socket.once('room-check', ({ valid }) => {
+                setValid(valid)
+                socket.emit('join', { name, room, id })
+                socket.once('joined', ({ room, id }) => {
+                    sessionStorage.setItem('room', room)
+                    setId(id)
+                })
+            })
+            return () => {
+                socket.off('room-check')
+                socket.off('joined')
+            }
         }
-    }, [setId])
-
-    useEffect(() => {
-        socket.emit('room-check', { room, id, name })
-        socket.once('room-check', ({ valid }) => setValid(valid))
-
-        return () => {
-            socket.off('room-check')
-        }
-    }, [room, id, name])
+    }, [alreadyVerified, room, id, name])
 
     useEffect(() => {
         socket.on('update', ({ data }) => {
@@ -66,7 +73,6 @@ function Room({ id, setId, name }) {
                     <ul>
                         {lobby.map(p => <li key={p.id}>{p.name}</li>)}
                     </ul>
-                    <App />
                 </>
             )
         default:
@@ -132,10 +138,11 @@ function Join({ id, name }) {
         socket.emit('room-check', { room, id, name })
         socket.once('room-check', ({ valid }) => {
             if (valid) {
-                nav(`/rooms/${room}`)
+                nav(`/rooms/${room}`, { state: true }) // true meaning already verified the room
             } else {
                 setError(room)
                 setDisabled(false)
+                roomRef.current.select()
             }
         })
     }
