@@ -16,7 +16,7 @@ function makeSerializable(data) {
 
 // TODO generally, remove all console.logs
 const Game = {
-  name: 'Pitter-Patter',
+  name: 'pp',
   minPlayers: 1, // TODO should be at least 2...
   maxPlayers: 8,
   setup(ctx, setupData) {
