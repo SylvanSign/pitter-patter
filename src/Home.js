@@ -13,7 +13,6 @@ import { io } from 'socket.io-client'
 const socket = io(`http://${window.location.hostname}:8001`)
 window.s = socket // TODO remove this
 
-
 function ErrorMsg({ error }) {
     if (!error)
         return null
@@ -97,7 +96,8 @@ function Join({ id, name }) {
 
 function Room({ id, setId, name }) {
     const [lobby, setLobby] = useState([])
-    const { room } = useParams()
+    let { room } = useParams()
+    room = room.toUpperCase()
 
     const [valid, setValid] = useState(undefined)
 
