@@ -27,7 +27,11 @@ export default class InnKeeper {
     const room = this._rooms.get(id)
     this._rooms.delete(id) // TODO?
 
-    const connected = this._stuff.get(room).connected
+    const stuff = this._stuff.get(room)
+    if (!stuff)
+      return
+    stuff.data.delete(id)
+    const connected = stuff.connected
     connected.delete(id)
 
     if (!connected.size) {

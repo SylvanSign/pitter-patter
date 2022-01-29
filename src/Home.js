@@ -101,6 +101,8 @@ function Room({ id, setId, name }) {
 
     const [valid, setValid] = useState(undefined)
 
+    useEffect(() => () => { socket.emit('left-room') }, [])
+
     useEffect(() => {
         socket.once('joined', ({ room, id }) => {
             sessionStorage.setItem('room', room)
@@ -155,7 +157,7 @@ function Room({ id, setId, name }) {
 function GameSelector({ name, setId }) {
     const nav = useNavigate()
 
-    useEffect(() => () => { socket.off('joined') })
+    useEffect(() => () => { socket.off('joined') }, [])
 
     const onClickNameChange = e => {
         e.preventDefault()
