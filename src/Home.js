@@ -7,7 +7,7 @@ import {
     useNavigate,
     useLocation,
 } from "react-router-dom"
-import Lobby from './Lobby'
+import Room from './Room'
 import { io } from 'socket.io-client'
 
 const socket = io(`http://${window.location.hostname}:8001`)
@@ -32,7 +32,7 @@ export default function Home() {
                 <Route path="/" element={<Landing name={name} setName={setName} setId={setId} />} />
                 <Route path="/name" element={<NameSelector setName={setName} />} />
                 <Route path="/join" element={<Join name={name} id={id} />} />
-                <Route path="/rooms/:room" element={<Lobby socket={socket} name={name} id={id} setId={setId} />} />
+                <Route path="/rooms/:room" element={<Room socket={socket} name={name} id={id} setId={setId} />} />
                 <Route path="*" element={<Navigate to={"/"} replace={true} />} />
             </Routes>
         </BrowserRouter>

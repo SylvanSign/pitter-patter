@@ -11,9 +11,7 @@ const lobbyClient = new LobbyClient({ server: `http://${window.location.hostname
 window.l = lobbyClient // TODO remove
 
 export default function Room({ socket, id, setId, name }) {
-    useRoomLeaverNotifier(socket)
     const [valid, room] = useRoomVerifier(socket, name, id, setId)
-    const lobby = useLobbyUpdater(socket)
 
     switch (valid) {
         case undefined:
@@ -21,18 +19,25 @@ export default function Room({ socket, id, setId, name }) {
         case false:
             return <Navigate to={'/'} state={room} />
         case true:
-            return (
-                <>
-                    <h1>{room}</h1>
-                    <ul>
-                        {lobby.map(p => <li key={p.id}>{p.name}</li>)}
-                    </ul>
-                </>
-            )
+            return <Lobby socket={socket} room={room} />
         default:
             throw new Error(`Unexpected state for 'valid': ${valid}`)
 
     }
+}
+
+function Lobby({ socket, room }) {
+    useRoomLeaverNotifier(socket)
+    const lobby = useLobbyUpdater(socket)
+
+    return (
+        <>
+            <h1>{room}</h1>
+            <ul>
+                {lobby.map(p => <li key={p.id}>{p.name}</li>)}
+            </ul>
+        </>
+    )
 }
 
 function useRoomVerifier(socket, name, id, setId) {
