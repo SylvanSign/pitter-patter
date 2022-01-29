@@ -10,6 +10,9 @@ import {
 } from "react-router-dom"
 import { io } from 'socket.io-client'
 
+const socket = io(`http://${window.location.hostname}:8001`)
+window.s = socket // TODO remove this
+
 
 function ErrorMsg({ error }) {
     if (!error)
@@ -22,17 +25,8 @@ function ErrorMsg({ error }) {
     )
 }
 
-
-
 export default function Home() {
     const [name, setName] = useSessionStorageState('name')
-    const [socket, setSocket] = useState()
-
-    useEffect(() => {
-        const sock = io(`http://${window.location.hostname}:8001`)
-        setSocket(sock)
-        window.s = sock // TODO remove this
-    }, [])
 
     if (!name)
         return <BaseNameSelector setName={setName} />
@@ -40,17 +34,17 @@ export default function Home() {
     return (
         <BrowserRouter>
             <Routes>
-                <Route path="/" element={<Landing name={name} setName={setName} socket={socket} />} />
+                <Route path="/" element={<Landing name={name} setName={setName} />} />
                 <Route path="/name" element={<NameSelector setName={setName} />} />
-                <Route path="/join" element={<Join socket={socket} />} />
-                <Route path="/rooms/:room" element={<Room name={name} socket={socket} />} />
+                <Route path="/join" element={<Join />} />
+                <Route path="/rooms/:room" element={<Room />} />
                 <Route path="*" element={<Navigate to={"/"} replace={true} />} />
             </Routes>
         </BrowserRouter>
     )
 }
 
-function Landing({ name, setName, socket }) {
+function Landing({ name, setName }) {
     const location = useLocation();
 
     if (!name) {
@@ -59,20 +53,19 @@ function Landing({ name, setName, socket }) {
     return (
         <>
             <ErrorMsg error={location.state} />
-            <GameSelector name={name} setName={setName} socket={socket} />
+            <GameSelector name={name} />
         </>
     )
 }
 
-function Join({ socket }) {
+function Join() {
     const nav = useNavigate()
     const roomRef = useRef()
     const [error, setError] = useState()
     const [disabled, setDisabled] = useState(false)
 
-    useEffect(() => {
-        return () => socket.off('room-check')
-    }, [socket])
+    // remove socket listeners on unmount
+    useEffect(() => () => { socket.off('room-check') }, [])
 
     const onSubmit = e => {
         e.preventDefault()
@@ -95,7 +88,7 @@ function Join({ socket }) {
             <h2>Join Room</h2>
             <form onSubmit={onSubmit}>
                 <input autoCapitalize="none" autoComplete="off" autoCorrect="off" id="form_name"
-                    maxLength="4" minLength="4" name="form[name]" pattern="^[A-Za-z]{4}$" placeholder="ENTER 4-LETTER ROOM CODE"
+                    maxLength={4} minLength={4} pattern="^[A-Za-z]{4}$" placeholder="ENTER 4-LETTER ROOM CODE"
                     style={{ textTransform: 'uppercase' }} title="Room code will be one 4-letter word"
                     type="text" autoFocus={true} required={true}
                     ref={roomRef} />
@@ -105,7 +98,7 @@ function Join({ socket }) {
     )
 }
 
-function Room({ socket }) {
+function Room() {
     const [lobby, setLobby] = useState([])
     const { room } = useParams()
 
@@ -114,8 +107,10 @@ function Room({ socket }) {
         socket.emit('room-check', { room })
         socket.once('room-check', ({ valid }) => setValid(valid))
 
-        return () => socket.off('room-check')
-    }, [room, socket])
+        return () => {
+            socket.off('room-check')
+        }
+    }, [room])
 
     useEffect(() => {
         socket.on('update', ({ state }) => {
@@ -123,8 +118,10 @@ function Room({ socket }) {
             setLobby(state)
         })
 
-        return () => socket.off('update')
-    }, [socket])
+        return () => {
+            socket.off('update')
+        }
+    }, [])
 
     switch (valid) {
         case undefined:
@@ -140,6 +137,8 @@ function Room({ socket }) {
                     </ul>
                 </>
             )
+        default:
+            throw new Error(`Unexpected state for 'valid': ${valid}`)
 
     }
 }
@@ -179,16 +178,14 @@ function NameSelector({ setName }) {
     return <BaseNameSelector setName={setName} afterSubmit={() => nav('/')} />
 }
 
-function BaseNameSelector({ setName, afterSubmit }) {
+function BaseNameSelector({ setName, afterSubmit = () => { } }) {
     const nameRef = useRef()
 
     const onSubmit = e => {
         e.preventDefault()
         const name = nameRef.current.value.toUpperCase()
         setName(name)
-        if (afterSubmit) {
-            afterSubmit()
-        }
+        afterSubmit()
     }
 
     return (
@@ -196,7 +193,7 @@ function BaseNameSelector({ setName, afterSubmit }) {
             <h2>Enter a name</h2>
             <form onSubmit={onSubmit}>
                 <input autoCapitalize="none" autoComplete="off" autoCorrect="off" id="form_name"
-                    maxLength="20" name="form[name]" pattern="^.*[^ ].*$" placeholder="ENTER YOUR NAME"
+                    maxLength={20} pattern="^.*[^ ].*$" placeholder="ENTER YOUR NAME"
                     style={{ textTransform: 'uppercase' }} title="Name must be at least 1 character"
                     type="text" autoFocus={true} required={true}
                     ref={nameRef} />
