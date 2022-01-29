@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react"
+import { useEffect, useState } from "react"
 import {
     Navigate,
     useParams,
@@ -11,16 +11,37 @@ const lobbyClient = new LobbyClient({ server: `http://${window.location.hostname
 window.l = lobbyClient // TODO remove
 
 export default function Room({ socket, id, setId, name }) {
-    const nav = useNavigate()
-    const [lobby, setLobby] = useState([])
-    let { room } = useParams()
-    room = room.toUpperCase()
+    useRoomLeaverNotifier(socket)
+    const lobby = useLobbyUpdater(socket)
+    const [valid, room] = useRoomVerifier(socket, name, id, setId)
 
+    switch (valid) {
+        case undefined:
+            return null
+        case false:
+            return <Navigate to={'/'} state={room} />
+        case true:
+            return (
+                <>
+                    <h1>{room}</h1>
+                    <ul>
+                        {lobby.map(p => <li key={p.id}>{p.name}</li>)}
+                    </ul>
+                </>
+            )
+        default:
+            throw new Error(`Unexpected state for 'valid': ${valid}`)
+
+    }
+}
+
+function useRoomVerifier(socket, name, id, setId) {
+    const nav = useNavigate()
     const location = useLocation();
     const alreadyVerified = location.state || undefined
     const [valid, setValid] = useState(alreadyVerified)
-
-    useEffect(() => () => { socket.emit('left-room') }, [])
+    let { room } = useParams()
+    room = room.toUpperCase()
 
     useEffect(() => {
         if (alreadyVerified) {
@@ -51,7 +72,17 @@ export default function Room({ socket, id, setId, name }) {
                 socket.off('joined')
             }
         }
-    }, [alreadyVerified, room, id, name])
+    }, [socket, name, alreadyVerified, room, id, setId, nav])
+
+    return [valid, room]
+}
+
+function useRoomLeaverNotifier(socket) {
+    useEffect(() => () => { socket.emit('left-room') }, [socket])
+}
+
+function useLobbyUpdater(socket) {
+    const [lobby, setLobby] = useState([])
 
     useEffect(() => {
         socket.on('update', ({ data }) => {
@@ -62,24 +93,7 @@ export default function Room({ socket, id, setId, name }) {
         return () => {
             socket.off('update')
         }
-    }, [])
+    }, [socket, setLobby])
 
-    switch (valid) {
-        case undefined:
-            return null
-        case false:
-            return <Navigate to={'/'} state={room} />
-        case true:
-            return (
-                <>
-                    <h1>{room}</h1>
-                    <ul>
-                        {lobby.map(p => <li key={p.id}>{p.name}</li>)}
-                    </ul>
-                </>
-            )
-        default:
-            throw new Error(`Unexpected state for 'valid': ${valid}`)
-
-    }
+    return lobby
 }

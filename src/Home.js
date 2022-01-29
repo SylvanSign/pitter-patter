@@ -4,13 +4,11 @@ import {
     Routes,
     Route,
     Navigate,
-    useParams,
     useNavigate,
     useLocation,
 } from "react-router-dom"
 import Lobby from './Lobby'
 import { io } from 'socket.io-client'
-import { LobbyClient } from 'boardgame.io/client'
 
 const socket = io(`http://${window.location.hostname}:8001`)
 
