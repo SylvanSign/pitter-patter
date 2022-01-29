@@ -12,8 +12,8 @@ window.l = lobbyClient // TODO remove
 
 export default function Room({ socket, id, setId, name }) {
     useRoomLeaverNotifier(socket)
-    const lobby = useLobbyUpdater(socket)
     const [valid, room] = useRoomVerifier(socket, name, id, setId)
+    const lobby = useLobbyUpdater(socket)
 
     switch (valid) {
         case undefined:
