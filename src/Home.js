@@ -42,7 +42,7 @@ export default function Home() {
             <Routes>
                 <Route path="/" element={<Landing name={name} setName={setName} socket={socket} />} />
                 <Route path="/name" element={<NameSelector setName={setName} />} />
-                <Route path="/join" element={<Join />} />
+                <Route path="/join" element={<Join socket={socket} />} />
                 <Route path="/rooms/:room" element={<Room name={name} socket={socket} />} />
                 <Route path="*" element={<Navigate to={"/"} replace={true} />} />
             </Routes>
@@ -64,15 +64,29 @@ function Landing({ name, setName, socket }) {
     )
 }
 
-function Join() {
+function Join({ socket }) {
     const nav = useNavigate()
     const roomRef = useRef()
     const [error, setError] = useState()
+    const [disabled, setDisabled] = useState(false)
+
+    useEffect(() => {
+        return () => socket.off('room-check')
+    }, [socket])
 
     const onSubmit = e => {
         e.preventDefault()
+        setDisabled(true)
         const room = roomRef.current.value.toUpperCase()
-        nav(`/rooms/${room}`)
+        socket.emit('room-check', { room })
+        socket.once('room-check', ({ valid }) => {
+            if (valid) {
+                nav(`/rooms/${room}`)
+            } else {
+                setError(room)
+                setDisabled(false)
+            }
+        })
     }
 
     return (
@@ -85,7 +99,7 @@ function Join() {
                     style={{ textTransform: 'uppercase' }} title="Room code will be one 4-letter word"
                     type="text" autoFocus={true} required={true}
                     ref={roomRef} />
-                <button type="submit">SUBMIT</button>
+                <button type="submit" disabled={disabled}>SUBMIT</button>
             </form>
         </>
     )
@@ -93,9 +107,9 @@ function Join() {
 
 function Room({ socket }) {
     const [lobby, setLobby] = useState([])
-    const [valid, setValid] = useState(undefined)
     const { room } = useParams()
 
+    const [valid, setValid] = useState(undefined)
     useEffect(() => {
         socket.emit('room-check', { room })
         socket.once('room-check', ({ valid }) => setValid(valid))
