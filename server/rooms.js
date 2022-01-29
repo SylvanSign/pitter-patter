@@ -1,8 +1,6 @@
 import fs from 'fs'
 
-const rooms =
-  fs.readFileSync('./server/rooms.txt', 'utf8')
-    .split('\n').slice(0, 1) // TODO remove
+const rooms = fs.readFileSync('./server/rooms.txt', 'utf8').split('\n')
 if (rooms[rooms.length - 1] === '') {
   rooms.pop()
 }
