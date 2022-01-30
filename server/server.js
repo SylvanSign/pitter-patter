@@ -1,3 +1,4 @@
+import fetch from 'node-fetch'
 import { Server, Origins } from 'boardgame.io/server'
 import path from 'path'
 import serve from 'koa-static'
@@ -72,11 +73,36 @@ io.on('connection', socket => {
         socket.to(room).emit('update-map', { map })
     })
 
-    socket.on('start', () => {
+    socket.on('start', async () => {
         const { room } = socket.data
-        io.in(room).emit('start', { map: innKeeper.map(room) })
+        const map = innKeeper.map(room)
+        const numPlayers = innKeeper.size(room)
+
+        // TODO prevent same room from creating duplicate matches
+        const { matchID } = await createMatch({
+            numPlayers,
+            // TODO setupData may eventually carry rules changes like items, abilities, houserules, etc.
+            setupData: {
+                map,
+            },
+            unlisted: true,
+        })
+        io.in(room).emit('start', {
+            matchID,
+        })
     })
 })
+
+async function createMatch(data) {
+    const response = await fetch('http://localhost:8000/games/pp/create', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
+    })
+    return response.json()
+}
 
 async function join(socket, name, room, id) {
     if (!id) {

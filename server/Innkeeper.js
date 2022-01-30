@@ -68,6 +68,10 @@ export default class InnKeeper {
     return [...this.stuff(room).values()]
   }
 
+  size(room) {
+    return this.stuff(room).size
+  }
+
   map(room) {
     return this._stuff.get(room).map
   }
