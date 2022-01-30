@@ -45,7 +45,7 @@ export default function Map({ G, playerID, moves, grid, fullGrid, Grid, corners,
           close()
         } else if (!!self.reachable.find(r => r.id === hex.id)) { // reachable
           setModal({ id: hex.id, comp: <Modal {...{ self, moves, hex, fullGrid, close, setNotes, }} /> })
-        } else if (!modal.id) {
+        } else if (!modal.id && typeof hex.type !== 'number') {
           // quick notes
           setNotes(notes => {
             return { ...notes, [hex.id]: !notes[hex.id] }

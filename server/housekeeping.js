@@ -18,5 +18,5 @@ export default function housekeeping(db) {
   }
 
   // Schedule clean-up.
-  setInterval(cleanStaleMatches, 20_000); // TODO should be day
+  setInterval(cleanStaleMatches, 120_000); // TODO should be day
 }
