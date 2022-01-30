@@ -65,16 +65,23 @@ io.on('connection', socket => {
         else
             socket.emit('invalid-room')
     })
+
+    socket.on('map-change', ({ map }) => {
+        const room = socket.data.room
+        innKeeper.updateMap(room, map)
+        socket.to(room).emit('update-map', { map })
+    })
 })
 
 async function join(socket, name, room, id) {
     if (!id) {
         id = randomUUID()
     }
-    const data = { name, id }
+    const data = { name, id, room }
     socket.data = data
     innKeeper.checkin(data, room)
     socket.join(room)
     socket.emit('joined', { room, id })
-    io.in(room).emit('update', { data: innKeeper.stuffs(room) })
+    io.in(room).emit('update-players', { players: innKeeper.stuffs(room) })
+    socket.emit('update-map', { map: innKeeper.map(room) })
 }
