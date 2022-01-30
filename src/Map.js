@@ -43,8 +43,15 @@ export default function Map({ G, playerID, moves, grid, fullGrid, Grid, corners,
       if (hex && hex.accessible && !G.escapes[hex.type]) {
         if (hex.id === modal.id) { // clicking already open hex will close it
           close()
-        } else {
+        } else if (!!self.reachable.find(r => r.id === hex.id)) { // reachable
           setModal({ id: hex.id, comp: <Modal {...{ self, moves, hex, fullGrid, close, setNotes, }} /> })
+        } else if (!modal.id) {
+          // quick notes
+          setNotes(notes => {
+            return { ...notes, [hex.id]: !notes[hex.id] }
+          })
+        } else {
+          close() // if modal is already open, let it close before taking quick notes
         }
       } else {
         close()
