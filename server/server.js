@@ -37,7 +37,7 @@ io.on('connection', socket => {
     socket.data = {}
 
     const handleDisconnect = () => {
-        const id = socket.data.id
+        const { id } = socket.data
         console.log(`Socket ${id} disconnected`)
         const room = innKeeper.room(id)
         innKeeper.checkout(id)
@@ -67,9 +67,14 @@ io.on('connection', socket => {
     })
 
     socket.on('map-change', ({ map }) => {
-        const room = socket.data.room
+        const { room } = socket.data
         innKeeper.updateMap(room, map)
         socket.to(room).emit('update-map', { map })
+    })
+
+    socket.on('start', () => {
+        const { room } = socket.data
+        io.in(room).emit('start', { map: innKeeper.map(room) })
     })
 })
 

@@ -34,13 +34,27 @@ function Lobby({ socket, room }) {
     const [map, setMap] = useState(Object.keys[0])
     const enoughPlayers = players.length > 1
 
+    const startGame = () => {
+        socket.emit('start')
+    }
+
+    useEffect(() => {
+        socket.once('start', ({ map }) => {
+            alert(`starting on map ${map}`)
+        })
+
+        return () => {
+            socket.off('start')
+        }
+    }, [socket])
+
     return (
         <>
             <h1>{room}</h1>
             <MapSelector socket={socket} map={map} setMap={setMap} />
             {' '}
             <label htmlFor="startButton">REQUIRES AT LEAST 2 PLAYERS</label>
-            <button id='startButton' disabled={!enoughPlayers}>START GAME</button>
+            <button id='startButton' disabled={!enoughPlayers} onClick={startGame}>START GAME</button>
             <ul>
                 {players.map(p => <li key={p.id}>{p.name}</li>)}
             </ul>
