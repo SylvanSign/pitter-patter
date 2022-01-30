@@ -41,7 +41,7 @@ function Lobby({ socket, room, name, setCredentials, setPlayerID, setMatchID }) 
     useRoomLeaverNotifier(socket)
     const players = usePlayersUpdater(socket)
     const [map, setMap] = useState(Object.keys[0])
-    const enoughPlayers = players.length > 1
+    const enoughPlayers = players.length > 0 // TODO should be > 1
 
     const startGame = () => {
         socket.emit('start')

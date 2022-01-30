@@ -3,7 +3,7 @@ import gridGenerator from './maps/gridGenerator'
 import MAPS from './maps'
 import { HEX_TYPES, idToCartesian, reachableHexes } from './maps/util'
 
-const [map, mapConfig] = Object.entries(MAPS)[2] // TODO make this selectable (from setupData?)
+const [map, mapConfig] = Object.entries(MAPS)[0] // TODO make this selectable (from setupData?)
 export const gridData = gridGenerator(map)
 
 function makeSerializable(data) {
@@ -17,7 +17,7 @@ function makeSerializable(data) {
 // TODO generally, remove all console.logs
 const Game = {
   name: 'pp',
-  minPlayers: 2,
+  minPlayers: 1, // TODO should be 2
   maxPlayers: 8,
   setup(ctx, /*{ map }*/) {
     // const mapConfig = MAPS[map]
