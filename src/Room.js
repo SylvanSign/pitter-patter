@@ -5,8 +5,10 @@ import {
     useNavigate,
     useLocation,
 } from "react-router-dom"
+import { useSessionStorageState } from './hooks'
 import { LobbyClient } from 'boardgame.io/client'
 import MAPS from './maps'
+import App from './App'
 
 
 const lobbyClient = new LobbyClient({ server: `http://${window.location.hostname}:8000` })
@@ -14,6 +16,7 @@ window.l = lobbyClient // TODO remove
 
 export default function Room({ socket, id, setId, name }) {
     const [valid, room] = useRoomVerifier(socket, name, id, setId)
+    const [creds, setCreds] = useSessionStorageState('creds')
 
     switch (valid) {
         case undefined:
@@ -21,14 +24,18 @@ export default function Room({ socket, id, setId, name }) {
         case false:
             return <Navigate to={'/'} state={room} />
         case true:
-            return <Lobby socket={socket} room={room} />
+            if (creds) {
+                return <App />
+            } else {
+                return <Lobby socket={socket} room={room} name={name} setCreds={setCreds} />
+            }
         default:
             throw new Error(`Unexpected state for 'valid': ${valid}`)
 
     }
 }
 
-function Lobby({ socket, room }) {
+function Lobby({ socket, room, name, setCreds }) {
     useRoomLeaverNotifier(socket)
     const players = usePlayersUpdater(socket)
     const [map, setMap] = useState(Object.keys[0])
@@ -39,14 +46,19 @@ function Lobby({ socket, room }) {
     }
 
     useEffect(() => {
-        socket.once('start', ({ map }) => {
-            alert(`starting on map ${map}`)
+        socket.once('start', async ({ map, matchID }) => {
+            const foo = await lobbyClient.joinMatch('pp', matchID, {
+                playerName: name,
+            })
+            const { playerCredentials } = foo
+            console.log(JSON.stringify(foo))
+            setCreds(playerCredentials)
         })
 
         return () => {
             socket.off('start')
         }
-    }, [socket])
+    }, [socket, setCreds, name])
 
     return (
         <>

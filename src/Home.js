@@ -8,6 +8,7 @@ import {
     useLocation,
 } from "react-router-dom"
 import Room from './Room'
+import { useSessionStorageState } from './hooks'
 import { io } from 'socket.io-client'
 
 const socket = io(`http://${window.location.hostname}:8001`)
@@ -155,19 +156,4 @@ function BaseNameSelector({ setName, afterSubmit = () => { } }) {
             </form>
         </>
     )
-}
-
-function useSessionStorageState(key) {
-    const [state, setState] = useState(sessionStorage.getItem(key))
-    const setterWithStorage = arg => {
-        let updatedState;
-        if (typeof state === 'function') {
-            updatedState = arg(state);
-        } else {
-            updatedState = arg;
-        }
-        sessionStorage.setItem(key, updatedState);
-        setState(updatedState);
-    }
-    return [state, setterWithStorage]
 }
