@@ -30,29 +30,41 @@ export default function Room({ socket, id, setId, name }) {
 
 function Lobby({ socket, room }) {
     useRoomLeaverNotifier(socket)
-    const lobby = useLobbyUpdater(socket)
+    const players = usePlayersUpdater(socket)
     const [map, setMap] = useState(Object.keys[0])
-    const enoughPlayers = lobby.length > 1
+    const enoughPlayers = players.length > 1
 
     return (
         <>
             <h1>{room}</h1>
-            <MapSelector map={map} setMap={setMap} />
+            <MapSelector socket={socket} map={map} setMap={setMap} />
             {' '}
             <label htmlFor="startButton">REQUIRES AT LEAST 2 PLAYERS</label>
             <button id='startButton' disabled={!enoughPlayers}>START GAME</button>
             <ul>
-                {lobby.map(p => <li key={p.id}>{p.name}</li>)}
+                {players.map(p => <li key={p.id}>{p.name}</li>)}
             </ul>
         </>
     )
 }
 
-function MapSelector({ map, setMap }) {
+function MapSelector({ socket, map, setMap }) {
     const options = Object.entries(MAPS).map(([name, _]) => <option key={name} value={name}>{name}</option>)
 
+    useEffect(() => {
+        socket.on('update-map', ({ map }) => {
+            setMap(map)
+        })
+
+        return () => {
+            socket.off('update-map')
+        }
+    }, [socket, setMap])
+
     function onChange(e) {
-        setMap(e.target.value)
+        const map = e.target.value
+        setMap(map)
+        socket.emit('map-change', { map })
     }
 
     return (
@@ -112,19 +124,19 @@ function useRoomLeaverNotifier(socket) {
     useEffect(() => () => { socket.emit('left-room') }, [socket])
 }
 
-function useLobbyUpdater(socket) {
-    const [lobby, setLobby] = useState([])
+function usePlayersUpdater(socket) {
+    const [players, setPlayers] = useState([])
 
     useEffect(() => {
-        socket.on('update', ({ data }) => {
+        socket.on('update-players', ({ players }) => {
             console.log('update was called')
-            setLobby(data)
+            setPlayers(players)
         })
 
         return () => {
-            socket.off('update')
+            socket.off('update-players')
         }
-    }, [socket, setLobby])
+    }, [socket, setPlayers])
 
-    return lobby
+    return players
 }

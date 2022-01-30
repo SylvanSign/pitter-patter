@@ -12,7 +12,8 @@ export default class InnKeeper {
     if (!this._stuff.has(room)) {
       this._stuff.set(room, {
         connected: new Set(),
-        data: new Map()
+        data: new Map(),
+        map: undefined, // TODO do we need to initialize this?
       })
     }
     const roomStuff = this._stuff.get(room)
@@ -65,5 +66,13 @@ export default class InnKeeper {
 
   stuffs(room) {
     return [...this.stuff(room).values()]
+  }
+
+  map(room) {
+    return this._stuff.get(room).map
+  }
+
+  updateMap(room, map) {
+    this._stuff.get(room).map = map
   }
 }
