@@ -8,6 +8,7 @@ import Game from '../src/Game'
 import { getRoom } from './rooms'
 import { randomUUID } from 'crypto'
 import InnKeeper from './Innkeeper'
+import housekeeping from './housekeeping'
 
 const server = Server({
     games: [Game],
@@ -19,6 +20,7 @@ const server = Server({
 // Build path relative to the server.js file
 server.app.use(serve(path.resolve(__dirname, '../build')))
 server.run(process.env.SERVER_PORT || 8000);
+housekeeping(server.db) // wipe stale games each day
 
 // Lobby management before games start
 const io = new SocketIOServer({
