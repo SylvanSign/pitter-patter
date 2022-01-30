@@ -18,6 +18,7 @@ export default function Room({ socket, id, setId, name }) {
     const [valid, room] = useRoomVerifier(socket, name, id, setId)
     const [credentials, setCredentials] = useSessionStorageState('credentials')
     const [playerID, setPlayerID] = useSessionStorageState('playerID')
+    const [matchID, setMatchID] = useSessionStorageState('playerID')
 
     switch (valid) {
         case undefined:
@@ -26,9 +27,9 @@ export default function Room({ socket, id, setId, name }) {
             return <Navigate to={'/'} state={room} />
         case true:
             if (credentials && playerID) {
-                return <App playerID={playerID} credentials={credentials} />
+                return <App playerID={playerID} credentials={credentials} matchID={matchID} />
             } else {
-                return <Lobby socket={socket} room={room} name={name} setCredentials={setCredentials} setPlayerID={setPlayerID} />
+                return <Lobby socket={socket} room={room} name={name} setCredentials={setCredentials} setPlayerID={setPlayerID} setMatchID={setMatchID} />
             }
         default:
             throw new Error(`Unexpected state for 'valid': ${valid}`)
@@ -36,7 +37,7 @@ export default function Room({ socket, id, setId, name }) {
     }
 }
 
-function Lobby({ socket, room, name, setCredentials, setPlayerID }) {
+function Lobby({ socket, room, name, setCredentials, setPlayerID, setMatchID }) {
     useRoomLeaverNotifier(socket)
     const players = usePlayersUpdater(socket)
     const [map, setMap] = useState(Object.keys[0])
@@ -51,14 +52,16 @@ function Lobby({ socket, room, name, setCredentials, setPlayerID }) {
             const { playerID, playerCredentials } = await lobbyClient.joinMatch('pp', matchID, {
                 playerName: name,
             })
+            console.log(`Joining matchID ${matchID}`)
             setCredentials(playerCredentials)
             setPlayerID(playerID)
+            setMatchID(matchID)
         })
 
         return () => {
             socket.off('start')
         }
-    }, [socket, setCredentials, setPlayerID, name])
+    }, [socket, setCredentials, setPlayerID, setMatchID, name])
 
     return (
         <>
