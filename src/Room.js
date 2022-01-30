@@ -16,7 +16,8 @@ window.l = lobbyClient // TODO remove
 
 export default function Room({ socket, id, setId, name }) {
     const [valid, room] = useRoomVerifier(socket, name, id, setId)
-    const [creds, setCreds] = useSessionStorageState('creds')
+    const [credentials, setCredentials] = useSessionStorageState('credentials')
+    const [playerID, setPlayerID] = useSessionStorageState('playerID')
 
     switch (valid) {
         case undefined:
@@ -24,10 +25,10 @@ export default function Room({ socket, id, setId, name }) {
         case false:
             return <Navigate to={'/'} state={room} />
         case true:
-            if (creds) {
-                return <App />
+            if (credentials && playerID) {
+                return <App playerID={playerID} credentials={credentials} />
             } else {
-                return <Lobby socket={socket} room={room} name={name} setCreds={setCreds} />
+                return <Lobby socket={socket} room={room} name={name} setCredentials={setCredentials} setPlayerID={setPlayerID} />
             }
         default:
             throw new Error(`Unexpected state for 'valid': ${valid}`)
@@ -35,7 +36,7 @@ export default function Room({ socket, id, setId, name }) {
     }
 }
 
-function Lobby({ socket, room, name, setCreds }) {
+function Lobby({ socket, room, name, setCredentials, setPlayerID }) {
     useRoomLeaverNotifier(socket)
     const players = usePlayersUpdater(socket)
     const [map, setMap] = useState(Object.keys[0])
@@ -47,18 +48,17 @@ function Lobby({ socket, room, name, setCreds }) {
 
     useEffect(() => {
         socket.once('start', async ({ map, matchID }) => {
-            const foo = await lobbyClient.joinMatch('pp', matchID, {
+            const { playerID, playerCredentials } = await lobbyClient.joinMatch('pp', matchID, {
                 playerName: name,
             })
-            const { playerCredentials } = foo
-            console.log(JSON.stringify(foo))
-            setCreds(playerCredentials)
+            setCredentials(playerCredentials)
+            setPlayerID(playerID)
         })
 
         return () => {
             socket.off('start')
         }
-    }, [socket, setCreds, name])
+    }, [socket, setCredentials, setPlayerID, name])
 
     return (
         <>
