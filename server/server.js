@@ -12,10 +12,7 @@ import housekeeping from './housekeeping'
 
 const server = Server({
     games: [Game],
-    origins: [
-        '*',
-        Origins.LOCALHOST_IN_DEVELOPMENT,
-    ],
+    origins: [/.*/],
 })
 // Build path relative to the server.js file
 server.app.use(serve(path.resolve(__dirname, '../build')))
@@ -25,10 +22,7 @@ housekeeping(server.db) // wipe stale games each day
 // Lobby management before games start
 const io = new SocketIOServer({
     cors: {
-        origins: [
-            '*',
-            Origins.LOCALHOST_IN_DEVELOPMENT,
-        ],
+        origins: [/.*/],
     },
 })
 io.listen(process.env.SOCKET_IO_SERVER_PORT || 8001)
