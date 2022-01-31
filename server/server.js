@@ -34,10 +34,9 @@ io.on('connection', socket => {
     socket.data = {}
 
     const handleDisconnect = () => {
-        const { id } = socket.data
+        const { id, room } = socket.data
         console.log(`Socket ${id} disconnected`)
-        const room = innKeeper.room(id)
-        innKeeper.checkout(id)
+        innKeeper.checkout(id, room)
         if (room) {
             io.in(room).emit('update', { data: innKeeper.stuffs(room) })
         }
@@ -104,11 +103,10 @@ async function join(socket, name, room, id) {
     if (!id) {
         id = randomUUID()
     }
-    const data = { name, id, room }
-    socket.data = data
-    innKeeper.checkin(data, room)
+    socket.data = { name, id, room }
+    innKeeper.checkin({ name, id }, room)
     socket.join(room)
-    socket.emit('joined', { room, id })
+    socket.emit('joined', { room, id, matchID: innKeeper.matchID(room) })
     io.in(room).emit('update-players', { players: innKeeper.stuffs(room) })
     socket.emit('update-map', { map: innKeeper.map(room) })
 }

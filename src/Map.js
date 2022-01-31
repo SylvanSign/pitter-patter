@@ -72,10 +72,9 @@ export default function Map({ G, playerID, moves, grid, fullGrid, Grid, corners,
   })
 
   const points = corners.map(({ x, y }) => `${x},${y}`).join(' ')
-  console.log(`viewbox: ${fullGrid.pointWidth()} ${fullGrid.pointHeight()}`)
   return (
     // TODO remove these debugging styles
-    <svg style={{ border: '3px dotted white' }} id={`map${playerID}`} onClick={onClick} viewBox={`0 0 ${fullGrid.pointWidth()} ${fullGrid.pointHeight()}`}>
+    <svg style={{ border: '1px dotted white' }} id={`map${playerID}`} onClick={onClick} viewBox={`0 0 ${fullGrid.pointWidth()} ${fullGrid.pointHeight()}`}>
       <defs>
         <symbol id='hex'>
           <polygon points={points} stroke='grey' strokeWidth='2' />
