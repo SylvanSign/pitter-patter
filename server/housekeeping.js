@@ -7,7 +7,7 @@ export default function housekeeping(db) {
     // Retrieve matchIDs for matches unchanged for > 1 week.
     const staleMatchIDs = await db.listMatches({
       where: {
-        updatedBefore: Date.now(), //TODO should be dayAgo
+        updatedBefore: dayAgo,
       },
     });
     // Delete matches one-by-one. Could also use a queue or parallel system here.
@@ -18,5 +18,5 @@ export default function housekeeping(db) {
   }
 
   // Schedule clean-up.
-  setInterval(cleanStaleMatches, 120_000); // TODO should be day
+  setInterval(cleanStaleMatches, day);
 }

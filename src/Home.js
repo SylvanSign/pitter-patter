@@ -46,19 +46,14 @@ function Landing({ name, setName, setId }) {
         return <BaseNameSelector setName={setName} />
     }
 
-    return (
-        <main className="container">
-            <ErrorMsg error={location.state} />
-            <GameSelector name={name} setId={setId} />
-        </main>
-    )
+    return <GameSelector name={name} setId={setId} />
 }
 
-function Join({ id, name }) {
+function Join() {
     const nav = useNavigate()
     const roomRef = useRef()
-    const [error, setError] = useState()
     const [disabled, setDisabled] = useState(false)
+    const location = useLocation();
 
     // remove socket listeners on unmount
     useEffect(() => () => { socket.off('room-check') }, [])
@@ -67,21 +62,12 @@ function Join({ id, name }) {
         e.preventDefault()
         setDisabled(true)
         const room = roomRef.current.value.toUpperCase()
-        socket.emit('room-check', { room, id, name })
-        socket.once('room-check', ({ valid }) => {
-            if (valid) {
-                nav(`/rooms/${room}`, { state: true }) // true meaning already verified the room
-            } else {
-                setError(room)
-                setDisabled(false)
-                roomRef.current.select()
-            }
-        })
+        nav(`/rooms/${room}`) // true meaning already verified the room
     }
 
     return (
         <main className='container'>
-            <ErrorMsg error={error} />
+            <ErrorMsg error={location.state} />
             <h2>Join Room</h2>
             <form onSubmit={onSubmit}>
                 <input autoCapitalize="none" autoComplete="off" autoCorrect="off" id="form_name"
