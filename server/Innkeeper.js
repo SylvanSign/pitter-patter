@@ -1,7 +1,8 @@
 export default class InnKeeper {
-  constructor() {
+  constructor(db) {
     this._stuff = new Map()
     this._timeoutRefs = new Map()
+    this._db = db
   }
 
   checkin(stuff, room) {
@@ -36,11 +37,14 @@ export default class InnKeeper {
       // TODO also cleanup other room resources like the associated Boardgame.io Game?
       clearTimeout(this._timeoutRefs.get(room))
 
-      const ref = setTimeout(() => {
+      const ref = setTimeout(async () => {
         console.log(`checking on ${room}`)
         if (!connected.size) {
-          console.log(`deleting ${room}`)
+          const matchID = this.matchID(room)
+          console.log(`deleting ${room} and matchID ${matchID}`)
           this._stuff.delete(room)
+          await this._db.wipe(matchID)
+          console.log('wipe complete')
         }
         this._timeoutRefs.delete(room)
       }, 10_000)
