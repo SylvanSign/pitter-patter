@@ -1,22 +1,22 @@
 import { useEffect, useState } from "react"
 import {
     Navigate,
-    useParams,
     useNavigate,
-    useLocation,
+    useParams,
 } from "react-router-dom"
 import { useSessionStorageState } from './hooks'
 import { LobbyClient } from 'boardgame.io/client'
 import MAPS from './maps'
 import App from './App'
+import socket from './io'
 
 
 const lobbyClient = new LobbyClient({ server: `http://${window.location.hostname}:8000` })
 window.l = lobbyClient // TODO remove
 
-export default function Room({ socket, id, setId, name }) {
+export default function Room({ id, setId, name }) {
     const [matchID, setMatchID] = useState()
-    const [valid, room] = useRoomVerifier(socket, name, id, setId, setMatchID)
+    const [valid, room] = useRoomVerifier(name, id, setId, setMatchID)
     const [credentials, setCredentials] = useSessionStorageState('credentials')
     const [playerID, setPlayerID] = useSessionStorageState('playerID')
 
@@ -24,12 +24,13 @@ export default function Room({ socket, id, setId, name }) {
         case undefined:
             return null
         case false:
+            alert('yo!')
             return <Navigate to={'/join'} state={room} />
         case true:
             if (matchID && credentials && playerID) {
                 return <App playerID={playerID} credentials={credentials} matchID={matchID} />
             } else {
-                return <Lobby socket={socket} room={room} name={name} setCredentials={setCredentials} setPlayerID={setPlayerID} setMatchID={setMatchID} />
+                return <Lobby room={room} name={name} setCredentials={setCredentials} setPlayerID={setPlayerID} setMatchID={setMatchID} />
             }
         default:
             throw new Error(`Unexpected state for 'valid': ${valid}`)
@@ -37,9 +38,9 @@ export default function Room({ socket, id, setId, name }) {
     }
 }
 
-function Lobby({ socket, room, name, setCredentials, setPlayerID, setMatchID }) {
-    useRoomLeaverNotifier(socket)
-    const players = usePlayersUpdater(socket)
+function Lobby({ room, name, setCredentials, setPlayerID, setMatchID }) {
+    const disableRoomLeaveNotifier = useRoomLeaverNotifier()
+    const players = usePlayersUpdater()
     const [map, setMap] = useState(Object.keys(MAPS)[0])
     const enoughPlayers = players.length > 1
 
@@ -56,17 +57,18 @@ function Lobby({ socket, room, name, setCredentials, setPlayerID, setMatchID }) 
             setCredentials(playerCredentials)
             setPlayerID(playerID)
             setMatchID(matchID)
+            disableRoomLeaveNotifier()
         })
 
         return () => {
             socket.off('start')
         }
-    }, [socket, setCredentials, setPlayerID, setMatchID, name])
+    }, [setCredentials, setPlayerID, setMatchID, name])
 
     return (
         <>
             <h1>{room}</h1>
-            <MapSelector socket={socket} map={map} setMap={setMap} />
+            <MapSelector map={map} setMap={setMap} />
             {' '}
             <label htmlFor="startButton">REQUIRES AT LEAST 2 PLAYERS</label>
             <button id='startButton' disabled={!enoughPlayers} onClick={startGame}>START GAME</button>
@@ -77,7 +79,7 @@ function Lobby({ socket, room, name, setCredentials, setPlayerID, setMatchID }) 
     )
 }
 
-function MapSelector({ socket, map, setMap }) {
+function MapSelector({ map, setMap }) {
     const options = Object.entries(MAPS).map(([name, _]) => <option key={name} value={name}>{name}</option>)
 
     useEffect(() => {
@@ -88,7 +90,7 @@ function MapSelector({ socket, map, setMap }) {
         return () => {
             socket.off('update-map')
         }
-    }, [socket, setMap])
+    }, [setMap])
 
     function onChange(e) {
         const map = e.target.value
@@ -107,7 +109,8 @@ function MapSelector({ socket, map, setMap }) {
     )
 }
 
-function useRoomVerifier(socket, name, id, setId, setMatchID) {
+function useRoomVerifier(name, id, setId, setMatchID) {
+    const nav = useNavigate()
     const [valid, setValid] = useState()
     let { room } = useParams()
     room = room.toUpperCase()
@@ -115,27 +118,38 @@ function useRoomVerifier(socket, name, id, setId, setMatchID) {
     useEffect(() => {
         socket.emit('room-check', { room, id, name })
         socket.once('room-check', ({ valid }) => {
-            setValid(valid)
             socket.emit('join', { name, room, id })
-            socket.once('joined', ({ room, id, matchID }) => {
+            socket.once('joined', ({ id, matchID }) => {
+                console.log(`YIKERSSSS ${matchID}`)
                 setId(id)
+                setValid(valid)
                 setMatchID(matchID)
+            })
+            socket.once('invalid-room', () => {
+                nav("/join", { state: room })
             })
         })
         return () => {
             socket.off('room-check')
             socket.off('joined')
+            socket.off('invalid-room')
         }
-    }, [socket, name, room, id, setId, setMatchID])
+    }, [name, room, id, setId, setMatchID])
 
     return [valid, room]
 }
 
-function useRoomLeaverNotifier(socket) {
-    useEffect(() => () => { socket.emit('left-room') }, [socket])
+function useRoomLeaverNotifier() {
+    const [disabled, setDisabled] = useState(false)
+    useEffect(() => () => {
+        if (disabled)
+            socket.emit('left-room')
+    }, [disabled])
+
+    return () => setDisabled(true)
 }
 
-function usePlayersUpdater(socket) {
+function usePlayersUpdater() {
     const [players, setPlayers] = useState([])
 
     useEffect(() => {
@@ -147,7 +161,7 @@ function usePlayersUpdater(socket) {
         return () => {
             socket.off('update-players')
         }
-    }, [socket, setPlayers])
+    }, [setPlayers])
 
     return players
 }
