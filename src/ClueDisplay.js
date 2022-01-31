@@ -19,7 +19,7 @@ export default function ClueDisplay({ G: { round, clue, promptNoise, }, ctx: { c
   // }, [clue, round]) // depend on round to use effect even when clue stays same between rounds (eg. 2 silent sectors in a row)
 
   return (
-    <h2>{text}</h2>
+    <h2 className="centered">{text}</h2>
   )
 }
 

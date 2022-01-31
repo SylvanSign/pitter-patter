@@ -1,19 +1,19 @@
 export default class InnKeeper {
   constructor() {
-    this._rooms = new Map()
     this._stuff = new Map()
     this._timeoutRefs = new Map()
   }
 
   checkin(stuff, room) {
     const { id } = stuff
-    this._rooms.set(id, room)
 
     if (!this._stuff.has(room)) {
       this._stuff.set(room, {
         connected: new Set(),
         data: new Map(),
-        map: undefined, // TODO do we need to initialize this?
+        // TODO do we need to initialize these?
+        matchID: undefined,
+        map: undefined,
       })
     }
     const roomStuff = this._stuff.get(room)
@@ -21,12 +21,9 @@ export default class InnKeeper {
     roomStuff.data.set(id, stuff)
   }
 
-  checkout(id) {
-    if (!id)
+  checkout(id, room) {
+    if (!(id && room))
       return
-
-    const room = this._rooms.get(id)
-    this._rooms.delete(id) // TODO?
 
     const stuff = this._stuff.get(room)
     if (!stuff)
@@ -52,10 +49,6 @@ export default class InnKeeper {
     }
   }
 
-  room(id) {
-    return this._rooms.get(id)
-  }
-
   open(room) {
     return this._stuff.has(room)
   }
@@ -78,5 +71,13 @@ export default class InnKeeper {
 
   updateMap(room, map) {
     this._stuff.get(room).map = map
+  }
+
+  matchID(room) {
+    return this._stuff.get(room).matchID
+  }
+
+  setMatchID(room, matchID) {
+    this._stuff.get(room).matchID = matchID
   }
 }

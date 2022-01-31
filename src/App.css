@@ -1,13 +1,17 @@
 svg {
   user-select: none;
   width: 100vw;
-  /* height: 100vh; */
+  height: 80vh;
 }
 
 h1,h2,h3,h4,h5,h6 {
-  text-align: center;
-  height: 10vh;
+  /* text-align: center; */
+  /* height: 10vh; */
   margin: 0;
+}
+
+.centered {
+  text-align: center;
 }
 
 text.danger, text.silent {

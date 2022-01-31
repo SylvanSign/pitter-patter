@@ -42,15 +42,15 @@ export default function Home() {
 
 function Landing({ name, setName, setId }) {
     const location = useLocation();
-
     if (!name) {
         return <BaseNameSelector setName={setName} />
     }
+
     return (
-        <>
+        <main className="container">
             <ErrorMsg error={location.state} />
             <GameSelector name={name} setId={setId} />
-        </>
+        </main>
     )
 }
 
@@ -80,7 +80,7 @@ function Join({ id, name }) {
     }
 
     return (
-        <>
+        <main className='container'>
             <ErrorMsg error={error} />
             <h2>Join Room</h2>
             <form onSubmit={onSubmit}>
@@ -91,7 +91,7 @@ function Join({ id, name }) {
                     ref={roomRef} />
                 <button type="submit" disabled={disabled}>SUBMIT</button>
             </form>
-        </>
+        </main>
     )
 }
 
@@ -119,12 +119,12 @@ function GameSelector({ name, setId }) {
     }
 
     return (
-        <>
+        <main className='container'>
             <h2>Welcome, {name} <sup>(<a href='/' onClick={onClickNameChange}>change</a>)</sup></h2>
             <button onClick={onClickJoinGame}>JOIN GAME</button>
             {' '}
             <button className="button-outline" onClick={onClickNewGame}>NEW GAME</button>
-        </>
+        </main>
     )
 }
 
@@ -144,7 +144,7 @@ function BaseNameSelector({ setName, afterSubmit = () => { } }) {
     }
 
     return (
-        <>
+        <main className="container">
             <h2>Enter a name</h2>
             <form onSubmit={onSubmit}>
                 <input autoCapitalize="none" autoComplete="off" autoCorrect="off" id="form_name"
@@ -154,6 +154,6 @@ function BaseNameSelector({ setName, afterSubmit = () => { } }) {
                     ref={nameRef} />
                 <button type="submit">SUBMIT</button>
             </form>
-        </>
+        </main>
     )
 }

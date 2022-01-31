@@ -15,10 +15,10 @@ const lobbyClient = new LobbyClient({ server: `http://${window.location.hostname
 window.l = lobbyClient // TODO remove
 
 export default function Room({ socket, id, setId, name }) {
-    const [valid, room] = useRoomVerifier(socket, name, id, setId)
+    const [matchID, setMatchID] = useState()
+    const [valid, room] = useRoomVerifier(socket, name, id, setId, setMatchID)
     const [credentials, setCredentials] = useSessionStorageState('credentials')
     const [playerID, setPlayerID] = useSessionStorageState('playerID')
-    const [matchID, setMatchID] = useSessionStorageState('playerID')
 
     switch (valid) {
         case undefined:
@@ -107,7 +107,7 @@ function MapSelector({ socket, map, setMap }) {
     )
 }
 
-function useRoomVerifier(socket, name, id, setId) {
+function useRoomVerifier(socket, name, id, setId, setMatchID) {
     const nav = useNavigate()
     const location = useLocation();
     const alreadyVerified = location.state || undefined
@@ -118,9 +118,10 @@ function useRoomVerifier(socket, name, id, setId) {
     useEffect(() => {
         if (alreadyVerified) {
             socket.emit('join', { name, room, id })
-            socket.once('joined', ({ room, id }) => {
+            socket.once('joined', ({ room, id, matchID }) => {
                 sessionStorage.setItem('room', room)
                 setId(id)
+                setMatchID(matchID)
             })
             socket.once('invalid-room', () => {
                 nav("/", { state: room })
@@ -134,9 +135,10 @@ function useRoomVerifier(socket, name, id, setId) {
             socket.once('room-check', ({ valid }) => {
                 setValid(valid)
                 socket.emit('join', { name, room, id })
-                socket.once('joined', ({ room, id }) => {
+                socket.once('joined', ({ room, id, matchID }) => {
                     sessionStorage.setItem('room', room)
                     setId(id)
+                    setMatchID(matchID)
                 })
             })
             return () => {
@@ -144,7 +146,7 @@ function useRoomVerifier(socket, name, id, setId) {
                 socket.off('joined')
             }
         }
-    }, [socket, name, alreadyVerified, room, id, setId, nav])
+    }, [socket, name, alreadyVerified, room, id, setId, setMatchID, nav])
 
     return [valid, room]
 }
