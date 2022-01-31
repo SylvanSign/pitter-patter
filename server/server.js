@@ -74,6 +74,7 @@ io.on('connection', socket => {
         const map = innKeeper.map(room)
         const numPlayers = innKeeper.size(room)
 
+        console.log(`>>> Should be map ${map}`)
         // TODO prevent same room from creating duplicate matches
         const { matchID } = await createMatch({
             numPlayers,

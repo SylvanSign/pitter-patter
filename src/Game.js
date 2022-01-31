@@ -17,10 +17,10 @@ function makeSerializable(data) {
 // TODO generally, remove all console.logs
 const Game = {
   name: 'pp',
-  minPlayers: 2,
+  minPlayers: 1, // TODO should be 2
   maxPlayers: 8,
-  setup(ctx, /*{ map }*/) {
-    // const mapConfig = MAPS[map]
+  setup(ctx, { map }) {
+    const mapConfig = MAPS[map]
     const humanHex = gridData.grid.get(idToCartesian(mapConfig[HEX_TYPES.human]))
     const alienHex = gridData.grid.get(idToCartesian(mapConfig[HEX_TYPES.alien]))
 

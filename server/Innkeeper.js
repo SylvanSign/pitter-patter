@@ -1,3 +1,5 @@
+import MAPS from '../src/maps'
+
 export default class InnKeeper {
   constructor(db) {
     this._stuff = new Map()
@@ -14,7 +16,7 @@ export default class InnKeeper {
         data: new Map(),
         // TODO do we need to initialize these?
         matchID: undefined,
-        map: undefined,
+        map: Object.keys(MAPS)[0],
       })
     }
     const roomStuff = this._stuff.get(room)
