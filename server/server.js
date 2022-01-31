@@ -27,7 +27,7 @@ const io = new SocketIOServer({
 })
 io.listen(process.env.SOCKET_IO_SERVER_PORT || 8001)
 
-const innKeeper = new InnKeeper()
+const innKeeper = new InnKeeper(server.db)
 
 io.on('connection', socket => {
     console.log(`Socket ${socket.id} connected`)
