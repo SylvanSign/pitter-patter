@@ -43,8 +43,8 @@ export default class InnKeeper {
           const matchID = this.matchID(room)
           console.log(`deleting ${room} and matchID ${matchID}`)
           this._stuff.delete(room)
-          await this._db.wipe(matchID)
-          console.log('wipe complete')
+          if (matchID)
+            await this._db.wipe(matchID)
         }
         this._timeoutRefs.delete(room)
       }, 10_000)
@@ -54,7 +54,7 @@ export default class InnKeeper {
   }
 
   open(room) {
-    return this._stuff.has(room)
+    return this._stuff.has(room) && !this.matchID(room)
   }
 
   stuff(room) {
