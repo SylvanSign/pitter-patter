@@ -34,10 +34,11 @@ io.on('connection', socket => {
     socket.data = {}
 
     const handleDisconnect = () => {
-        const { id, room } = socket.data
+        const { id, name, room } = socket.data
         console.log(`Socket ${id} disconnected`)
         innKeeper.checkout(id, room)
         if (room) {
+            console.log(`${name} disconnected with room ${room}`)
             io.in(room).emit('update', { data: innKeeper.stuffs(room) })
         }
     }
@@ -46,8 +47,8 @@ io.on('connection', socket => {
     socket.on('left-room', handleDisconnect)
 
     socket.on('room-check', ({ room, name, id }) => {
-        console.log(`Room check for ${room} ${name} ${id}`)
         const valid = innKeeper.open(room)
+        console.log(`Room check for ${room} ${name} ${id} is ${valid}`)
         socket.emit('room-check', { valid })
     })
 
@@ -82,6 +83,7 @@ io.on('connection', socket => {
             },
             unlisted: true,
         })
+        innKeeper.setMatchID(room, matchID)
         io.in(room).emit('start', {
             matchID,
         })
