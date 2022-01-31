@@ -3,8 +3,7 @@ import gridGenerator from './maps/gridGenerator'
 import MAPS from './maps'
 import { HEX_TYPES, idToCartesian, reachableHexes } from './maps/util'
 
-const [map, mapConfig] = Object.entries(MAPS)[0] // TODO make this selectable (from setupData?)
-export const gridData = gridGenerator(map)
+let gridData
 
 function makeSerializable(data) {
   if (process.env.NODE_ENV === 'production') {
@@ -21,6 +20,7 @@ const Game = {
   maxPlayers: 8,
   setup(ctx, { map }) {
     const mapConfig = MAPS[map]
+    gridData = gridGenerator(map)
     const humanHex = gridData.grid.get(idToCartesian(mapConfig[HEX_TYPES.human]))
     const alienHex = gridData.grid.get(idToCartesian(mapConfig[HEX_TYPES.alien]))
 
