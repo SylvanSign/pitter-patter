@@ -17,7 +17,7 @@ function makeSerializable(data) {
 // TODO generally, remove all console.logs
 const Game = {
   name: 'pp',
-  minPlayers: 1, // TODO should be 2
+  minPlayers: 2,
   maxPlayers: 8,
   setup(ctx, /*{ map }*/) {
     // const mapConfig = MAPS[map]
@@ -48,7 +48,7 @@ const Game = {
   },
 
   endIf(G, ctx) {
-    if (G.round > 40) { // TODO should be 40
+    if (G.round > 40) {
       return { winner: G.winners } // TODO fix this
     }
 

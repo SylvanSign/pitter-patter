@@ -24,9 +24,9 @@ export default function Room({ socket, id, setId, name }) {
         case undefined:
             return null
         case false:
-            return <Navigate to={'/'} state={room} />
+            return <Navigate to={'/join'} state={room} />
         case true:
-            if (credentials && playerID) {
+            if (matchID && credentials && playerID) {
                 return <App playerID={playerID} credentials={credentials} matchID={matchID} />
             } else {
                 return <Lobby socket={socket} room={room} name={name} setCredentials={setCredentials} setPlayerID={setPlayerID} setMatchID={setMatchID} />
@@ -40,8 +40,8 @@ export default function Room({ socket, id, setId, name }) {
 function Lobby({ socket, room, name, setCredentials, setPlayerID, setMatchID }) {
     useRoomLeaverNotifier(socket)
     const players = usePlayersUpdater(socket)
-    const [map, setMap] = useState(Object.keys[0])
-    const enoughPlayers = players.length > 0 // TODO should be > 1
+    const [map, setMap] = useState(Object.keys(MAPS)[0])
+    const enoughPlayers = players.length > 1
 
     const startGame = () => {
         socket.emit('start')
@@ -50,7 +50,7 @@ function Lobby({ socket, room, name, setCredentials, setPlayerID, setMatchID }) 
     useEffect(() => {
         socket.once('start', async ({ map, matchID }) => {
             const { playerID, playerCredentials } = await lobbyClient.joinMatch('pp', matchID, {
-                playerName: name,
+                playerName: `${name}-${new Date()}`,
             })
             console.log(`Joining matchID ${matchID}`)
             setCredentials(playerCredentials)
@@ -108,45 +108,25 @@ function MapSelector({ socket, map, setMap }) {
 }
 
 function useRoomVerifier(socket, name, id, setId, setMatchID) {
-    const nav = useNavigate()
-    const location = useLocation();
-    const alreadyVerified = location.state || undefined
-    const [valid, setValid] = useState(alreadyVerified)
+    const [valid, setValid] = useState()
     let { room } = useParams()
     room = room.toUpperCase()
 
     useEffect(() => {
-        if (alreadyVerified) {
+        socket.emit('room-check', { room, id, name })
+        socket.once('room-check', ({ valid }) => {
+            setValid(valid)
             socket.emit('join', { name, room, id })
             socket.once('joined', ({ room, id, matchID }) => {
-                sessionStorage.setItem('room', room)
                 setId(id)
                 setMatchID(matchID)
             })
-            socket.once('invalid-room', () => {
-                nav("/", { state: room })
-            })
-            return () => {
-                socket.off('joined')
-                socket.off('invalid-room')
-            }
-        } else {
-            socket.emit('room-check', { room, id, name })
-            socket.once('room-check', ({ valid }) => {
-                setValid(valid)
-                socket.emit('join', { name, room, id })
-                socket.once('joined', ({ room, id, matchID }) => {
-                    sessionStorage.setItem('room', room)
-                    setId(id)
-                    setMatchID(matchID)
-                })
-            })
-            return () => {
-                socket.off('room-check')
-                socket.off('joined')
-            }
+        })
+        return () => {
+            socket.off('room-check')
+            socket.off('joined')
         }
-    }, [socket, name, alreadyVerified, room, id, setId, setMatchID, nav])
+    }, [socket, name, room, id, setId, setMatchID])
 
     return [valid, room]
 }
