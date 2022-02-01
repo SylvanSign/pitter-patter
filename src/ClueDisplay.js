@@ -1,7 +1,6 @@
 // import { useEffect } from "react"
 
 export default function ClueDisplay({ G: { round, clues, promptNoise, }, ctx: { currentPlayer, gameover, }, playerID, matchData }) {
-  console.log(matchData)
   const text = gameover ?
     gameEnderDisplay(clues, gameover.winner, matchData)
     : (promptNoise && currentPlayer === playerID) ?
@@ -25,13 +24,13 @@ export default function ClueDisplay({ G: { round, clues, promptNoise, }, ctx: { 
 }
 
 function gameEnderDisplay(clues, winners, matchData) {
-  return `${renderClue(clues, matchData)}. ${gameoverText(winners, matchData)}`
+  return `${renderClue(clues, matchData)} ${gameoverText(winners, matchData)}`
 }
 
 function renderClue(clues, matchData) {
   return clues
     .map(({ id, msg }) => msg.replace('NAME', matchData.find(e => e.id === id).name))
-    .join('. ')
+    .join(' ')
 }
 
 

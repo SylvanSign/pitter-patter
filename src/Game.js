@@ -159,7 +159,7 @@ const Game = {
               msg: `NAME left in escape pod ${hex.type}`,
             }]
             G.escapes[hex.type] = 'success'
-            G.winners.push(ctx.currentPlayer)
+            G.winners.push(Number.parseInt(ctx.currentPlayer, 10))
             remove(G, ctx.currentPlayer)
             ctx.events.endTurn()
           } else { // 'fail'
@@ -234,11 +234,11 @@ const Game = {
             eliminate(data, G, playerID, currentPlayerData)
             const stinger =
               (data.role === 'human')
-                ? "become an alien"
-                : "been killed"
+                ? "turned NAME"
+                : "killed NAME"
             clues.push({
               id: Number.parseInt(playerID, 10),
-              msg: `${data.role.toUpperCase()} NAME has ${stinger}`
+              msg: `and ${stinger}`
             })
           }
         }
