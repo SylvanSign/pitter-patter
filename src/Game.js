@@ -119,18 +119,18 @@ const Game = {
 
       switch (hex.type) {
         case HEX_TYPES.silent:
-          G.clue = `Player ${ctx.currentPlayer} is in a silent sector...`
+          G.clue = `${ctx.currentPlayer} is in a silent sector...`
           ctx.events.endTurn()
           break
         case HEX_TYPES.danger:
           const dangerCard = drawDangerCard(G, ctx)
           switch (dangerCard) {
             case 'silence':
-              G.clue = `Player ${ctx.currentPlayer} is in a dangerous sector, but you don't hear anything...`
+              G.clue = `${ctx.currentPlayer} is in a dangerous sector.`
               ctx.events.endTurn()
               break
             case 'you':
-              G.clue = `Player ${ctx.currentPlayer} is in a dangerous sector. You hear a noise in ${hex.id}`
+              G.clue = `${ctx.currentPlayer} made a noise in ${hex.id}`
               G.noise = hex.id
               ctx.events.endTurn()
               break
@@ -144,13 +144,13 @@ const Game = {
         default: // escape pod
           const escapeCard = G.escapeDeck.pop()
           if (escapeCard === 'success') {
-            G.clue = `Player ${ctx.currentPlayer} has successfully launched out of escape pod ${hex.type}`
+            G.clue = `${ctx.currentPlayer} left in escape pod ${hex.type}`
             G.escapes[hex.type] = 'success'
             G.winners.push(ctx.currentPlayer)
             remove(G, ctx.currentPlayer)
             ctx.events.endTurn()
           } else { // 'fail'
-            G.clue = `Player ${ctx.currentPlayer} has failed to launch escape pod ${hex.id}`
+            G.clue = `${ctx.currentPlayer} failed to launch escape pod ${hex.id}`
             G.escapes[hex.type] = 'fail'
             ctx.events.endTurn()
           }
@@ -173,7 +173,7 @@ const Game = {
           }
       }
 
-      G.clue = `Player ${ctx.currentPlayer} is in a dangerous sector. You hear a noise in ${hex.id}`
+      G.clue = `${ctx.currentPlayer} made a noise in ${hex.id}`
       G.noise = hex.id
       G.promptNoise = false
       ctx.events.endTurn()
@@ -204,17 +204,17 @@ const Game = {
       currentPlayerData.hex = makeSerializable(hex)
       currentPlayerData.reachable = [] // TODO clean this reachable thing up
       // TODO attack logic
-      const clues = [`Player ${ctx.currentPlayer} has attacked sector ${hex.id}`]
+      const clues = [`${ctx.currentPlayer} attacked sector ${hex.id}`]
       G.noise = hex.id
       for (const [playerID, data] of Object.entries(G.players)) {
         if (playerID !== ctx.currentPlayer) {
           if (data.hex.id === hex.id) {
             eliminate(data, G, playerID, currentPlayerData)
-            clues.push(`The ${data.role} player ${playerID} has been killed!`)
+            clues.push(`${data.role} ${playerID} has been killed!`)
             if (data.role === 'human') {
-              clues.push(`They have respawned as an alien at ${G.alienHex}.`)
+              clues.push(`They've respawned as an alien`)
             } else {
-              clues.push(`They have been eliminated.`)
+              clues.push(`They've been eliminated`)
             }
           }
         }

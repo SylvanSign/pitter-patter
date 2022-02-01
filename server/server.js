@@ -15,8 +15,16 @@ const server = Server({
     origins: [/.*/],
 })
 // Build path relative to the server.js file
-server.app.use(serve(path.resolve(__dirname, '../build')))
-server.run(process.env.SERVER_PORT || 8000);
+const frontEndAppBuildPath = path.resolve(__dirname, '../build');
+server.app.use(serve(frontEndAppBuildPath))
+server.run(process.env.SERVER_PORT || 8000, () => {
+    server.app.use(
+        async (ctx, next) => await serve(frontEndAppBuildPath)(
+            Object.assign(ctx, { path: 'index.html' }),
+            next
+        )
+    )
+})
 housekeeping(server.db) // wipe stale games each day
 
 // Lobby management before games start
