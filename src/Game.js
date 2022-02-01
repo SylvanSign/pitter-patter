@@ -234,7 +234,7 @@ const Game = {
             eliminate(data, G, playerID, currentPlayerData)
             const stinger =
               (data.role === 'human')
-                ? "turned NAME"
+                ? "infected NAME"
                 : "killed NAME"
             clues.push({
               id: Number.parseInt(playerID, 10),

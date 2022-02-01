@@ -1,6 +1,24 @@
-export default function RoundDisplay({ ctx: { gameover, }, G: { round, } }) {
-  const text = gameover ? 'Game Over!' : `Round ${round}`
+export default function RoundDisplay({ ctx: { gameover }, G: { round, }, matchData, }) {
+  const text =
+    gameover
+      ? `Game Over! ${gameoverText(gameover.winner, matchData)}`
+      : `Round ${round}`
   return (
     <h2 className="centered">{text}</h2>
   )
+}
+
+function gameoverText(winners, matchData) {
+  switch (winners.length) {
+    case 0:
+      return 'Aliens killed all the humans!'
+    case 1:
+      return `Human ${renderWinners(winners, matchData)} got out alive!`
+    default:
+      return `Humans ${renderWinners(winners, matchData)} got out alive!`
+  }
+}
+
+function renderWinners(winners, matchData) {
+  return winners.map(w => matchData.find(e => e.id === w).name).join(', ')
 }
