@@ -8,12 +8,12 @@ export default function RoundDisplay({ ctx: { gameover }, G: { round, }, matchDa
   )
 }
 
-function gameoverText(winners, matchData) {
+export function gameoverText(winners, matchData) {
   switch (winners.length) {
     case 0:
-      return 'Aliens killed all the humans!'
+      return 'Aliens infected all the humans!'
     case 1:
-      return `Human ${renderWinners(winners, matchData)} got out alive!`
+      return `Only human ${renderWinners(winners, matchData)} got out alive!`
     default:
       return `Humans ${renderWinners(winners, matchData)} got out alive!`
   }

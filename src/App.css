@@ -15,7 +15,7 @@ h1,h2,h3,h4,h5,h6 {
 }
 
 text.danger, text.silent {
-  font-family: 'Roboto Mono', monospace;
+  font-family: 'Roboto Mono', 'Fira Mono', 'DejaVu Sans Mono', 'Menlo', 'Consolas', 'Liberation Mono', 'Monaco', 'Lucida Console', monospace;
   /* font-size: small; */
   fill: rgb(121, 121, 121);
 }
@@ -29,7 +29,7 @@ use.silent {
 }
 
 text.key {
-  font-family: 'Roboto Mono', monospace;
+  font-family: 'Roboto Mono', 'Fira Mono', 'DejaVu Sans Mono', 'Menlo', 'Consolas', 'Liberation Mono', 'Monaco', 'Lucida Console', monospace;
   font-size: xx-large;
   fill: white;
 }
@@ -39,7 +39,7 @@ use.key {
 }
 
 text.fail {
-  font-family: 'Roboto Mono', monospace;
+  font-family: 'Roboto Mono', 'Fira Mono', 'DejaVu Sans Mono', 'Menlo', 'Consolas', 'Liberation Mono', 'Monaco', 'Lucida Console', monospace;
   font-size: xx-large;
   fill: white;
 }
@@ -49,7 +49,7 @@ use.fail {
 }
 
 text.success {
-  font-family: 'Roboto Mono', monospace;
+  font-family: 'Roboto Mono', 'Fira Mono', 'DejaVu Sans Mono', 'Menlo', 'Consolas', 'Liberation Mono', 'Monaco', 'Lucida Console', monospace;
   font-size: xx-large;
   fill: white;
   opacity: 50%;
