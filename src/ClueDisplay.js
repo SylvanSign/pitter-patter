@@ -1,11 +1,12 @@
 // import { useEffect } from "react"
 
-export default function ClueDisplay({ G: { round, clue, promptNoise, }, ctx: { currentPlayer, gameover, }, playerID, }) {
+export default function ClueDisplay({ G: { round, clues, promptNoise, }, ctx: { currentPlayer, gameover, }, playerID, matchData }) {
+  console.log(matchData)
   const text = gameover ?
-    gameoverText(gameover.winner)
+    gameEnderDisplay(clues, gameover.winner, matchData)
     : (promptNoise && currentPlayer === playerID) ?
       'Select any dangerous sector to make a noise there'
-      : clue
+      : renderClue(clues, matchData)
 
   // TODO checkbox to enable this or something?
   // useEffect(() => {
@@ -23,13 +24,28 @@ export default function ClueDisplay({ G: { round, clue, promptNoise, }, ctx: { c
   )
 }
 
-function gameoverText(winners) {
+function gameEnderDisplay(clues, winners, matchData) {
+  return `${renderClue(clues, matchData)}. ${gameoverText(winners, matchData)}`
+}
+
+function renderClue(clues, matchData) {
+  return clues
+    .map(({ id, msg }) => msg.replace('NAME', matchData.find(e => e.id === id).name))
+    .join('. ')
+}
+
+
+function gameoverText(winners, matchData) {
   switch (winners.length) {
     case 0:
-      return 'Not a single human survived!'
+      return 'Aliens killed all the humans!'
     case 1:
-      return `Human ${winners[0]} got out alive!`
+      return `Human ${renderWinners(winners, matchData)} got out alive!`
     default:
-      return `Humans ${winners} got out alive!`
+      return `Humans ${renderWinners(winners, matchData)} got out alive!`
   }
+}
+
+function renderWinners(winners, matchData) {
+  return winners.map(w => matchData.find(e => e.id === w).name).join(', ')
 }

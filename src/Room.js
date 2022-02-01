@@ -50,9 +50,8 @@ function Lobby({ room, name, setCredentials, setPlayerID, setMatchID }) {
 
     useEffect(() => {
         socket.once('start', async ({ map, matchID }) => {
-            const { playerID, playerCredentials } = await lobbyClient.joinMatch('pp', matchID, {
-                playerName: `${name}-${new Date()}`,
-            })
+            const { playerID, playerCredentials } =
+                await lobbyClient.joinMatch('pp', matchID, { playerName: name })
             console.log(`Joining matchID ${matchID}`)
             setCredentials(playerCredentials)
             setPlayerID(playerID)
@@ -120,7 +119,6 @@ function useRoomVerifier(name, id, setId, setMatchID) {
         socket.once('room-check', ({ valid }) => {
             socket.emit('join', { name, room, id })
             socket.once('joined', ({ id, matchID }) => {
-                console.log(`YIKERSSSS ${matchID}`)
                 setId(id)
                 setValid(valid)
                 setMatchID(matchID)

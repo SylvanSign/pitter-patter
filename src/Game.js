@@ -18,7 +18,7 @@ const Game = {
   name: 'pp',
   minPlayers: 1, // TODO should be 2
   maxPlayers: 8,
-  setup(ctx, { map }) {
+  setup(ctx, { map = 'dilemma' } = {}) {
     const mapConfig = MAPS[map]
     gridData = gridGenerator(map)
     const humanHex = gridData.grid.get(idToCartesian(mapConfig[HEX_TYPES.human]))
@@ -44,6 +44,7 @@ const Game = {
       mapConfig,
       escapes: [],
       winners: [],
+      clues: [],
     })
   },
 
@@ -119,18 +120,27 @@ const Game = {
 
       switch (hex.type) {
         case HEX_TYPES.silent:
-          G.clue = `${ctx.currentPlayer} is in a silent sector...`
+          G.clues = [{
+            id: Number.parseInt(ctx.currentPlayer, 10),
+            msg: 'NAME is in a silent sector',
+          }]
           ctx.events.endTurn()
           break
         case HEX_TYPES.danger:
           const dangerCard = drawDangerCard(G, ctx)
           switch (dangerCard) {
             case 'silence':
-              G.clue = `${ctx.currentPlayer} is in a dangerous sector.`
+              G.clues = [{
+                id: Number.parseInt(ctx.currentPlayer, 10),
+                msg: 'NAME is in a dangerous sector',
+              }]
               ctx.events.endTurn()
               break
             case 'you':
-              G.clue = `${ctx.currentPlayer} made a noise in ${hex.id}`
+              G.clues = [{
+                id: Number.parseInt(ctx.currentPlayer, 10),
+                msg: `NAME made a noise in ${hex.id}`,
+              }]
               G.noise = hex.id
               ctx.events.endTurn()
               break
@@ -144,13 +154,19 @@ const Game = {
         default: // escape pod
           const escapeCard = G.escapeDeck.pop()
           if (escapeCard === 'success') {
-            G.clue = `${ctx.currentPlayer} left in escape pod ${hex.type}`
+            G.clues = [{
+              id: Number.parseInt(ctx.currentPlayer, 10),
+              msg: `NAME left in escape pod ${hex.type}`,
+            }]
             G.escapes[hex.type] = 'success'
             G.winners.push(ctx.currentPlayer)
             remove(G, ctx.currentPlayer)
             ctx.events.endTurn()
           } else { // 'fail'
-            G.clue = `${ctx.currentPlayer} failed to launch escape pod ${hex.id}`
+            G.clues = [{
+              id: Number.parseInt(ctx.currentPlayer, 10),
+              msg: `NAME failed to launch escape pod ${hex.id}`,
+            }]
             G.escapes[hex.type] = 'fail'
             ctx.events.endTurn()
           }
@@ -173,7 +189,10 @@ const Game = {
           }
       }
 
-      G.clue = `${ctx.currentPlayer} made a noise in ${hex.id}`
+      G.clues = [{
+        id: Number.parseInt(ctx.currentPlayer, 10),
+        msg: `NAME made a noise in ${hex.id}`,
+      }]
       G.noise = hex.id
       G.promptNoise = false
       ctx.events.endTurn()
@@ -204,22 +223,27 @@ const Game = {
       currentPlayerData.hex = makeSerializable(hex)
       currentPlayerData.reachable = [] // TODO clean this reachable thing up
       // TODO attack logic
-      const clues = [`${ctx.currentPlayer} attacked sector ${hex.id}`]
+      const clues = [{
+        id: Number.parseInt(ctx.currentPlayer, 10),
+        msg: `NAME attacked sector ${hex.id}`,
+      }]
       G.noise = hex.id
       for (const [playerID, data] of Object.entries(G.players)) {
         if (playerID !== ctx.currentPlayer) {
           if (data.hex.id === hex.id) {
             eliminate(data, G, playerID, currentPlayerData)
-            clues.push(`${data.role} ${playerID} has been killed!`)
-            if (data.role === 'human') {
-              clues.push(`They've respawned as an alien`)
-            } else {
-              clues.push(`They've been eliminated`)
-            }
+            const stinger =
+              (data.role === 'human')
+                ? "become an alien"
+                : "been killed"
+            clues.push({
+              id: Number.parseInt(playerID, 10),
+              msg: `${data.role.toUpperCase()} NAME has ${stinger}`
+            })
           }
         }
       }
-      G.clue = clues.join('. ')
+      G.clues = clues
       ctx.events.endTurn()
     },
   },
