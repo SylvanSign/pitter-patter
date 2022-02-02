@@ -2,14 +2,15 @@ import { useEffect } from "react"
 import { gameoverText } from "./RoundDisplay"
 
 export default function ClueDisplay({ G: { round, clues, promptNoise, }, ctx: { gameover, currentPlayer, }, playerID, matchData }) {
+  const promptingNoiseForYou = (promptNoise && currentPlayer === playerID)
   const text =
-    (promptNoise && currentPlayer === playerID)
+    promptingNoiseForYou
       ? 'Select any dangerous sector to make a noise there'
       : renderClue(clues, matchData)
 
   // TODO checkbox to enable this or something?
   useEffect(() => {
-    if (clues) {
+    if (clues && !promptingNoiseForYou) {
       // for some reason `speechSynthesis.speak(new SpeechSynthesisUtterance('I08'))` or with any other number gets pronounced weirdly on my phone...
       let readText = text.replace('I0', 'I 0 ')
       if (gameover)
@@ -19,7 +20,7 @@ export default function ClueDisplay({ G: { round, clues, promptNoise, }, ctx: { 
       speechSynthesis.cancel()
       speechSynthesis.speak(utterance)
     }
-  }, [clues, gameover, matchData, text, round]) // depend on round to use effect even when clue stays same between rounds (eg. 2 silent sectors in a row)
+  }, [clues, gameover, matchData, text, round, currentPlayer]) // depend on round to use effect even when clue stays same between rounds (eg. 2 silent sectors in a row)
 
   return (
     <h2 className="centered">{text}</h2>

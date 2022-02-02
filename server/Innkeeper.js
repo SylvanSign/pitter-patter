@@ -31,7 +31,11 @@ export default class InnKeeper {
     const stuff = this._stuff.get(room)
     if (!stuff)
       return
-    stuff.data.delete(id)
+
+    if (!stuff.matchID) {
+      // transient tenants okay because we haven't started a match yet
+      stuff.data.delete(id)
+    }
     const connected = stuff.connected
     connected.delete(id)
 
@@ -55,8 +59,11 @@ export default class InnKeeper {
     }
   }
 
-  open(room) {
-    return this._stuff.has(room) && !this.matchID(room)
+  open(room, id) {
+    console.log(this._stuff.has(room) && this.stuff(room))
+    const openButNotYetStarted = this._stuff.has(room) && !this.matchID(room)
+    const closedButYouAreInAlready = this._stuff.has(room) && this.stuff(room).has(id)
+    return openButNotYetStarted || closedButYouAreInAlready
   }
 
   stuff(room) {

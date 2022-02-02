@@ -55,7 +55,7 @@ io.on('connection', socket => {
     socket.on('left-room', handleDisconnect)
 
     socket.on('room-check', ({ room, name, id }) => {
-        const valid = innKeeper.open(room)
+        const valid = innKeeper.open(room, id)
         console.log(`Room check for ${room} ${name} ${id} is ${valid}`)
         socket.emit('room-check', { valid })
     })
@@ -65,7 +65,7 @@ io.on('connection', socket => {
     })
 
     socket.on('join', ({ name, room, id }) => {
-        if (innKeeper.open(room))
+        if (innKeeper.open(room, id))
             join(socket, name, room, id)
         else
             socket.emit('invalid-room')
