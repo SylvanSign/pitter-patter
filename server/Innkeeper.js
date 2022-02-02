@@ -44,10 +44,8 @@ export default class InnKeeper {
       clearTimeout(this._timeoutRefs.get(room))
 
       const ref = setTimeout(async () => {
-        console.log(`checking on ${room}`)
         if (!connected.size) {
           const matchID = this.matchID(room)
-          console.log(`deleting ${room} and matchID ${matchID}`)
           this._stuff.delete(room)
           if (matchID)
             await this._db.wipe(matchID)
@@ -60,7 +58,6 @@ export default class InnKeeper {
   }
 
   open(room, id) {
-    console.log(this._stuff.has(room) && this.stuff(room))
     const openButNotYetStarted = this._stuff.has(room) && !this.matchID(room)
     const closedButYouAreInAlready = this._stuff.has(room) && this.stuff(room).has(id)
     return openButNotYetStarted || closedButYouAreInAlready

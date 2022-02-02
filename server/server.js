@@ -38,15 +38,12 @@ io.listen(process.env.SOCKET_IO_SERVER_PORT || 8001)
 const innKeeper = new InnKeeper(server.db)
 
 io.on('connection', socket => {
-    console.log(`Socket ${socket.id} connected`)
     socket.data = {}
 
     const handleDisconnect = () => {
         const { id, name, room } = socket.data
-        console.log(`Socket ${id} disconnected`)
         innKeeper.checkout(id, room)
         if (room) {
-            console.log(`${name} disconnected with room ${room}`)
             io.in(room).emit('update', { data: innKeeper.stuffs(room) })
         }
     }
@@ -56,7 +53,6 @@ io.on('connection', socket => {
 
     socket.on('room-check', ({ room, name, id }) => {
         const valid = innKeeper.open(room, id)
-        console.log(`Room check for ${room} ${name} ${id} is ${valid}`)
         socket.emit('room-check', { valid })
     })
 
@@ -82,7 +78,6 @@ io.on('connection', socket => {
         const map = innKeeper.map(room)
         const numPlayers = innKeeper.size(room)
 
-        console.log(`>>> Should be map ${map}`)
         // TODO prevent same room from creating duplicate matches
         const { matchID } = await createMatch({
             numPlayers,

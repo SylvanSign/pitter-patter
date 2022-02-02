@@ -52,7 +52,6 @@ function Lobby({ room, name, setCredentials, setPlayerID, setMatchID }) {
         socket.once('start', async ({ map, matchID }) => {
             const { playerID, playerCredentials } =
                 await lobbyClient.joinMatch('pp', matchID, { playerName: name })
-            console.log(`Joining matchID ${matchID}`)
             setCredentials(playerCredentials)
             setPlayerID(playerID)
             setMatchID(matchID)
@@ -153,7 +152,6 @@ function usePlayersUpdater() {
 
     useEffect(() => {
         socket.on('update-players', ({ players }) => {
-            console.log('update was called')
             setPlayers(players)
         })
 

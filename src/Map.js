@@ -8,11 +8,12 @@ export default function Map({ G, playerID, moves, grid, fullGrid, Grid, corners,
   const [notes, setNotes] = useSessionStorageState('notes', {})
   const [modal, setModal] = useState({ id: null, comp: '' })
 
+  // we don't pass setNotes to deps array because it will never change
   useEffect(() => {
     setNotes(notes => {
       return { ...notes, [G.noise]: true }
     })
-  }, [G.noise])
+  }, [G.noise, setNotes])
 
   const { map, promptNoise, } = G
   const self = G.players[playerID || 0] // TODO shouldn't need the || 0 except for local testing
