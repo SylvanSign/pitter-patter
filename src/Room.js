@@ -57,6 +57,7 @@ function Lobby({ room, name, setCredentials, setPlayerID, setMatchID }) {
             setPlayerID(playerID)
             setMatchID(matchID)
             disableRoomLeaveNotifier()
+            sessionStorage.removeItem('notes')
         })
 
         return () => {

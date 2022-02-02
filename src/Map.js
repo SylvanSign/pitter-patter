@@ -2,9 +2,10 @@ import Tile from './Tile'
 import Modal from './Modal'
 import { cartesianToId } from './maps/util'
 import { useEffect, useState, } from 'react'
+import { useSessionStorageState } from './hooks'
 
 export default function Map({ G, playerID, moves, grid, fullGrid, Grid, corners, ctx: { currentPlayer, }, }) {
-  const [notes, setNotes] = useState({})
+  const [notes, setNotes] = useSessionStorageState('notes', {})
   const [modal, setModal] = useState({ id: null, comp: '' })
 
   useEffect(() => {
