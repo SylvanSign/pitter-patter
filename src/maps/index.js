@@ -1,4 +1,5 @@
 import ascesa from './ascesa'
+import cavour from './cavour'
 import dilemma from './dilemma'
 import fermi from './fermi'
 import frenzy from './frenzy'
@@ -9,6 +10,7 @@ import socrates from './socrates'
 
 const MAPS = {
   ascesa,
+  cavour,
   dilemma,
   fermi,
   frenzy,
