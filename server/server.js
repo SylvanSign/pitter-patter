@@ -15,11 +15,13 @@ const server = Server({
     origins: [/.*/],
 })
 // Build path relative to the server.js file
-const frontEndAppBuildPath = path.resolve(__dirname, '../build');
-server.app.use(serve(frontEndAppBuildPath))
+const audioPath = path.resolve(__dirname, '../build/audio');
+const appPath = path.resolve(__dirname, '../build');
+server.app.use(serve(appPath))
 server.run(process.env.SERVER_PORT || 8000, () => {
+    server.router.get('/audio/:audio').use(async (ctx, next) => await serve(audioPath))
     server.app.use(
-        async (ctx, next) => await serve(frontEndAppBuildPath)(
+        async (ctx, next) => await serve(appPath)(
             Object.assign(ctx, { path: 'index.html' }),
             next
         )
