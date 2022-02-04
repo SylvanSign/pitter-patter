@@ -16,7 +16,7 @@ function makeSerializable(data) {
 // TODO generally, remove all console.logs
 const Game = {
   name: 'pp',
-  minPlayers: 1, // TODO should be 2
+  minPlayers: 2,
   maxPlayers: 8,
   setup(ctx, { map = defaultMap } = {}) {
     const mapConfig = MAPS[map]
