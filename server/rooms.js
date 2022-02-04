@@ -1,5 +1,5 @@
 import fs from 'fs'
-import shuffle from '../shared/shuffle'
+import { shuffle } from '../shared/random'
 
 const rooms = fs.readFileSync('./server/rooms.txt', 'utf8').split('\n')
 if (rooms[rooms.length - 1] === '') {

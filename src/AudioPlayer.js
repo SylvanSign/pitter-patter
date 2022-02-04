@@ -1,5 +1,5 @@
 import { useEffect, useRef } from 'react'
-import shuffle from '../shared/shuffle'
+import { randomElement } from '../shared/random'
 
 export default function AudioPlayer({ src }) {
   const audioRef = useRef()
@@ -24,12 +24,16 @@ const EVENT_SOUNDS = {
     'public/audio/humans-come-out-to-play.mp3',
     'public/audio/aliens-come-out-to-play.mp3',
   ],
-  end: [],
+  end: [
+    'public/audio/do-not-be-sad-it-is-over.mp3',
+    'public/audio/it-over-wish-had-good-time.mp3'
+  ],
   silent: [
     'public/audio/all-you-hear-is-your-heartbeat-is-it-normally-that-fast.mp3',
     'public/audio/silence-in-all-sectors.mp3',
     'public/audio/must-have-just-been-the-wind.mp3',
     'public/audio/you-hear-nothing.mp3',
+    'public/audio/quiet-game.mp3',
   ],
   noise: [
     'public/audio/did-you-hear-that.mp3',
@@ -41,10 +45,14 @@ const EVENT_SOUNDS = {
     'public/audio/what-was-that-noise.mp3',
     'public/audio/who-could-that-be.mp3',
   ],
-  attack: [
+  miss: [
     'public/audio/sector-under-attack.mp3',
+    'public/audio/well-somebody-seems-upset.mp3',
+    'public/audio/a-swing-and-a-miss.mp3',
+    'public/audio/you-know-you-were-supposed-to-hit-that-attack.mp3',
+    'public/audio/you-would-be-amazing.mp3',
   ],
-  kill: [
+  hit: [
     'public/audio/a-player-has-been-eaten-which-is-the-opposite-of-what-they-were-told-to-do.mp3',
     'public/audio/a-player-has-been-killed.mp3',
     'public/audio/anybody-ever-tell-you-you-look-dead-man.mp3',
@@ -57,10 +65,9 @@ const EVENT_SOUNDS = {
   escapeFail: [
     'public/audio/escape-pod-malfunctioned.mp3',
     'public/audio/how-did-it-feel-dud-escape-pod.mp3',
-    'public/audio/i-wish-i-could-leave-this-place-too.mp3',
   ],
 }
 
-export function randSourceFor(event) {
-  return shuffle(EVENT_SOUNDS[event])[0]
+export function randSrc(event) {
+  return randomElement(EVENT_SOUNDS[event])
 }
