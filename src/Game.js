@@ -45,6 +45,7 @@ const Game = {
       escapes: [],
       winners: [],
       clues: [],
+      event: null,
     })
   },
 
@@ -59,6 +60,7 @@ const Game = {
         .filter(r => r === 'human')
         .length
     if (humansLeft === 0) {
+      G.event = 'end'
       return { winner: G.winners } // TODO fix this
     }
   },
@@ -124,6 +126,7 @@ const Game = {
             id: Number.parseInt(ctx.currentPlayer, 10),
             msg: 'NAME is in a silent sector',
           }]
+          G.event = 'silent'
           ctx.events.endTurn()
           break
         case HEX_TYPES.danger:
@@ -134,6 +137,7 @@ const Game = {
                 id: Number.parseInt(ctx.currentPlayer, 10),
                 msg: 'NAME is in a dangerous sector',
               }]
+              G.event = 'silent'
               ctx.events.endTurn()
               break
             case 'you':
@@ -141,6 +145,7 @@ const Game = {
                 id: Number.parseInt(ctx.currentPlayer, 10),
                 msg: `NAME made a noise in ${hex.id}`,
               }]
+              G.event = 'noise'
               G.noise = hex.id
               ctx.events.endTurn()
               break
@@ -158,6 +163,7 @@ const Game = {
               id: Number.parseInt(ctx.currentPlayer, 10),
               msg: `NAME left in escape pod ${hex.type}`,
             }]
+            G.event = 'escape'
             G.escapes[hex.type] = 'success'
             G.winners.push(Number.parseInt(ctx.currentPlayer, 10))
             remove(G, ctx.currentPlayer)
@@ -167,6 +173,7 @@ const Game = {
               id: Number.parseInt(ctx.currentPlayer, 10),
               msg: `NAME failed to launch escape pod ${hex.id}`,
             }]
+            G.event = 'escapeFail'
             G.escapes[hex.type] = 'fail'
             ctx.events.endTurn()
           }
@@ -193,6 +200,7 @@ const Game = {
         id: Number.parseInt(ctx.currentPlayer, 10),
         msg: `NAME made a noise in ${hex.id}`,
       }]
+      G.event = 'noise'
       G.noise = hex.id
       G.promptNoise = false
       ctx.events.endTurn()
@@ -228,9 +236,11 @@ const Game = {
         msg: `NAME attacked sector ${hex.id}`,
       }]
       G.noise = hex.id
+      let hitAnything = false
       for (const [playerID, data] of Object.entries(G.players)) {
         if (playerID !== ctx.currentPlayer) {
           if (data.hex.id === hex.id) {
+            hitAnything = true
             eliminate(data, G, playerID, currentPlayerData)
             const stinger =
               (data.role === 'human')
@@ -244,6 +254,7 @@ const Game = {
         }
       }
       G.clues = clues
+      G.event = hitAnything ? 'hit' : 'miss'
       ctx.events.endTurn()
     },
   },

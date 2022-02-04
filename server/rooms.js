@@ -1,5 +1,4 @@
 import fs from 'fs'
-import { shuffle } from '../shared/random'
 
 const rooms = fs.readFileSync('./server/rooms.txt', 'utf8').split('\n')
 if (rooms[rooms.length - 1] === '') {
@@ -14,4 +13,11 @@ export function getRoom() {
   nextRoomIndex += 1
   nextRoomIndex %= roomCodesLength
   return code
+}
+
+function shuffle(array) {
+  for (let i = array.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [array[i], array[j]] = [array[j], array[i]];
+  }
 }
