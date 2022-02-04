@@ -16,7 +16,7 @@ function makeSerializable(data) {
 // TODO generally, remove all console.logs
 const Game = {
   name: 'pp',
-  minPlayers: 1, // should be 2
+  minPlayers: 2,
   maxPlayers: 8,
   setup(ctx, { map = defaultMap } = {}) {
     const mapConfig = MAPS[map]
@@ -29,7 +29,7 @@ const Game = {
     const players = setupPlayers({ humans, humanHex, }, { aliens, alienHex, })
 
     const dangerDeck = makeDangerDeck(ctx)
-    const escapeDeck = makeEscapeDeck(ctx)
+    const escapeDeck = makeEscapeDeck(ctx, Object.keys(mapConfig.escape).length)
 
     return makeSerializable({
       round: 1,
@@ -364,10 +364,10 @@ function makeDangerDeck(ctx) {
   return ctx.random.Shuffle(deck)
 }
 
-function makeEscapeDeck(ctx) {
+function makeEscapeDeck(ctx, numberPods) {
   const deck = [
     'fail',
-    ...Array(4).fill('success'), // TODO this should depend on how many escape pods in map
+    ...Array(numberPods).fill('success'),
   ]
 
   return ctx.random.Shuffle(deck)

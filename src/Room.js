@@ -24,7 +24,6 @@ export default function Room({ id, setId, name }) {
         case undefined:
             return null
         case false:
-            alert('yo!')
             return <Navigate to={'/join'} state={room} />
         case true:
             if (matchID && credentials && playerID) {
@@ -42,7 +41,7 @@ function Lobby({ room, name, setCredentials, setPlayerID, setMatchID }) {
     const disableRoomLeaveNotifier = useRoomLeaverNotifier()
     const players = usePlayersUpdater()
     const [map, setMap] = useState(defaultMap)
-    const enoughPlayers = players.length > 0 // TODO
+    const enoughPlayers = players.length > 1
 
     const startGame = () => {
         socket.emit('start')
@@ -57,6 +56,7 @@ function Lobby({ room, name, setCredentials, setPlayerID, setMatchID }) {
             setMatchID(matchID)
             disableRoomLeaveNotifier()
             sessionStorage.removeItem('notes')
+            sessionStorage.removeItem('noises')
         })
 
         return () => {

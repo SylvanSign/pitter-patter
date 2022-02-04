@@ -9,13 +9,14 @@ export default function Map({ G, playerID, moves, grid, fullGrid, Grid, corners,
   const [notes, setNotes] = useSessionStorageState('notes', {})
   const [modal, setModal] = useState({ id: null, comp: '' })
 
+
   // TODO do people actually like this auto-noter for noises?
   //      or is it more fun manually?
   useEffect(() => {
-    setNoises(noises => {
-      return { ...noises, [G.noise]: true }
+    setNotes(Notes => {
+      return { ...Notes, [G.noise]: true }
     })
-  }, [G.noise, setNoises])
+  }, [G.noise, setNotes])
 
   const { map, promptNoise, } = G
   const self = G.players[playerID || 0] // TODO shouldn't need the || 0 except for local testing
@@ -89,10 +90,10 @@ export default function Map({ G, playerID, moves, grid, fullGrid, Grid, corners,
           <polygon points={points} stroke='gold' strokeWidth='3' />
         </symbol>
         <symbol id='note'>
-          <polygon points={points} stroke='black' strokeWidth='5' fill='none' transform='scale(0.6) translate(19 16)' />
+          <polygon points={points} stroke='red' strokeWidth='5' fill='none' transform='scale(0.6) translate(19 16)' />
         </symbol>
         <symbol id='noise'>
-          <polygon points={points} stroke='red' strokeWidth='5' fill='none' transform='scale(0.6) translate(19 16)' />
+          <polygon points={points} stroke='purple' strokeWidth='5' fill='none' transform='scale(0.6) translate(19 16)' />
         </symbol>
         {/* <symbol id='note'>
           <text x={corners[0].x - 35} y={corners[0].y + 5}>?</text>
