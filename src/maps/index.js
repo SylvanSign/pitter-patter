@@ -5,6 +5,7 @@ import fermi from './fermi'
 import frenzy from './frenzy'
 import galilei from './galilei'
 import galvani from './galvani'
+import rush from './rush'
 import socrates from './socrates'
 
 
@@ -16,6 +17,7 @@ const MAPS = {
   frenzy,
   galilei,
   galvani,
+  rush,
   socrates,
 }
 

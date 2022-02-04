@@ -2,7 +2,7 @@ import MAPS from './maps'
 import { HEX_TYPES } from './maps/util'
 
 const COORDS_ENABLED = true;
-const COORDS_OPACITY = "80%";
+const COORDS_OPACITY = "100%";
 
 export default function Tile({ map, id, x, y, current, moveCandidate, hasNote, status, }) {
   const hexInfo = MAPS[map][id]
