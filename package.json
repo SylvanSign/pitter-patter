@@ -19,7 +19,8 @@
     "start": "node -r esm server/server.js & react-scripts start & wait",
     "build": "react-scripts build",
     "eject": "react-scripts eject",
-    "serve": "nodemon -r esm server/server.js"
+    "server": "nodemon -r esm server/server.js",
+    "serve": "node -r esm server/server.js"
   },
   "eslintConfig": {
     "extends": [
