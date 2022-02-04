@@ -12,7 +12,7 @@ import socket from './io'
 
 
 const lobbyClient = new LobbyClient({ server: `http://${window.location.hostname}:8000` })
-window.l = lobbyClient // TODO remove
+// window.l = lobbyClient // TODO remove
 
 export default function Room({ id, setId, name }) {
     const [matchID, setMatchID] = useState()

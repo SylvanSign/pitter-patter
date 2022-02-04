@@ -13,3 +13,11 @@ export default function Game(props) { // props from boardgame.io/react
     </div >
   )
 }
+
+function AudioPlayer() {
+  const [src, setSrc] = useState()
+
+  return (
+    <audio src={src}></audio>
+  )
+}
