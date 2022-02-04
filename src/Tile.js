@@ -4,14 +4,14 @@ import { HEX_TYPES } from './maps/util'
 const COORDS_ENABLED = true;
 const COORDS_OPACITY = "100%";
 
-export default function Tile({ map, id, x, y, current, moveCandidate, hasNote, status, }) {
+export default function Tile({ map, id, x, y, current, moveCandidate, hasNote, hasNoise, status, }) {
   const hexInfo = MAPS[map][id]
 
   switch (hexInfo) {
     case HEX_TYPES.silent:
-      return <SilentHex {...{ x, y, label: id, current, moveCandidate, hasNote, }} />
+      return <SilentHex {...{ x, y, label: id, current, moveCandidate, hasNote, hasNoise, }} />
     case HEX_TYPES.danger:
-      return <DangerHex {...{ x, y, label: id, current, moveCandidate, hasNote, }} />
+      return <DangerHex {...{ x, y, label: id, current, moveCandidate, hasNote, hasNoise, }} />
     case HEX_TYPES.human:
       return <HumanHex {...{ x, y }} />
     case HEX_TYPES.alien:
@@ -28,13 +28,16 @@ export default function Tile({ map, id, x, y, current, moveCandidate, hasNote, s
   }
 }
 
-function HexShape({ className, x, y, current, moveCandidate, hasNote }) {
+function HexShape({ className, x, y, current, moveCandidate, hasNote, hasNoise, }) {
   // TODO use better indicator (symbol based like styled inner ring?) that doesn't disrupt primary coloring of base tiles
   const movementClass = current ? 'current'
     : moveCandidate ? 'can-move'
       : ''
   const noteMarker = hasNote ?
     <use xlinkHref='#note' />
+    : ''
+  const noiseMarker = hasNoise ?
+    <use xlinkHref='#noise' />
     : ''
   return (
     <g transform={`translate(${x} ${y})`}>
@@ -46,6 +49,7 @@ function HexShape({ className, x, y, current, moveCandidate, hasNote }) {
         : ''
       }
       {noteMarker}
+      {noiseMarker}
     </g>
   )
 }
@@ -84,18 +88,18 @@ function AlienHex({ x, y }) {
       <title>Alien Spawn</title>
       <HexShape {...{ className: 'key', x, y }} />
       <svg viewBox="0 0 134 116" width='60' height='60' x={x} y={y - 5}>
-        <path d="M66.995,44.187l-31.918,-18.101l4.015,-7.086l27.903,15.826l27.908,-15.826l4.02,7.086l-31.928,18.101Z" style={{ fill: 'red', fillRule: 'nonzero' }} />
-        <path d="M33.013,97.384l0,-43.289l33.895,-19.215l34.079,17.566l0,44.938l-33.994,-19.272l-33.98,19.272Zm33.98,-28.628l25.846,14.65l0,-25.997l-25.756,-13.272l-25.927,14.703l0,24.566l25.837,-14.65Z" style={{ fill: 'red', fillRule: 'nonzero' }} />
+        <path d="M66.995,44.187l-31.918,-18.101l4.015,-7.086l27.903,15.826l27.908,-15.826l4.02,7.086l-31.928,18.101Z" style={{ fill: 'purple', fillRule: 'nonzero' }} />
+        <path d="M33.013,97.384l0,-43.289l33.895,-19.215l34.079,17.566l0,44.938l-33.994,-19.272l-33.98,19.272Zm33.98,-28.628l25.846,14.65l0,-25.997l-25.756,-13.272l-25.927,14.703l0,24.566l25.837,-14.65Z" style={{ fill: 'purple', fillRule: 'nonzero' }} />
       </svg>
     </g>
   )
 }
 
-function DangerHex({ x, y, label, current, moveCandidate, hasNote }) {
+function DangerHex({ x, y, label, current, moveCandidate, hasNote, hasNoise, }) {
   return (
     <g>
       <title>Dangerous Sector (Noise Risk)</title>
-      <HexShape {...{ className: 'danger', x, y, current, moveCandidate, hasNote }} />
+      <HexShape {...{ className: 'danger', x, y, current, moveCandidate, hasNote, hasNoise, }} />
       <svg viewBox="0 0 134 116" width='60' height='60' x={x} y={y - 4}>
         <path d="M10.469,39.925l-10.432,18.074l10.432,18.083l10.432,-18.083l-10.432,-18.074Z" style={{ fill: 'grey', fillRule: 'nonzero' }} />
         <path d="M123.531,39.925l-10.432,18.074l10.432,18.083l10.432,-18.083l-10.432,-18.074Z" style={{ fill: 'grey', fillRule: 'nonzero' }} />
@@ -113,11 +117,11 @@ function DangerHex({ x, y, label, current, moveCandidate, hasNote }) {
   )
 }
 
-function SilentHex({ x, y, label, current, moveCandidate, hasNote }) {
+function SilentHex({ x, y, label, current, moveCandidate, hasNote, hasNoise, }) {
   return (
     <g>
       <title>Silent Sector</title>
-      <HexShape {...{ className: 'silent', x, y, current, moveCandidate, hasNote }} />
+      <HexShape {...{ className: 'silent', x, y, current, moveCandidate, hasNote, hasNoise, }} />
       {
         COORDS_ENABLED
           ? <text x={x + 15} y={y + 32} className='silent' opacity={COORDS_OPACITY}>{label}</text>

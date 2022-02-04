@@ -5,16 +5,17 @@ import { useEffect, useState, } from 'react'
 import { useSessionStorageState } from './hooks'
 
 export default function Map({ G, playerID, moves, grid, fullGrid, Grid, corners, ctx: { currentPlayer, }, }) {
+  const [noises, setNoises] = useSessionStorageState('noises', {})
   const [notes, setNotes] = useSessionStorageState('notes', {})
   const [modal, setModal] = useState({ id: null, comp: '' })
 
   // TODO do people actually like this auto-noter for noises?
   //      or is it more fun manually?
   useEffect(() => {
-    setNotes(notes => {
-      return { ...notes, [G.noise]: true }
+    setNoises(noises => {
+      return { ...noises, [G.noise]: true }
     })
-  }, [G.noise, setNotes])
+  }, [G.noise, setNoises])
 
   const { map, promptNoise, } = G
   const self = G.players[playerID || 0] // TODO shouldn't need the || 0 except for local testing
@@ -70,8 +71,9 @@ export default function Map({ G, playerID, moves, grid, fullGrid, Grid, corners,
     const current = self.hex.id === id && !self.dead
     const moveCandidate = !!self.reachable.find(r => r.id === hex.id)
     const hasNote = notes[id]
+    const hasNoise = noises[id]
     const status = G.escapes[hex.type]
-    return <Tile {...{ key: id, current, moveCandidate, hasNote, map, id, x, y, status, }} />
+    return <Tile {...{ key: id, current, moveCandidate, hasNote, hasNoise, map, id, x, y, status, }} />
   })
 
   const points = corners.map(({ x, y }) => `${x},${y}`).join(' ')
