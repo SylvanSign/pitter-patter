@@ -11,12 +11,13 @@ export default function ClueDisplay({ G: { round, clues, event, promptNoise, }, 
       : renderClue(clues, matchData)
 
   useEffect(() => {
-    console.log('effect')
     if (event) {
-      console.log('should update src')
       setSrc(randSrc(event))
     }
-  }, [currentPlayer, event])
+    if (gameover) {
+      setSrc(randSrc('end'))
+    }
+  }, [currentPlayer, event, gameover])
 
   // // TODO checkbox to enable this or something?
   // useEffect(() => {

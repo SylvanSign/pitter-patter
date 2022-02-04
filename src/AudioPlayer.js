@@ -6,18 +6,13 @@ export default function AudioPlayer({ src }) {
 
   useEffect(() => {
     const ref = audioRef.current
-    setTimeout(() => {
-      if (ref) {
-        ref.load()
-        console.log('>>>> ')
-        ref.play().catch(e => {
-          console.error(`****************** ${e}`)
-        })
+    if (ref) {
+      ref.load()
+      ref.play()
+      return () => {
+        ref.pause()
+        ref.currentTime = 0
       }
-    }, 0)
-    return () => {
-      ref.pause()
-      ref.currentTime = 0
     }
   }, [src])
 
@@ -38,12 +33,18 @@ const EVENT_SOUNDS = {
     'do-not-be-sad-it-is-over',
     'it-over-wish-had-good-time',
   ],
+  // silent means silent sector
   silent: [
-    'all-you-hear-is-your-heartbeat-is-it-normally-that-fast',
     'silence-in-all-sectors',
-    'must-have-just-been-the-wind',
     'you-hear-nothing',
+    'all-you-hear-is-your-heartbeat-is-it-normally-that-fast',
+  ],
+  // quiet means no noise but in dangerous sector
+  quiet: [
+    'must-have-just-been-the-wind',
     'quiet-game',
+    'sneaky-hobbits',
+    'sneaky-hobbitses',
   ],
   noise: [
     'did-you-hear-that',

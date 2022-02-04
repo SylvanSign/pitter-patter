@@ -87,7 +87,10 @@ export default function Map({ G, playerID, moves, grid, fullGrid, Grid, corners,
           <polygon points={points} stroke='gold' strokeWidth='3' />
         </symbol>
         <symbol id='note'>
-          <polygon points={points} stroke='#ff8200' strokeWidth='5' fill='none' transform='scale(0.6) translate(19 16)' />
+          <polygon points={points} stroke='black' strokeWidth='5' fill='none' transform='scale(0.6) translate(19 16)' />
+        </symbol>
+        <symbol id='noise'>
+          <polygon points={points} stroke='red' strokeWidth='5' fill='none' transform='scale(0.6) translate(19 16)' />
         </symbol>
         {/* <symbol id='note'>
           <text x={corners[0].x - 35} y={corners[0].y + 5}>?</text>

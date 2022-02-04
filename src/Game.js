@@ -60,7 +60,6 @@ const Game = {
         .filter(r => r === 'human')
         .length
     if (humansLeft === 0) {
-      G.event = 'end'
       return { winner: G.winners } // TODO fix this
     }
   },
@@ -137,7 +136,7 @@ const Game = {
                 id: Number.parseInt(ctx.currentPlayer, 10),
                 msg: 'NAME is in a dangerous sector',
               }]
-              G.event = 'silent'
+              G.event = 'quiet'
               ctx.events.endTurn()
               break
             case 'you':
