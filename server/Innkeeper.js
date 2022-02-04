@@ -1,4 +1,4 @@
-import MAPS from '../src/maps'
+import MAPS, { defaultMap } from '../src/maps'
 
 export default class InnKeeper {
   constructor(db) {
@@ -16,7 +16,7 @@ export default class InnKeeper {
         data: new Map(),
         // TODO do we need to initialize these?
         matchID: undefined,
-        map: Object.keys(MAPS)[0],
+        map: defaultMap,
       })
     }
     const roomStuff = this._stuff.get(room)

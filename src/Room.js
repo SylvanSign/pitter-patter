@@ -6,7 +6,7 @@ import {
 } from "react-router-dom"
 import { useSessionStorageState } from './hooks'
 import { LobbyClient } from 'boardgame.io/client'
-import MAPS from './maps'
+import MAPS, { defaultMap } from './maps'
 import App from './App'
 import socket from './io'
 
@@ -41,7 +41,7 @@ export default function Room({ id, setId, name }) {
 function Lobby({ room, name, setCredentials, setPlayerID, setMatchID }) {
     const disableRoomLeaveNotifier = useRoomLeaverNotifier()
     const players = usePlayersUpdater()
-    const [map, setMap] = useState(Object.keys(MAPS)[0])
+    const [map, setMap] = useState(defaultMap)
     const enoughPlayers = players.length > 0 // TODO should be 1
 
     const startGame = () => {

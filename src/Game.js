@@ -1,6 +1,6 @@
 import { INVALID_MOVE } from 'boardgame.io/core'
 import gridGenerator from './maps/gridGenerator'
-import MAPS from './maps'
+import MAPS, { defaultMap } from './maps'
 import { HEX_TYPES, idToCartesian, reachableHexes } from './maps/util'
 
 let gridData
@@ -18,7 +18,7 @@ const Game = {
   name: 'pp',
   minPlayers: 1, // TODO should be 2
   maxPlayers: 8,
-  setup(ctx, { map = 'dilemma' } = {}) {
+  setup(ctx, { map = defaultMap } = {}) {
     const mapConfig = MAPS[map]
     gridData = gridGenerator(map)
     const humanHex = gridData.grid.get(idToCartesian(mapConfig[HEX_TYPES.human]))

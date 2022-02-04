@@ -20,7 +20,7 @@ export default function ClueDisplay({ G: { round, clues, promptNoise, }, ctx: { 
       speechSynthesis.cancel()
       speechSynthesis.speak(utterance)
     }
-  }, [clues, gameover, matchData, text, round, currentPlayer]) // depend on round to use effect even when clue stays same between rounds (eg. 2 silent sectors in a row)
+  }, [clues, gameover, matchData, text, promptingNoiseForYou, round, currentPlayer]) // depend on round to use effect even when clue stays same between rounds (eg. 2 silent sectors in a row)
 
   return (
     <h2 className="centered">{text}</h2>

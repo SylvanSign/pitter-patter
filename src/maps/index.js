@@ -5,6 +5,7 @@ import galilei from './galilei'
 import galvani from './galvani'
 import socrates from './socrates'
 
+
 const MAPS = {
   dilemma,
   fermi,
@@ -15,3 +16,4 @@ const MAPS = {
 }
 
 export default MAPS
+export const defaultMap = 'galilei'
