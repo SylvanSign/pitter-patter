@@ -1,12 +1,19 @@
+html, body {
+  max-width: 100%;
+  max-height: 100%;
+  overflow-x: hidden;
+  overflow-y: hidden;
+}
+
 svg {
   user-select: none;
   width: 100vw;
-  height: 80vh;
+  height: 75vh;
 }
 
 h1,h2,h3,h4,h5,h6 {
   /* text-align: center; */
-  /* height: 10vh; */
+  /* height: 5vh; */
   margin: 0;
 }
 

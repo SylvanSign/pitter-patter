@@ -17,18 +17,15 @@ export default function ClueDisplay({ G: { round, clues, event }, ctx: { gameove
   console.log(JSON.stringify(clues))
 
   return (
-    <div>
-      <ul>
+    <div style={{ height: '20vh', overflow: 'scroll' }}>
+      <ul style={{ listStyle: 'none', display: 'table', margin: '0 auto' }}>
         {renderClues(clues, matchData).map(c => <li key={c.key}>{c.msg}</li>)}
       </ul>
       <AudioPlayer src={src} />
-    </div>
+    </div >
   )
 }
 
 function renderClues(clues, matchData) {
-  console.log('****', clues.length)
-  console.log('****', JSON.stringify(clues))
-
   return clues.map(({ key, id, msg }) => ({ key, msg: msg.replace('NAME', matchData.find(e => e.id === id).name) }))
 }
