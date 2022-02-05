@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react"
 import AudioPlayer, { randSrc } from "./AudioPlayer"
 
-export default function ClueDisplay({ G: { round, clues, event }, ctx: { gameover, currentPlayer, }, playerID, matchData }) {
+export default function ClueDisplay({ G: { clues, event }, ctx: { turn, gameover, currentPlayer, }, playerID, matchData }) {
   const [src, setSrc] = useState(randSrc('start'))
 
   useEffect(() => {
@@ -21,7 +21,7 @@ export default function ClueDisplay({ G: { round, clues, event }, ctx: { gameove
       <ul style={{ listStyle: 'none', display: 'table', margin: '0 auto' }}>
         {renderClues(clues, matchData).map(c => <li key={c.key}>{c.msg}</li>)}
       </ul>
-      <AudioPlayer src={src} />
+      <AudioPlayer src={src} turn={turn} />
     </div >
   )
 }

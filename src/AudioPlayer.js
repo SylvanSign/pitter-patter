@@ -1,23 +1,26 @@
-import { useEffect, useRef } from 'react'
+import { useCallback, useEffect, useRef } from 'react'
 
 
-export default function AudioPlayer({ src }) {
+export default function AudioPlayer({ src, turn }) {
   const audioRef = useRef()
 
   useEffect(() => {
     const ref = audioRef.current
     if (ref) {
       ref.load()
-      ref.play()
       return () => {
         ref.pause()
         ref.currentTime = 0
       }
     }
-  }, [src])
+  }, [src, turn])
+
+  const onCanPlay = useCallback(() => {
+    audioRef.current.play()
+  }, [])
 
   return (
-    <audio ref={audioRef}>
+    <audio ref={audioRef} onCanPlay={onCanPlay}>
       <source src={`http://${window.location.hostname}:8000/audio/${src}.ogg`} type="audio/ogg" />
       <source src={`http://${window.location.hostname}:8000/audio/${src}.mp3`} type="audio/mpeg" />
     </audio>
