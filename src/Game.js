@@ -92,6 +92,10 @@ const Game = {
     onEnd(G) {
       G.playOrderPos = (G.playOrderPos + 1) % G.playOrder.length
       if (G.playOrderPos === 0) {
+        G.clues.unshift({
+          key: G.round,
+          msg: `-------- Round ${G.round} --------`
+        })
         ++G.round
       }
     },
