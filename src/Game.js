@@ -121,10 +121,11 @@ const Game = {
 
       switch (hex.type) {
         case HEX_TYPES.silent:
-          G.clues = [{
+          G.clues.unshift({
+            key: `${ctx.currentPlayer} ${G.round}`,
             id: Number.parseInt(ctx.currentPlayer, 10),
-            msg: 'NAME is in a silent sector',
-          }]
+            msg: `${G.round}: NAME is in a silent sector`,
+          })
           G.event = 'silent'
           ctx.events.endTurn()
           break
@@ -132,18 +133,20 @@ const Game = {
           const dangerCard = drawDangerCard(G, ctx)
           switch (dangerCard) {
             case 'silence':
-              G.clues = [{
+              G.clues.unshift({
+                key: `${ctx.currentPlayer} ${G.round}`,
                 id: Number.parseInt(ctx.currentPlayer, 10),
-                msg: 'NAME is in a dangerous sector',
-              }]
+                msg: `${G.round}: NAME is in a dangerous sector`,
+              })
               G.event = 'quiet'
               ctx.events.endTurn()
               break
             case 'you':
-              G.clues = [{
+              G.clues.unshift({
+                key: `${ctx.currentPlayer} ${G.round}`,
                 id: Number.parseInt(ctx.currentPlayer, 10),
-                msg: `NAME made a noise in ${hex.id}`,
-              }]
+                msg: `${G.round}: NAME made a noise in ${hex.id}`,
+              })
               G.event = 'noise'
               G.noise = hex.id
               ctx.events.endTurn()
@@ -158,20 +161,22 @@ const Game = {
         default: // escape pod
           const escapeCard = G.escapeDeck.pop()
           if (escapeCard === 'success') {
-            G.clues = [{
+            G.clues.unshift({
+              key: `${ctx.currentPlayer} ${G.round}`,
               id: Number.parseInt(ctx.currentPlayer, 10),
-              msg: `NAME left in escape pod ${hex.type}`,
-            }]
+              msg: `${G.round}: NAME left in escape pod ${hex.type}`,
+            })
             G.event = 'escape'
             G.escapes[hex.type] = 'success'
             G.winners.push(Number.parseInt(ctx.currentPlayer, 10))
             remove(G, ctx.currentPlayer)
             ctx.events.endTurn()
           } else { // 'fail'
-            G.clues = [{
+            G.clues.unshift({
+              key: `${ctx.currentPlayer} ${G.round}`,
               id: Number.parseInt(ctx.currentPlayer, 10),
-              msg: `NAME failed to launch escape pod ${hex.id}`,
-            }]
+              msg: `${G.round}: NAME failed to launch escape pod ${hex.id}`,
+            })
             G.event = 'escapeFail'
             G.escapes[hex.type] = 'fail'
             ctx.events.endTurn()
@@ -194,11 +199,11 @@ const Game = {
             return INVALID_MOVE
           }
       }
-
-      G.clues = [{
+      G.clues.unshift({
+        key: `${ctx.currentPlayer} ${G.round}`,
         id: Number.parseInt(ctx.currentPlayer, 10),
-        msg: `NAME made a noise in ${hex.id}`,
-      }]
+        msg: `${G.round}: NAME made a noise in ${hex.id}`,
+      })
       G.event = 'noise'
       G.noise = hex.id
       G.promptNoise = false
@@ -231,8 +236,9 @@ const Game = {
       currentPlayerData.reachable = [] // TODO clean this reachable thing up
       // TODO attack logic
       const clues = [{
+        key: `${ctx.currentPlayer} ${G.round}`,
         id: Number.parseInt(ctx.currentPlayer, 10),
-        msg: `NAME attacked sector ${hex.id}`,
+        msg: `${G.round}: NAME attacked sector ${hex.id}`,
       }]
       G.noise = hex.id
       let hitAnything = false
@@ -246,13 +252,14 @@ const Game = {
                 ? "infected NAME"
                 : "killed NAME"
             clues.push({
+              key: `${ctx.currentPlayer} ${G.round} ${playerID}`,
               id: Number.parseInt(playerID, 10),
               msg: `and ${stinger}`
             })
           }
         }
       }
-      G.clues = clues
+      G.clues = clues.concat(G.clues)
       G.event = hitAnything ? 'hit' : 'miss'
       ctx.events.endTurn()
     },
