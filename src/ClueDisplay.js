@@ -28,7 +28,7 @@ export default function ClueDisplay({ G: { clues, event }, ctx: { turn, gameover
 
 function renderClues(clues, matchData) {
   return clues.map(({ key, id, msg }) => {
-    const renderedMsg = id ? msg.replace('NAME', matchData.find(e => e.id === id).name) : msg
+    const renderedMsg = id !== undefined ? msg.replace('NAME', matchData.find(e => e.id === id).name) : msg
     return {
       key,
       msg: renderedMsg,

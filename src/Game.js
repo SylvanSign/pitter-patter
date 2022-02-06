@@ -136,15 +136,6 @@ const Game = {
         case HEX_TYPES.danger:
           const dangerCard = drawDangerCard(G, ctx)
           switch (dangerCard) {
-            case 'silence':
-              G.clues.unshift({
-                key: `${ctx.currentPlayer} ${G.round}`,
-                id: Number.parseInt(ctx.currentPlayer, 10),
-                msg: `${G.round}: NAME is in a dangerous sector`,
-              })
-              G.event = 'quiet'
-              ctx.events.endTurn()
-              break
             case 'you':
               G.clues.unshift({
                 key: `${ctx.currentPlayer} ${G.round}`,
@@ -159,7 +150,14 @@ const Game = {
               G.promptNoise = true
               break
             default:
-              throw new Error('Unexpected dangerCard value')
+              // silence or item
+              G.clues.unshift({
+                key: `${ctx.currentPlayer} ${G.round}`,
+                id: Number.parseInt(ctx.currentPlayer, 10),
+                msg: `${G.round}: NAME may have found something in a dangerous sector`,
+              })
+              G.event = 'quiet'
+              ctx.events.endTurn()
           }
           break
         default: // escape pod
@@ -305,11 +303,16 @@ function drawDangerCard(G, ctx) {
     G.dangerDeck = ctx.random.Shuffle(G.dangerDiscard.splice(0))
   }
   const dangerCard = G.dangerDeck.pop()
-  if (dangerCard === 'silence' || dangerCard === 'item') {
-    G.players[ctx.currentPlayer].hand.push(dangerCard)
-  } else {
-    G.dangerDiscard.push(dangerCard)
+  switch (dangerCard) {
+    case 'you':
+    case 'any':
+      G.dangerDiscard.push(dangerCard)
+      break
+    default:
+      // should 'silence' still go into hand so that we can have an accurate handsize in the UI?
+      G.players[ctx.currentPlayer].hand.push(dangerCard)
   }
+
   return dangerCard
 }
 
@@ -366,10 +369,17 @@ function makeDangerDeck(ctx) {
   const deck = [
     ...Array(27).fill('you'),
     ...Array(27).fill('any'),
-    ...Array(17 + 6).fill('silence'), // see TODO below
-    // TODO actually differentiate items
-    // ...Array(6).fill 'silence'),
-    // ...Array(17).fill('item'),
+    ...Array(6).fill('silence'),
+    ...Array(3).fill('adrenaline'),
+    ...Array(3).fill('sedatives'),
+    ...Array(2).fill('attack'),
+    ...Array(2).fill('cat'),
+    ...Array(2).fill('spotlight'),
+    ...Array(1).fill('teleport'),
+    ...Array(1).fill('defence'),
+    ...Array(1).fill('clone'),
+    ...Array(1).fill('sensor'),
+    ...Array(1).fill('mutation'),
   ]
 
   return ctx.random.Shuffle(deck)

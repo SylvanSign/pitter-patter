@@ -1,16 +1,15 @@
 export default function RoundDisplay({ ctx: { gameover, currentPlayer, }, G: { round, players, promptNoise, }, matchData, playerID }) {
   const promptingNoiseForYou = (promptNoise && currentPlayer === playerID)
   const role = players[playerID].role
-  const youAre = `You are ${role}`
+  const color = role === 'human' ? 'green' : 'purple'
 
-  const text =
-    gameover
-      ? `Game Over! ${gameoverText(gameover.winner, matchData)}`
-      : promptingNoiseForYou
-        ? 'Select any dangerous sector to make a noise there'
-        : `${youAre} - Round ${round}`
   return (
-    <h2 className="centered">{text}</h2>
+    gameover
+      ? <h2 className="centered">Game Over! {gameoverText(gameover.winner, matchData)}</h2>
+      : promptingNoiseForYou
+        ? <h2 className="centered">Select any dangerous sector to make a noise there</h2>
+        : <h2 className="centered">Round {round} · You are <span style={{ color }}>{role}</span></h2>
+
   )
 }
 
