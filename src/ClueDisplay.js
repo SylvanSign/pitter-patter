@@ -13,9 +13,6 @@ export default function ClueDisplay({ G: { clues, event }, ctx: { turn, gameover
     }
   }, [currentPlayer, event, gameover])
 
-  console.log(clues.length)
-  console.log(JSON.stringify(clues))
-
   return (
     <div style={{ height: '20vh', overflow: 'auto' }}>
       <ul style={{ listStyle: 'none', display: 'table', margin: '0 auto' }}>

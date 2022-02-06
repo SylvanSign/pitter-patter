@@ -25,6 +25,7 @@ const Game = {
     const alienHex = gridData.grid.get(idToCartesian(mapConfig[HEX_TYPES.alien]))
 
     const { playOrder, } = ctx
+    const randomizedPlayOrder = ctx.random.Shuffle(playOrder)
     const [humans, aliens] = pickRoles(ctx, playOrder)
     const players = setupPlayers({ humans, humanHex, }, { aliens, alienHex, })
 
@@ -36,7 +37,8 @@ const Game = {
       map,
       alienHex: alienHex,
       players: players,
-      playOrder: ctx.random.Shuffle(playOrder),
+      startingPlayOrder: randomizedPlayOrder,
+      playOrder: randomizedPlayOrder,
       playOrderPos: 0,
       escapeDeck,
       dangerDeck,
