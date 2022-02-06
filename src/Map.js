@@ -90,10 +90,10 @@ export default function Map({ G, playerID, moves, grid, fullGrid, Grid, corners,
           <polygon points={points} stroke='gold' strokeWidth='3' />
         </symbol>
         <symbol id='note'>
-          <polygon points={points} stroke='red' strokeWidth='5' fill='none' transform='scale(0.6) translate(19 16)' />
+          <polygon points={points} stroke='red' strokeWidth='5' fill='none' transform='scale(0.6) translate(20 20)' />
         </symbol>
         <symbol id='noise'>
-          <polygon points={points} stroke='purple' strokeWidth='5' fill='none' transform='scale(0.6) translate(19 16)' />
+          <polygon points={points} stroke='purple' strokeWidth='5' fill='none' transform='scale(0.6) translate(20 20)' />
         </symbol>
         {/* <symbol id='note'>
           <text x={corners[0].x - 35} y={corners[0].y + 5}>?</text>
@@ -138,7 +138,7 @@ export function MapArt({ grid, fullGrid, map, corners }) {
           <polygon points={points} stroke='gold' strokeWidth='3' />
         </symbol>
         <symbol id='note'>
-          <polygon points={points} stroke='red' strokeWidth='5' fill='none' transform='scale(0.6) translate(19 16)' />
+          <polygon points={points} stroke='red' strokeWidth='5' fill='none' transform='scale(0.75) translate(10 10)' />
         </symbol>
         <pattern id="stars" width="420" height="420" patternUnits="userSpaceOnUse">
           <svg xmlns="http://www.w3.org/2000/svg">

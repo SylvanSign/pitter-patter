@@ -2,6 +2,7 @@ import { INVALID_MOVE } from 'boardgame.io/core'
 import gridGenerator from './maps/gridGenerator'
 import MAPS, { defaultMap } from './maps'
 import { HEX_TYPES, idToCartesian, reachableHexes } from './maps/util'
+import { EMOJIS } from './emojis'
 
 let gridData
 
@@ -255,8 +256,8 @@ const Game = {
             eliminate(data, G, playerID, currentPlayerData)
             const stinger =
               (data.role === 'human')
-                ? "infected NAME"
-                : "killed NAME"
+                ? `turned ${EMOJIS.human} NAME into an ${EMOJIS.alien}`
+                : `killed ${EMOJIS.alien} NAME`
             clues.push({
               key: `${ctx.currentPlayer} ${G.round} ${playerID}`,
               id: Number.parseInt(playerID, 10),
@@ -280,6 +281,7 @@ function eliminate(data, G, playerIDToEliminate, currentPlayerData) {
       break
     case 'human':
       G.players[playerIDToEliminate] = freshAlien(G.alienHex)
+      G.players[playerIDToEliminate].publicRole = 'alien'
       currentPlayerData.speed = 3
       break
     default:

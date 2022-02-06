@@ -45,7 +45,7 @@ function HexShape({ className, x, y, current, moveCandidate, hasNote, hasNoise, 
       <use xlinkHref='#hex' className={className} />
       {movementClass ?
         <g>
-          <use xlinkHref='#hex' className={movementClass} transform='scale(0.6) translate(19 16)' />
+          <use xlinkHref='#hex' className={movementClass} transform='scale(0.6) translate(20 20)' />
         </g>
         : ''
       }

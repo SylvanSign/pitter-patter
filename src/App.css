@@ -23,7 +23,7 @@ h1,h2,h3,h4,h5,h6 {
 
 text.danger, text.silent {
   font-family: 'Roboto Mono', 'Fira Mono', 'DejaVu Sans Mono', 'Menlo', 'Consolas', 'Liberation Mono', 'Monaco', 'Lucida Console', monospace;
-  /* font-size: small; */
+  font-size: medium;
   fill: rgb(121, 121, 121);
 }
 
