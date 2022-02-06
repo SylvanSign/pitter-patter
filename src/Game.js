@@ -366,10 +366,10 @@ function makeDangerDeck(ctx) {
   const deck = [
     ...Array(27).fill('you'),
     ...Array(27).fill('any'),
-    ...Array(34).fill('silence'), // see TODO below
+    ...Array(17 + 6).fill('silence'), // see TODO below
     // TODO actually differentiate items
+    // ...Array(6).fill 'silence'),
     // ...Array(17).fill('item'),
-    // ...Array(17).fill 'silence'),
   ]
 
   return ctx.random.Shuffle(deck)
