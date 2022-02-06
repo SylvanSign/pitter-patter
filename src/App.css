@@ -27,6 +27,10 @@ text.danger, text.silent {
   fill: rgb(121, 121, 121);
 }
 
+text.emoji {
+  font-size: xx-large;
+}
+
 use.danger {
   fill: lightgrey;
 }

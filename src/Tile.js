@@ -74,10 +74,11 @@ function HumanHex({ x, y }) {
     <g>
       <title>Human Spawn</title>
       <HexShape {...{ className: 'key', x, y }} />
-      <svg viewBox="0 0 134 116" width='60' height='60' x={x} y={y - 5}>
+      {/* <svg viewBox="0 0 134 116" width='60' height='60' x={x} y={y - 5}>
         <path d="M67.009,100.979l-33.996,-19.624l0,-56.517l16.998,-9.817l4.067,7.058l-12.921,7.456l0,47.117l25.852,14.927l25.834,-14.927l0,-47.117l-12.912,-7.456l4.072,-7.058l16.984,9.817l0,56.517l-33.978,19.624Z" style={{ fill: 'green', fillRule: 'nonzero' }} />
         <path d="M67.009,66.431l-31.958,-18.444l4.072,-7.058l27.886,16.103l27.872,-16.103l4.072,7.058l-31.944,18.444Z" style={{ fill: 'green', fillRule: 'nonzero' }} />
-      </svg>
+      </svg> */}
+      <text x={x + 14} y={y + 38} className='emoji' opacity={COORDS_OPACITY}>👨‍🚀</text>
     </g>
   )
 }
@@ -87,10 +88,11 @@ function AlienHex({ x, y }) {
     <g>
       <title>Alien Spawn</title>
       <HexShape {...{ className: 'key', x, y }} />
-      <svg viewBox="0 0 134 116" width='60' height='60' x={x} y={y - 5}>
+      {/* <svg viewBox="0 0 134 116" width='60' height='60' x={x} y={y - 5}>
         <path d="M66.995,44.187l-31.918,-18.101l4.015,-7.086l27.903,15.826l27.908,-15.826l4.02,7.086l-31.928,18.101Z" style={{ fill: 'purple', fillRule: 'nonzero' }} />
         <path d="M33.013,97.384l0,-43.289l33.895,-19.215l34.079,17.566l0,44.938l-33.994,-19.272l-33.98,19.272Zm33.98,-28.628l25.846,14.65l0,-25.997l-25.756,-13.272l-25.927,14.703l0,24.566l25.837,-14.65Z" style={{ fill: 'purple', fillRule: 'nonzero' }} />
-      </svg>
+      </svg> */}
+      <text x={x + 14} y={y + 38} className='emoji' opacity={COORDS_OPACITY}>👽</text>
     </g>
   )
 }
