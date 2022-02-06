@@ -22,4 +22,4 @@ const MAPS = {
 }
 
 export default MAPS
-export const defaultMap = 'frenzy'
+export const defaultMap = 'dilemma'

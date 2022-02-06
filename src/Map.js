@@ -69,7 +69,7 @@ export default function Map({ G, playerID, moves, grid, fullGrid, Grid, corners,
     const cartesian = hex.coordinates()
     const id = cartesianToId(cartesian.x, cartesian.y)
 
-    const current = self.hex.id === id && !self.dead
+    const current = self.hex.id === id && !self.gone
     const moveCandidate = !!self.reachable.find(r => r.id === hex.id)
     const hasNote = notes[id]
     const hasNoise = noises[id]

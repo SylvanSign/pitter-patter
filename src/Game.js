@@ -53,7 +53,7 @@ const Game = {
 
   endIf(G, ctx) {
     if (G.round > 40) {
-      return { winner: G.winners } // TODO fix this
+      return { winner: G.winners } // TODO fix this by making winners less ambiguous??
     }
 
     const humansLeft =
@@ -61,6 +61,7 @@ const Game = {
         .map(id => G.players[id].role)
         .filter(r => r === 'human')
         .length
+    // TODO end if all escape pods have launched or failed?
     if (humansLeft === 0) {
       return { winner: G.winners } // TODO fix this
     }
@@ -164,6 +165,7 @@ const Game = {
           break
         default: // escape pod
           const escapeCard = G.escapeDeck.pop()
+          currentPlayerData.publicRole = 'human' // only humans can enter escape pod hexes
           if (escapeCard === 'success') {
             G.clues.unshift({
               key: `${ctx.currentPlayer} ${G.round}`,
@@ -173,7 +175,7 @@ const Game = {
             G.event = 'escape'
             G.escapes[hex.type] = 'success'
             G.winners.push(Number.parseInt(ctx.currentPlayer, 10))
-            remove(G, ctx.currentPlayer)
+            remove(G, ctx.currentPlayer, false)
             ctx.events.endTurn()
           } else { // 'fail'
             G.clues.unshift({
@@ -265,6 +267,7 @@ const Game = {
       }
       G.clues = clues.concat(G.clues)
       G.event = hitAnything ? 'hit' : 'miss'
+      currentPlayerData.publicRole = 'alien' // only aliens can attack
       ctx.events.endTurn()
     },
   },
@@ -284,7 +287,7 @@ function eliminate(data, G, playerIDToEliminate, currentPlayerData) {
   }
 }
 
-function remove(G, playerIDToEliminate) {
+function remove(G, playerIDToEliminate, markDead = true) {
   // Find index of player to remove.
   const index = G.playOrder.indexOf(playerIDToEliminate)
   // The move should be invalid if we can’t find the player to remove.
@@ -297,7 +300,10 @@ function remove(G, playerIDToEliminate) {
   if (index < G.playOrderPos) {
     --G.playOrderPos
   }
-  G.players[playerIDToEliminate].dead = true
+  G.players[playerIDToEliminate].gone = true
+  if (markDead) {
+    G.players[playerIDToEliminate].dead = true
+  }
 }
 
 function drawDangerCard(G, ctx) {
