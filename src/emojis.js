@@ -1,10 +1,9 @@
+export const EMOJIS = {
+  alien: '👽',
+  human: '👨‍🚀',
+  default: '❓',
+}
+
 export function roleToEmoji(role) {
-  switch (role) {
-    case 'alien':
-      return '👽'
-    case 'human':
-      return '👨‍🚀'
-    default:
-      return '❓'
-  }
+  return EMOJIS[role] || EMOJIS.default
 }

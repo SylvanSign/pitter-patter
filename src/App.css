@@ -27,6 +27,11 @@ text.danger, text.silent {
   fill: rgb(121, 121, 121);
 }
 
+svg text{
+  text-anchor: middle;
+  dominant-baseline: middle;
+}
+
 text.emoji {
   font-size: xx-large;
 }
