@@ -5,6 +5,6 @@ export function roleToEmoji(role) {
     case 'human':
       return '👨‍🚀'
     default:
-      return '❔'
+      return '❓'
   }
 }
