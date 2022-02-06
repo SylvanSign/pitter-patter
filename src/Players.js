@@ -1,4 +1,4 @@
-import { roleToEmoji } from "./emojis"
+import { EMOJIS, roleToEmoji } from "./emojis"
 
 export default function Players({ G: { players, startingPlayOrder }, ctx: { currentPlayer }, playerID, matchData }) {
   const playerData = Object.entries(players).reduce((playerData, [id, player]) => {
@@ -15,17 +15,15 @@ export default function Players({ G: { players, startingPlayOrder }, ctx: { curr
     startingPlayOrder
       .map(id => playerData[id])
       .map(({ id, name, player }) => {
-        const roleInfo = `${roleToEmoji(player.publicRole)} `
-
-        let statusMarker = ''
-
+        let roleInfo
         if (player.dead) {
-          statusMarker = '💀'
-        } else if (id === currentPlayer) {
-          statusMarker = '🤫'
+          roleInfo = EMOJIS.dead
+        } else {
+          roleInfo = `${roleToEmoji(player.publicRole)}`
         }
+        const currentPlayerMarker = id === currentPlayer ? ' 🤫' : ''
 
-        return <li key={id} style={{ margin: '0' }}>{'> '}{roleInfo}{name} {statusMarker}</li>
+        return <li key={id} style={{ margin: '0' }}>{'> '}{roleInfo} {name}{currentPlayerMarker}</li>
       })
 
   return (
@@ -33,7 +31,7 @@ export default function Players({ G: { players, startingPlayOrder }, ctx: { curr
       <h3>Players </h3>
       <ul style={{ listStyle: 'none' }}>
         {playerElements}
-      </ul >
+      </ul>
     </div>
   )
 }

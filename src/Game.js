@@ -305,6 +305,9 @@ function remove(G, playerIDToEliminate, markDead = true) {
   G.players[playerIDToEliminate].gone = true
   if (markDead) {
     G.players[playerIDToEliminate].dead = true
+    G.players[playerIDToEliminate].role = 'dead'
+  } else {
+    G.players[playerIDToEliminate].role = 'gone'
   }
 }
 

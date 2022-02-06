@@ -1,6 +1,8 @@
 export const EMOJIS = {
-  alien: '👽',
+  alien: '🐙',
   human: '👨‍🚀',
+  dead: '💀',
+  gone: '🚀',
   default: '❓',
 }
 
