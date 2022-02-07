@@ -299,8 +299,8 @@ function remove(G, playerIDToEliminate, markDead = true) {
   }
   // Remove the player from G.playOrder.
   G.playOrder.splice(index, 1)
-  // Decrement position if the eliminated position is lower in the order.
-  if (index < G.playOrderPos) {
+  // Decrement position if the eliminated position is lte in the order.
+  if (index <= G.playOrderPos) {
     --G.playOrderPos
   }
   G.players[playerIDToEliminate].gone = true
