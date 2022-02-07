@@ -1,15 +1,19 @@
+import { useEffect } from "react/cjs/react.development"
 import { roleToEmoji } from "./emojis"
 
 export default function RoundDisplay({ ctx: { gameover, currentPlayer, }, G: { round, players, promptNoise, }, matchData, playerID }) {
   const promptingNoiseForYou = (promptNoise && currentPlayer === playerID)
   const role = players[playerID].role
 
+  useEffect(() => {
+    if (promptingNoiseForYou)
+      alert('Click any dangerous sector to make a noise there') // TODO better UI for this :)
+  }, [promptingNoiseForYou])
+
   return (
     gameover
       ? <h2 className="centered">Game Over! {gameoverText(gameover.winner, matchData)}</h2>
-      : promptingNoiseForYou
-        ? <h2 className="centered">Select any dangerous sector to make a noise there</h2>
-        : <h2 className="centered">Round {round} · You are {roleToEmoji(role)}</h2>
+      : <h2 className="centered">Round {round} · You are {roleToEmoji(role)}</h2>
 
   )
 }

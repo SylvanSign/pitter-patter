@@ -83,7 +83,7 @@ function Join({ name, setName }) {
     }
 
     return (
-        <main className='container'>
+        <>
             <ErrorMsg error={location.state} />
             <h2>Join Room</h2>
             <form onSubmit={onSubmit}>
@@ -94,7 +94,7 @@ function Join({ name, setName }) {
                     ref={roomRef} />
                 <button type="submit" disabled={disabled}>SUBMIT</button>
             </form>
-        </main>
+        </>
     )
 }
 
@@ -121,12 +121,12 @@ function GameSelector({ name, setId }) {
     }
 
     return (
-        <main className='container'>
+        <>
             <h2>Welcome, {name} <sup>(<a href='/' onClick={onClickNameChange}>change</a>)</sup></h2>
             <button onClick={onClickJoinGame}>JOIN GAME</button>
             {' '}
             <button className="button-outline" onClick={onClickNewGame}>NEW GAME</button>
-        </main>
+        </>
     )
 }
 
@@ -143,7 +143,7 @@ function NameSelector({ setName, backTo }) {
     }
 
     return (
-        <main className="container">
+        <>
             <h2>Enter a name</h2>
             <form onSubmit={onSubmit}>
                 <input autoCapitalize="none" autoComplete="off" autoCorrect="off" id="form_name"
@@ -153,6 +153,6 @@ function NameSelector({ setName, backTo }) {
                     ref={nameRef} />
                 <button type="submit">SUBMIT</button>
             </form>
-        </main>
+        </>
     )
 }
