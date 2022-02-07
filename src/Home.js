@@ -130,7 +130,7 @@ function GameSelector({ name, setId }) {
     )
 }
 
-function NameSelector({ setName, backTo = '/' }) {
+function NameSelector({ setName, backTo }) {
     const nav = useNavigate()
     const nameRef = useRef()
 
@@ -138,7 +138,8 @@ function NameSelector({ setName, backTo = '/' }) {
         e.preventDefault()
         const name = nameRef.current.value.toUpperCase()
         setName(name)
-        nav(backTo)
+        if (backTo)
+            nav(backTo)
     }
 
     return (
