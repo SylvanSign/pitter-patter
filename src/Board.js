@@ -11,7 +11,7 @@ export default function Game(props) { // props from boardgame.io/react
       {/* TODO add MapSelector somehow? */}
       <RoundDisplay {...props} />
       <Players {...props} />
-      <Inventory {...props} />
+      {/* <Inventory {...props} /> */}
       <Map {...props} {...gridGenerator(props.G.map)} />
       <ClueDisplay {...props} />
     </div >
