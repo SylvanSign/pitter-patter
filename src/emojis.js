@@ -2,7 +2,7 @@ export const EMOJIS = {
   alien: '🐙',
   human: '👨‍🚀',
   dead: '💀',
-  gone: '🚀',
+  pod: '🚀',
   fail: '🔥',
   success: '🌎',
   default: '❓',

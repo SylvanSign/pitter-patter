@@ -58,7 +58,7 @@ function HexShape({ className, x, y, current, moveCandidate, hasNote, hasNoise, 
 function EscapeHex({ x, y, label, current, moveCandidate, hasNote, status, }) {
   const className = status ? status : 'key'
   const text = className === 'key'
-    ? EMOJIS.gone
+    ? EMOJIS.pod
     : EMOJIS[className]
   return (
     <g>

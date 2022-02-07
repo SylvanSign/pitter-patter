@@ -22,6 +22,7 @@ export default function Players({ G: { players, startingPlayOrder }, ctx: { curr
           roleInfo = `${roleToEmoji(player.publicRole)}`
         }
         const currentPlayerMarker = id === currentPlayer ? ' 🤫' : ''
+        name = id === playerID ? <span style={{ color: 'gold' }}>{name}</span> : name
 
         return <li key={id} style={{ margin: '0' }}>{'> '}{roleInfo} {name}{currentPlayerMarker}</li>
       })

@@ -168,6 +168,7 @@ const Game = {
           const escapeCard = G.escapeDeck.pop()
           currentPlayerData.publicRole = 'human' // only humans can enter escape pod hexes
           if (escapeCard === 'success') {
+            currentPlayerData.publicRole = 'g' // only humans can enter escape pod hexes
             G.clues.unshift({
               key: `${ctx.currentPlayer} ${G.round}`,
               id: Number.parseInt(ctx.currentPlayer, 10),
@@ -250,13 +251,13 @@ const Game = {
       G.noise = hex.id
       let hitAnything = false
       for (const [playerID, data] of Object.entries(G.players)) {
-        if (playerID !== ctx.currentPlayer) {
+        if (playerID !== ctx.currentPlayer && !data.dead) {
           if (data.hex.id === hex.id) {
             hitAnything = true
             eliminate(data, G, playerID, currentPlayerData)
             const stinger =
               (data.role === 'human')
-                ? `killed ${EMOJIS.human} NAME. NAME is now ${EMOJIS.alien}`
+                ? `killed ${EMOJIS.human} NAME. ${EMOJIS.alien} NAME has spawned`
                 : `killed ${EMOJIS.alien} NAME`
             clues.push({
               key: `${ctx.currentPlayer} ${G.round} ${playerID}`,
@@ -307,7 +308,7 @@ function remove(G, playerIDToEliminate, markDead = true) {
     G.players[playerIDToEliminate].dead = true
     G.players[playerIDToEliminate].role = 'dead'
   } else {
-    G.players[playerIDToEliminate].role = 'gone'
+    G.players[playerIDToEliminate].role = 'success'
   }
 }
 
