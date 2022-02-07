@@ -9,17 +9,22 @@ import { LobbyClient } from 'boardgame.io/client'
 import MAPS, { defaultMap } from './maps'
 import App from './App'
 import socket from './io'
+import { useNameGuarantee } from "./Home"
 
 const SERVER_PORT = process.env.REACT_APP_SERVER_PORT || 8000
 
 const lobbyClient = new LobbyClient({ server: `http://${window.location.hostname}:${SERVER_PORT}` })
 // window.l = lobbyClient // TODO remove
 
-export default function Room({ id, setId, name }) {
+export default function Room({ id, setId, name, setName }) {
     const [matchID, setMatchID] = useState()
     const [valid, room] = useRoomVerifier(name, id, setId, setMatchID)
     const [credentials, setCredentials] = useSessionStorageState('credentials')
     const [playerID, setPlayerID] = useSessionStorageState('playerID')
+
+    const nameComp = useNameGuarantee(name, setName)
+    if (nameComp)
+        return nameComp
 
     switch (valid) {
         case undefined:

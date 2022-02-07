@@ -7,7 +7,6 @@ import {
     useNavigate,
     useLocation,
     Link,
-    NavLink,
 } from "react-router-dom"
 import Room from './Room'
 import { useSessionStorageState } from './hooks'
@@ -23,7 +22,7 @@ function ErrorMsg({ error }) {
 function Header() {
     return (
         <header>
-            <NavLink to="/">Home</NavLink>·
+            <Link to="/">Home</Link>·
             <a href="https://github.com/SylvanSign/pitter-patter">Source</a>
             |inspired by <em>EftAiOS!</em>
             (<a href="http://www.eftaios.com/">Site</a>
@@ -37,32 +36,33 @@ export default function Home() {
     const [name, setName] = useSessionStorageState('name')
     const [id, setId] = useSessionStorageState('id')
 
-    if (!name)
-        return <BaseNameSelector setName={setName} />
-
     return (
         <BrowserRouter>
             <Header />
             <Routes>
                 <Route path="/" element={<Landing name={name} setName={setName} setId={setId} />} />
-                <Route path="/name" element={<NameSelector setName={setName} />} />
-                <Route path="/join" element={<Join name={name} id={id} />} />
-                <Route path="/rooms/:room" element={<Room name={name} id={id} setId={setId} />} />
+                <Route path="/name" element={<NameSelector setName={setName} backTo={'/'} />} />
+                <Route path="/join" element={<Join name={name} setName={setName} id={id} />} />
+                <Route path="/rooms/:room" element={<Room name={name} setName={setName} id={id} setId={setId} />} />
                 <Route path="*" element={<Navigate to={"/"} replace={true} />} />
             </Routes>
         </BrowserRouter>
     )
 }
 
-function Landing({ name, setName, setId }) {
-    if (!name) {
-        return <BaseNameSelector setName={setName} />
-    }
+export function useNameGuarantee(name, setName) {
+    if (!name)
+        return <NameSelector setName={setName} />
+}
 
+function Landing({ name, setName, setId }) {
+    const nameComp = useNameGuarantee(name, setName)
+    if (nameComp)
+        return nameComp
     return <GameSelector name={name} setId={setId} />
 }
 
-function Join() {
+function Join({ name, setName }) {
     const nav = useNavigate()
     const roomRef = useRef()
     const [disabled, setDisabled] = useState(false)
@@ -70,6 +70,10 @@ function Join() {
 
     // remove socket listeners on unmount
     useEffect(() => () => { socket.off('room-check') }, [])
+
+    const nameComp = useNameGuarantee(name, setName)
+    if (nameComp)
+        return nameComp
 
     const onSubmit = e => {
         e.preventDefault()
@@ -126,19 +130,15 @@ function GameSelector({ name, setId }) {
     )
 }
 
-function NameSelector({ setName }) {
+function NameSelector({ setName, backTo = '/' }) {
     const nav = useNavigate()
-    return <BaseNameSelector setName={setName} afterSubmit={() => nav('/')} />
-}
-
-function BaseNameSelector({ setName, afterSubmit = () => { } }) {
     const nameRef = useRef()
 
     const onSubmit = e => {
         e.preventDefault()
         const name = nameRef.current.value.toUpperCase()
         setName(name)
-        afterSubmit()
+        nav(backTo)
     }
 
     return (
