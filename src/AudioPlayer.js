@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef } from 'react'
 
+const SERVER_PORT = process.env.SERVER_PORT || 8000
 
 export default function AudioPlayer({ src, turn }) {
   const audioRef = useRef()
@@ -21,8 +22,8 @@ export default function AudioPlayer({ src, turn }) {
 
   return (
     <audio ref={audioRef} onCanPlay={onCanPlay}>
-      <source src={`http://${window.location.hostname}:8000/audio/${src}.ogg`} type="audio/ogg" />
-      <source src={`http://${window.location.hostname}:8000/audio/${src}.mp3`} type="audio/mpeg" />
+      <source src={`http://${window.location.hostname}:${SERVER_PORT}/audio/${src}.ogg`} type="audio/ogg" />
+      <source src={`http://${window.location.hostname}:${SERVER_PORT}/audio/${src}.mp3`} type="audio/mpeg" />
     </audio>
   )
 }

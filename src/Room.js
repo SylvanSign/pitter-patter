@@ -10,8 +10,9 @@ import MAPS, { defaultMap } from './maps'
 import App from './App'
 import socket from './io'
 
+const SERVER_PORT = process.env.SERVER_PORT || 8000
 
-const lobbyClient = new LobbyClient({ server: `http://${window.location.hostname}:8000` })
+const lobbyClient = new LobbyClient({ server: `http://${window.location.hostname}:${SERVER_PORT}` })
 // window.l = lobbyClient // TODO remove
 
 export default function Room({ id, setId, name }) {

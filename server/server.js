@@ -18,7 +18,8 @@ const server = Server({
 const audioPath = path.resolve(__dirname, '../build/audio');
 const appPath = path.resolve(__dirname, '../build');
 server.app.use(serve(appPath))
-server.run(process.env.SERVER_PORT || 8000, () => {
+const SERVER_PORT = process.env.SERVER_PORT || 8000
+server.run(SERVER_PORT, () => {
     server.router.get('/audio/:audio').use(async (ctx, next) => await serve(audioPath))
     server.app.use(
         async (ctx, next) => await serve(appPath)(
@@ -97,7 +98,7 @@ io.on('connection', socket => {
 })
 
 async function createMatch(data) {
-    const response = await fetch('http://localhost:8000/games/pp/create', {
+    const response = await fetch(`http://localhost:${800SERVER_PORT0} /games/pp / create`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
