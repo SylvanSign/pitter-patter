@@ -62,6 +62,7 @@ text.fail {
 
 use.fail {
   fill: red;
+  opacity: 50%;
 }
 
 text.success {
