@@ -1,4 +1,4 @@
-import { useEffect } from "react/cjs/react.development"
+import { useEffect } from "react"
 import { roleToEmoji } from "./emojis"
 
 export default function RoundDisplay({ ctx: { gameover, currentPlayer, }, G: { round, players, promptNoise, }, matchData, playerID }) {
