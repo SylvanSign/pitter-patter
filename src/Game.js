@@ -166,9 +166,8 @@ const Game = {
           break
         default: // escape pod
           const escapeCard = G.escapeDeck.pop()
-          currentPlayerData.publicRole = 'human' // only humans can enter escape pod hexes
           if (escapeCard === 'success') {
-            currentPlayerData.publicRole = 'g' // only humans can enter escape pod hexes
+            currentPlayerData.publicRole = 'success'
             G.clues.unshift({
               key: `${ctx.currentPlayer} ${G.round}`,
               id: Number.parseInt(ctx.currentPlayer, 10),
@@ -180,6 +179,7 @@ const Game = {
             remove(G, ctx.currentPlayer, false)
             ctx.events.endTurn()
           } else { // 'fail'
+            currentPlayerData.publicRole = 'human'
             G.clues.unshift({
               key: `${ctx.currentPlayer} ${G.round}`,
               id: Number.parseInt(ctx.currentPlayer, 10),
