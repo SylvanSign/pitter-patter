@@ -98,7 +98,7 @@ io.on('connection', socket => {
 })
 
 async function createMatch(data) {
-    const response = await fetch(`http://localhost:${SERVER_PORT} /games/pp / create`, {
+    const response = await fetch(`http://localhost:${SERVER_PORT}/games/pp/create`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
