@@ -256,7 +256,7 @@ const Game = {
             eliminate(data, G, playerID, currentPlayerData)
             const stinger =
               (data.role === 'human')
-                ? `turned ${EMOJIS.human} NAME into an ${EMOJIS.alien}`
+                ? `killed ${EMOJIS.human} NAME. NAME is now ${EMOJIS.alien}`
                 : `killed ${EMOJIS.alien} NAME`
             clues.push({
               key: `${ctx.currentPlayer} ${G.round} ${playerID}`,

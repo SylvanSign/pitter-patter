@@ -101,8 +101,9 @@
  }
 
 
-body {
+body, header {
   margin: 0;
+  border: none;
   font-family: 'Roboto Mono', 'Fira Mono', 'DejaVu Sans Mono', 'Menlo', 'Consolas', 'Liberation Mono', 'Monaco', 'Lucida Console', monospace;
   background-color:black;
 }

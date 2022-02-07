@@ -6,6 +6,8 @@ import {
     Navigate,
     useNavigate,
     useLocation,
+    Link,
+    NavLink,
 } from "react-router-dom"
 import Room from './Room'
 import { useSessionStorageState } from './hooks'
@@ -15,7 +17,20 @@ function ErrorMsg({ error }) {
     if (!error)
         return null
 
-    return <p className="alert alert-danger" role="alert">Could not find room {error}</p>
+    return <div style={{ color: 'red' }}>!! Could not find room {error} !!</div>
+}
+
+function Header() {
+    return (
+        <header>
+            <NavLink to="/">Home</NavLink>·
+            <a href="https://github.com/SylvanSign/pitter-patter">Source</a>
+            |inspired by <em>EftAiOS!</em>
+            (<a href="http://www.eftaios.com/">Site</a>
+            ·
+            <a href="https://www.boardgamegeek.com/boardgame/82168/escape-aliens-outer-space">BGG</a>)
+        </header>
+    )
 }
 
 export default function Home() {
@@ -27,6 +42,7 @@ export default function Home() {
 
     return (
         <BrowserRouter>
+            <Header />
             <Routes>
                 <Route path="/" element={<Landing name={name} setName={setName} setId={setId} />} />
                 <Route path="/name" element={<NameSelector setName={setName} />} />

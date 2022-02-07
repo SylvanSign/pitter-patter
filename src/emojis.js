@@ -3,6 +3,8 @@ export const EMOJIS = {
   human: '👨‍🚀',
   dead: '💀',
   gone: '🚀',
+  fail: '🔥',
+  success: '🌎',
   default: '❓',
 }
 

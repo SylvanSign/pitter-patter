@@ -46,7 +46,7 @@ use.silent {
 
 text.key {
   font-family: 'Roboto Mono', 'Fira Mono', 'DejaVu Sans Mono', 'Menlo', 'Consolas', 'Liberation Mono', 'Monaco', 'Lucida Console', monospace;
-  font-size: x-large;
+  font-size: xx-large;
   fill: white;
 }
 
@@ -68,7 +68,6 @@ text.success {
   font-family: 'Roboto Mono', 'Fira Mono', 'DejaVu Sans Mono', 'Menlo', 'Consolas', 'Liberation Mono', 'Monaco', 'Lucida Console', monospace;
   font-size: xx-large;
   fill: white;
-  opacity: 50%;
 }
 
 use.success {
@@ -92,4 +91,9 @@ use.menu {
 
 use.highlight {
   fill: none;
+}
+
+select>option {
+  color: white;
+  background-color: black;
 }
