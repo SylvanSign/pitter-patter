@@ -10,7 +10,7 @@ import MAPS, { defaultMap } from './maps'
 import App from './App'
 import socket from './io'
 
-const SERVER_PORT = process.env.SERVER_PORT || 8000
+const SERVER_PORT = process.env.REACT_APP_SERVER_PORT || 8000
 
 const lobbyClient = new LobbyClient({ server: `http://${window.location.hostname}:${SERVER_PORT}` })
 // window.l = lobbyClient // TODO remove

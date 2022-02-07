@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef } from 'react'
 
-const SERVER_PORT = process.env.SERVER_PORT || 8000
+const SERVER_PORT = process.env.REACT_APP_SERVER_PORT || 8000
 
 export default function AudioPlayer({ src, turn }) {
   const audioRef = useRef()
