@@ -89,7 +89,11 @@ const Game = {
     },
     onBegin(G, ctx) {
       const self = G.players[ctx.currentPlayer]
-      self.reachable = makeSerializable(reachableHexes(gridData.grid, gridData.Hex, G.escapes, self.hex, self.speed))
+      let speed = self.speed
+      if (self.role === 'human' && self.hand.adrenaline) {
+        speed += 1
+      }
+      self.reachable = makeSerializable(reachableHexes(gridData.grid, gridData.Hex, G.escapes, self.hex, speed))
     },
 
     // Increment the position in the play order at the end of the turn.
@@ -439,19 +443,19 @@ function freshPlayer(hex) {
 function makeDangerDeck(ctx) {
   // TODO replace items with silence if playing without items (look into setupData and lobby item toggles)
   const deck = [
-    ...Array(27).fill('you'),
-    ...Array(27).fill('any'),
-    ...Array(6).fill('silence'),
+    // ...Array(27).fill('you'),
+    // ...Array(27).fill('any'),
+    // ...Array(6).fill('silence'),
     ...Array(3).fill('adrenaline'),
-    ...Array(3).fill('sedatives'),
-    ...Array(2).fill('attack'),
-    ...Array(2).fill('cat'),
-    ...Array(2).fill('spotlight'),
-    ...Array(1).fill('teleport'),
-    ...Array(1).fill('defence'),
-    ...Array(1).fill('clone'),
-    ...Array(1).fill('sensor'),
-    ...Array(1).fill('mutation'),
+    // ...Array(3).fill('sedatives'),
+    // ...Array(2).fill('attack'),
+    // ...Array(2).fill('cat'),
+    // ...Array(2).fill('spotlight'),
+    // ...Array(1).fill('teleport'),
+    // ...Array(1).fill('defence'),
+    // ...Array(1).fill('clone'),
+    // ...Array(1).fill('sensor'),
+    // ...Array(1).fill('mutation'),
   ]
 
   return ctx.random.Shuffle(deck)
