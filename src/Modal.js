@@ -1,4 +1,4 @@
-export default function Modal({ self, moves, fullGrid, hex, close, setNotes, }) {
+export default function Modal({ self, hand, moves, fullGrid, hex, close, setNotes, }) {
   const escape = typeof hex.type === 'number'
 
   if (escape && self.role === 'alient') {
@@ -11,7 +11,7 @@ export default function Modal({ self, moves, fullGrid, hex, close, setNotes, }) 
     attack,
   ] = fullGrid.neighborsOf(hex).filter(n => n)
   const moveComp = <Move {...{ place: move, hex, moves, close }} />
-  const attackComp = self.role === 'alien' ? <Attack {...{ place: attack, hex, moves, close }} /> : ''
+  const attackComp = self.role === 'alien' || hand.attack ? <Attack {...{ place: attack, role: self.role, hex, moves, close }} /> : ''
   const noteComp = escape ? '' : <Note {...{ place: note, hex, close, setNotes }} />
 
   return (
@@ -50,10 +50,14 @@ function Move({ place, hex, close, moves, }) {
   return <ModalHex {...{ place, svg, tooltip, onClick, }} />
 }
 
-function Attack({ place, hex, close, moves, }) {
+function Attack({ place, role, hex, close, moves, }) {
   function onClick() {
     close()
-    moves.attack(hex)
+    if (role === 'alien') {
+      moves.attack(hex)
+    } else {
+      moves.attackItem(hex)
+    }
   }
   const tooltip = 'MOVE & ATTACK'
   const svg = (

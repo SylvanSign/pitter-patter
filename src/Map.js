@@ -49,7 +49,7 @@ export default function Map({ G, playerID, moves, grid, fullGrid, Grid, corners,
         if (hex.id === modal.id) { // clicking already open hex will close it
           close()
         } else if (!!self.reachable.find(r => r.id === hex.id)) { // reachable
-          setModal({ id: hex.id, comp: <Modal {...{ self, moves, hex, fullGrid, close, setNotes, }} /> })
+          setModal({ id: hex.id, comp: <Modal {...{ self, hand: G.players[playerID].hand, moves, hex, fullGrid, close, setNotes, }} /> })
         } else if (!modal.id && typeof hex.type !== 'number') {
           // quick notes
           setNotes(notes => {

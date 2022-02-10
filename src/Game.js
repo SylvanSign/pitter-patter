@@ -106,6 +106,32 @@ const Game = {
   },
 
   moves: {
+    noise(G, ctx, hex) {
+      // handle invalid moves
+      if (!hex) {
+        return INVALID_MOVE
+      }
+      const config = G.mapConfig[hex.id]
+      switch (config) {
+        case HEX_TYPES.human:
+        case HEX_TYPES.alien:
+        case HEX_TYPES.silent:
+          return INVALID_MOVE
+        default:
+          if (config > 0 || config < 5) {
+            return INVALID_MOVE
+          }
+      }
+      G.clues.unshift({
+        key: `${ctx.currentPlayer} ${G.round}`,
+        id: Number.parseInt(ctx.currentPlayer, 10),
+        msg: `${G.round}: NAME made a noise in ${hex.id}`,
+      })
+      G.event = 'noise'
+      G.noise = hex.id
+      G.promptNoise = false
+      ctx.events.endTurn()
+    },
     move(G, ctx, hex) {
       const currentPlayerData = G.players[ctx.currentPlayer]
       if (hex === currentPlayerData.hex) {
@@ -191,34 +217,7 @@ const Game = {
           }
       }
     },
-    noise(G, ctx, hex) {
-      // handle invalid moves
-      if (!hex) {
-        return INVALID_MOVE
-      }
-      const config = G.mapConfig[hex.id]
-      switch (config) {
-        case HEX_TYPES.human:
-        case HEX_TYPES.alien:
-        case HEX_TYPES.silent:
-          return INVALID_MOVE
-        default:
-          if (config > 0 || config < 5) {
-            return INVALID_MOVE
-          }
-      }
-      G.clues.unshift({
-        key: `${ctx.currentPlayer} ${G.round}`,
-        id: Number.parseInt(ctx.currentPlayer, 10),
-        msg: `${G.round}: NAME made a noise in ${hex.id}`,
-      })
-      G.event = 'noise'
-      G.noise = hex.id
-      G.promptNoise = false
-      ctx.events.endTurn()
-    },
     attack(G, ctx, hex) {
-      // TODO factor out shared movement code with move and attack
       const currentPlayerData = G.players[ctx.currentPlayer]
       if (currentPlayerData.role !== 'alien') {
         return INVALID_MOVE
@@ -271,9 +270,67 @@ const Game = {
       G.event = hitAnything ? 'hit' : 'miss'
       currentPlayerData.publicRole = 'alien' // only aliens can attack
       ctx.events.endTurn()
+    }, attackItem(G, ctx, hex) {
+      const currentPlayerData = G.players[ctx.currentPlayer]
+      if (currentPlayerData.role !== 'human') {
+        return INVALID_MOVE
+      }
+
+      if (hex === currentPlayerData.hex) {
+        return INVALID_MOVE
+      }
+
+      switch (G.mapConfig[hex.id]) {
+        case HEX_TYPES.human:
+          return INVALID_MOVE
+        case HEX_TYPES.alien:
+          return INVALID_MOVE
+        default: // proceed
+      }
+
+      if (!currentPlayerData.reachable.find(r => r.id === hex.id)) {
+        return INVALID_MOVE
+      }
+
+      currentPlayerData.hex = makeSerializable(hex)
+      currentPlayerData.reachable = [] // TODO clean this reachable thing up
+      // TODO attack logic
+      const clues = [{
+        key: `${ctx.currentPlayer} ${G.round}`,
+        id: Number.parseInt(ctx.currentPlayer, 10),
+        msg: `${G.round}: NAME attacked sector ${hex.id}`,
+      }]
+      G.noise = hex.id
+      let hitAnything = false
+      for (const [playerID, data] of Object.entries(G.players)) {
+        if (playerID !== ctx.currentPlayer && !data.dead) {
+          if (data.hex.id === hex.id) {
+            hitAnything = true
+            eliminate(data, G, playerID, currentPlayerData)
+            const stinger =
+              (data.role === 'human')
+                ? `killed fellow ${EMOJIS.human} NAME. Murderer!`
+                : `killed ${EMOJIS.alien} NAME`
+            clues.push({
+              key: `${ctx.currentPlayer} ${G.round} ${playerID}`,
+              id: Number.parseInt(playerID, 10),
+              msg: `and ${stinger}`
+            })
+          }
+        }
+      }
+      G.clues = clues.concat(G.clues)
+      G.event = hitAnything ? 'hit' : 'miss'
+      --currentPlayerData.hand.attack
+      if (!currentPlayerData.hand.attack) {
+        delete currentPlayerData.hand.attack
+      }
+      currentPlayerData.publicRole = 'human' // only humans can itemAttack
+      ctx.events.endTurn()
     },
   },
 }
+
 
 function eliminate(data, G, playerIDToEliminate, currentPlayerData) {
   switch (data.role) {
@@ -380,6 +437,7 @@ function freshPlayer(hex) {
 }
 
 function makeDangerDeck(ctx) {
+  // TODO replace items with silence if playing without items (look into setupData and lobby item toggles)
   const deck = [
     ...Array(27).fill('you'),
     ...Array(27).fill('any'),
