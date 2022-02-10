@@ -46,7 +46,7 @@ use.silent {
 
 text.key {
   font-family: 'Roboto Mono', 'Fira Mono', 'DejaVu Sans Mono', 'Menlo', 'Consolas', 'Liberation Mono', 'Monaco', 'Lucida Console', monospace;
-  font-size: xx-large;
+  font-size: x-large;
   fill: white;
 }
 

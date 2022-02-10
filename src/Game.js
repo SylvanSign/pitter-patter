@@ -324,7 +324,9 @@ function drawDangerCard(G, ctx) {
       break
     default:
       // should 'silence' still go into hand so that we can have an accurate handsize in the UI?
-      G.players[ctx.currentPlayer].hand.push(dangerCard)
+      const hand = G.players[ctx.currentPlayer].hand
+      hand[dangerCard] = hand[dangerCard] || 0
+      ++hand[dangerCard]
   }
 
   return dangerCard
@@ -357,7 +359,6 @@ function freshHuman(hex) {
     role: 'human',
     speed: 1,
     reachable: [],
-    hand: [],
   }
 }
 
@@ -367,7 +368,6 @@ function freshAlien(hex) {
     role: 'alien',
     speed: 2,
     reachable: [],
-    hand: [],
   }
 }
 
@@ -375,7 +375,7 @@ function freshPlayer(hex) {
   return {
     hex,
     reachable: [],
-    hand: [],
+    hand: {},
   }
 }
 
