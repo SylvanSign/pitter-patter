@@ -14,6 +14,10 @@ function makeSerializable(data) {
   }
 }
 
+function emojiPlusName({ publicRole }) {
+  return `${EMOJIS[publicRole]} NAME`
+}
+
 // TODO generally, remove all console.logs
 const Game = {
   name: 'pp',
@@ -71,9 +75,6 @@ const Game = {
   },
 
   turn: {
-    // TODO use stages to enforce this and allow other players to take notes when not current player?
-    // moveLimit: 1, // must move, then either silent, draw, or attack
-
     order: {
       // Calculate the first player.
       first(G, ctx) {
@@ -131,7 +132,7 @@ const Game = {
       G.clues.unshift({
         key: `${ctx.currentPlayer} ${G.round}`,
         id: Number.parseInt(ctx.currentPlayer, 10),
-        msg: `${G.round}: NAME made a noise in ${hex.id}`,
+        msg: `${emojiPlusName(G.players[ctx.currentPlayer])} made a noise in ${hex.id}`,
       })
       G.event = 'noise'
       G.noise = hex.id
@@ -161,7 +162,7 @@ const Game = {
       let usedAdrenaline = false
       if (gridData && new gridData.Hex(currentPlayerData.hex).distance(new gridData.Hex(hex)) > currentPlayerData.speed) {
         usedAdrenaline = true
-        discardCard(currentPlayerData.hand, 'adrenaline')
+        discard(currentPlayerData.hand, 'adrenaline')
         currentPlayerData.publicRole = 'human' // TODO handle Surge Alien, eventually
       }
       const adrenalineMsg = usedAdrenaline ? ' used ADRENALINE and ' : ' '
@@ -174,7 +175,7 @@ const Game = {
           G.clues.unshift({
             key: `${ctx.currentPlayer} ${G.round}`,
             id: Number.parseInt(ctx.currentPlayer, 10),
-            msg: `${G.round}: NAME${adrenalineMsg}is in a silent sector`,
+            msg: `${emojiPlusName(currentPlayerData)}${adrenalineMsg}is in a silent sector`,
           })
           G.event = 'silent'
           ctx.events.endTurn()
@@ -186,7 +187,7 @@ const Game = {
               G.clues.unshift({
                 key: `${ctx.currentPlayer} ${G.round}`,
                 id: Number.parseInt(ctx.currentPlayer, 10),
-                msg: `${G.round}: NAME${adrenalineMsg}made a noise in ${hex.id}`,
+                msg: `${emojiPlusName(currentPlayerData)}${adrenalineMsg}made a noise in ${hex.id}`,
               })
               G.event = 'noise'
               G.noise = hex.id
@@ -200,20 +201,20 @@ const Game = {
               G.clues.unshift({
                 key: `${ctx.currentPlayer} ${G.round}`,
                 id: Number.parseInt(ctx.currentPlayer, 10),
-                msg: `${G.round}: NAME${adrenalineMsg}may have found something in a dangerous sector`,
+                msg: `${emojiPlusName(currentPlayerData)}${adrenalineMsg}may have found something in a dangerous sector`,
               })
               G.event = 'quiet'
               ctx.events.endTurn()
           }
           break
         case HEX_TYPES.human:
-          discardCard(currentPlayerData.hand, 'teleport')
+          discard(currentPlayerData.hand, 'teleport')
+          currentPlayerData.publicRole = 'human' // TODO handle blink alien!
           G.clues.unshift({
             key: `${ctx.currentPlayer} ${G.round}`,
             id: Number.parseInt(ctx.currentPlayer, 10),
-            msg: `${G.round}: ${EMOJIS.human} NAME teleported to the human spawn`,
+            msg: `${emojiPlusName(currentPlayerData)} teleported to the human spawn`,
           })
-          currentPlayerData.publicRole = 'human' // TODO handle blink alien!
           G.event = 'teleport'
           ctx.events.endTurn()
           break
@@ -224,7 +225,7 @@ const Game = {
             G.clues.unshift({
               key: `${ctx.currentPlayer} ${G.round}`,
               id: Number.parseInt(ctx.currentPlayer, 10),
-              msg: `${G.round}: NAME${adrenalineMsg}left in escape pod ${hex.type}`,
+              msg: `${emojiPlusName(currentPlayerData)}${adrenalineMsg}left in escape pod ${hex.type}`,
             })
             G.event = 'escape'
             G.escapes[hex.type] = 'success'
@@ -236,7 +237,7 @@ const Game = {
             G.clues.unshift({
               key: `${ctx.currentPlayer} ${G.round}`,
               id: Number.parseInt(ctx.currentPlayer, 10),
-              msg: `${G.round}: NAME${adrenalineMsg}failed to launch escape pod ${hex.id}`,
+              msg: `${emojiPlusName(currentPlayerData)}${adrenalineMsg}failed to launch escape pod ${hex.id}`,
             })
             G.event = 'escapeFail'
             G.escapes[hex.type] = 'fail'
@@ -269,10 +270,11 @@ const Game = {
       currentPlayerData.hex = makeSerializable(hex)
       currentPlayerData.reachable = [] // TODO clean this reachable thing up
       // TODO attack logic
+      currentPlayerData.publicRole = 'alien' // only aliens can attack
       const clues = [{
         key: `${ctx.currentPlayer} ${G.round}`,
         id: Number.parseInt(ctx.currentPlayer, 10),
-        msg: `${G.round}: ${EMOJIS.alien} NAME attacked sector ${hex.id}`,
+        msg: `${emojiPlusName(currentPlayerData)} attacked sector ${hex.id}`,
       }]
       G.noise = hex.id
       let hitAnything = false
@@ -280,12 +282,12 @@ const Game = {
         if (playerID !== ctx.currentPlayer && !data.dead) {
           if (data.hex.id === hex.id) {
             if (data.role === 'human' && data.hand.defense) {
-              discardCard(data.hand, 'defense')
+              discard(data.hand, 'defense')
               data.publicRole = 'human' // only humans can use defense
               clues.push({
                 key: `${ctx.currentPlayer} ${G.round} ${playerID}`,
                 id: Number.parseInt(playerID, 10),
-                msg: `and hit ${EMOJIS.human} NAME, who blocked it with defense`
+                msg: `and hit ${emojiPlusName(data)}, who blocked it with defense`
               })
             } else if (data.role === 'human' && data.hand.clone) {
               G.players[playerID] = freshHuman(G.humanHex)
@@ -293,7 +295,7 @@ const Game = {
               clues.push({
                 key: `${ctx.currentPlayer} ${G.round} ${playerID}`,
                 id: Number.parseInt(playerID, 10),
-                msg: `and hit ${EMOJIS.human} NAME, whose ${EMOJIS.human} clone has spawned in their place!`
+                msg: `and hit ${emojiPlusName(G.players[playerID])}, whose clone has spawned in their place!`
               })
             } else {
               hitAnything = true
@@ -301,7 +303,7 @@ const Game = {
               const stinger =
                 (data.role === 'human')
                   ? `killed ${EMOJIS.human} NAME, who has respawned as a ${EMOJIS.alien}!`
-                  : `killed ${EMOJIS.alien} NAME`
+                  : `killed ${EMOJIS.alien} NAME. Murderer!`
               clues.push({
                 key: `${ctx.currentPlayer} ${G.round} ${playerID}`,
                 id: Number.parseInt(playerID, 10),
@@ -313,7 +315,6 @@ const Game = {
       }
       G.clues = clues.concat(G.clues)
       G.event = hitAnything ? 'hit' : 'miss'
-      currentPlayerData.publicRole = 'alien' // only aliens can attack
       ctx.events.endTurn()
     },
     attackItem(G, ctx, hex) {
@@ -343,7 +344,7 @@ const Game = {
       let usedAdrenaline = false
       if (gridData && new gridData.Hex(currentPlayerData.hex).distance(new gridData.Hex(hex)) > currentPlayerData.speed) {
         usedAdrenaline = true
-        discardCard(currentPlayerData.hand, 'adrenaline')
+        discard(currentPlayerData.hand, 'adrenaline')
         currentPlayerData.publicRole = 'human' // TODO handle Surge Alien, eventually
       }
       const adrenalineMsg = usedAdrenaline ? ' used ADRENALINE and ' : ' '
@@ -351,10 +352,11 @@ const Game = {
       currentPlayerData.hex = makeSerializable(hex)
       currentPlayerData.reachable = [] // TODO clean this reachable thing up
       // TODO attack logic
+      currentPlayerData.publicRole = 'human' // only humans can itemAttack
       const clues = [{
         key: `${ctx.currentPlayer} ${G.round}`,
         id: Number.parseInt(ctx.currentPlayer, 10),
-        msg: `${G.round}: ${EMOJIS.human} NAME${adrenalineMsg}attacked sector ${hex.id}`,
+        msg: `${emojiPlusName(currentPlayerData)}${adrenalineMsg}attacked sector ${hex.id}`,
       }]
       G.noise = hex.id
       let hitAnything = false
@@ -377,14 +379,18 @@ const Game = {
       }
       G.clues = clues.concat(G.clues)
       G.event = hitAnything ? 'hit' : 'miss'
-      discardCard(currentPlayerData.hand, 'attack')
-      currentPlayerData.publicRole = 'human' // only humans can itemAttack
+      discard(currentPlayerData.hand, 'attack')
       ctx.events.endTurn()
     },
   },
 }
 
-function discardCard(hand, type) {
+function draw(hand, type) {
+  hand[type] = hand[type] || 0
+  ++hand[type]
+}
+
+function discard(hand, type) {
   --hand[type]
   if (!hand[type]) {
     delete hand[type]
@@ -442,8 +448,7 @@ function drawDangerCard(G, ctx) {
     default:
       // should 'silence' still go into hand so that we can have an accurate handsize in the UI?
       const hand = G.players[ctx.currentPlayer].hand
-      hand[dangerCard] = hand[dangerCard] || 0
-      ++hand[dangerCard]
+      draw(hand, dangerCard)
   }
 
   return dangerCard
@@ -493,6 +498,7 @@ function freshPlayer(hex) {
     hex,
     reachable: [],
     hand: {},
+    publicRole: 'unknown',
   }
 }
 

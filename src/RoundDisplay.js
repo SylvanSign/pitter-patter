@@ -1,5 +1,5 @@
 import { useEffect } from "react"
-import { roleToEmoji } from "./emojis"
+import { EMOJIS } from "./emojis"
 
 export default function RoundDisplay({ ctx: { gameover, currentPlayer, }, G: { round, players, promptNoise, }, matchData, playerID }) {
   const promptingNoiseForYou = (promptNoise && currentPlayer === playerID)
@@ -13,7 +13,7 @@ export default function RoundDisplay({ ctx: { gameover, currentPlayer, }, G: { r
   return (
     gameover
       ? <h2 className="centered">Game Over! {gameoverText(gameover.winner, matchData)}</h2>
-      : <h2 className="centered">Round {round} · You are {roleToEmoji(role)}</h2>
+      : <h2 className="centered">Round {round} · You are {EMOJIS[role]}</h2>
 
   )
 }

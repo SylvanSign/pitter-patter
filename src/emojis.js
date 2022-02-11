@@ -5,9 +5,5 @@ export const EMOJIS = {
   pod: '🚀',
   fail: '🔥',
   success: '🌎',
-  default: '❓',
-}
-
-export function roleToEmoji(role) {
-  return EMOJIS[role] || EMOJIS.default
+  unknown: '❓',
 }

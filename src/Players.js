@@ -1,4 +1,4 @@
-import { EMOJIS, roleToEmoji } from "./emojis"
+import { EMOJIS } from "./emojis"
 
 export default function Players({ G: { players, startingPlayOrder }, ctx: { currentPlayer }, playerID, matchData }) {
   const playerData = Object.entries(players).reduce((playerData, [id, player]) => {
@@ -19,7 +19,7 @@ export default function Players({ G: { players, startingPlayOrder }, ctx: { curr
         if (player.dead) {
           roleInfo = EMOJIS.dead
         } else {
-          roleInfo = `${roleToEmoji(player.publicRole)}`
+          roleInfo = `${EMOJIS[player.publicRole]}`
         }
         const currentPlayerMarker = id === currentPlayer ? ' 🤫' : ''
         name = id === playerID ? <span style={{ color: 'gold' }}>{name}</span> : name
