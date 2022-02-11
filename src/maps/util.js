@@ -60,7 +60,7 @@ export function idToCartesian(id) {
 }
 
 // from https://www.redblobgames.com/grids/hexagons/#range-obstacles
-export function reachableHexes(grid, Hex, escapes, start, movement) {
+export function reachableHexes(grid, Hex, escapes, start, movement, self, humanHex) {
   const startHex = new Hex(start)
   const visited = new Set([startHex]); // set of hexes
   const fringes = [[startHex]] // array of arrays of hexes
@@ -83,5 +83,8 @@ export function reachableHexes(grid, Hex, escapes, start, movement) {
     }
   }
   visited.delete(startHex) // TODO? must move every turn
+  if (self.role === 'human' && self.hand.teleport) {
+    visited.add(humanHex)
+  }
   return Array.from(visited)
 }

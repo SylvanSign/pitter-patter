@@ -95,7 +95,7 @@ const Game = {
       if (self.role === 'human' && self.hand.adrenaline) {
         speed += 1
       }
-      self.reachable = makeSerializable(reachableHexes(gridData.grid, gridData.Hex, G.escapes, self.hex, speed))
+      self.reachable = makeSerializable(reachableHexes(gridData.grid, gridData.Hex, G.escapes, self.hex, speed, self, G.humanHex))
     },
 
     // Increment the position in the play order at the end of the turn.
@@ -145,8 +145,9 @@ const Game = {
       }
 
       switch (G.mapConfig[hex.id]) {
-        case HEX_TYPES.human:
-          return INVALID_MOVE
+        // Human sometimes valid, because teleport item
+        // case HEX_TYPES.human:
+        //   return INVALID_MOVE
         case HEX_TYPES.alien:
           return INVALID_MOVE
         default: // proceed
@@ -204,6 +205,17 @@ const Game = {
               G.event = 'quiet'
               ctx.events.endTurn()
           }
+          break
+        case HEX_TYPES.human:
+          discardCard(currentPlayerData.hand, 'teleport')
+          G.clues.unshift({
+            key: `${ctx.currentPlayer} ${G.round}`,
+            id: Number.parseInt(ctx.currentPlayer, 10),
+            msg: `${G.round}: ${EMOJIS.human} NAME teleported to the human spawn`,
+          })
+          currentPlayerData.publicRole = 'human' // TODO handle blink alien!
+          G.event = 'teleport'
+          ctx.events.endTurn()
           break
         default: // escape pod
           const escapeCard = G.escapeDeck.pop()

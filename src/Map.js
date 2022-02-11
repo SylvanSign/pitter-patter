@@ -45,7 +45,7 @@ export default function Map({ G, playerID, moves, grid, fullGrid, Grid, corners,
     if (promptNoise && playerID === currentPlayer) {
       moves.noise(hex)
     } else {
-      if (hex && hex.accessible && !G.escapes[hex.type]) {
+      if (hex && !G.escapes[hex.type]) {
         if (hex.id === modal.id) { // clicking already open hex will close it
           close()
         } else if (!!self.reachable.find(r => r.id === hex.id)) { // reachable

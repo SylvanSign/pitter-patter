@@ -74,6 +74,9 @@ const EVENT_SOUNDS = {
     'anybody-ever-tell-you-you-look-dead-man',
     'not-that-bad-to-be-eaten-by-alien',
   ],
+  teleport: [
+    'portal-quote',
+  ],
   escape: [
     'escape-pod-launched',
     'i-wish-i-could-leave-this-place-too',

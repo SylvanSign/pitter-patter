@@ -14,7 +14,7 @@ export default function Tile({ map, id, x, y, current, moveCandidate, hasNote, h
     case HEX_TYPES.danger:
       return <DangerHex {...{ x, y, label: id, current, moveCandidate, hasNote, hasNoise, }} />
     case HEX_TYPES.human:
-      return <HumanHex {...{ x, y }} />
+      return <HumanHex {...{ x, y, moveCandidate }} />
     case HEX_TYPES.alien:
       return <AlienHex {...{ x, y }} />
     // escape pods
@@ -73,11 +73,11 @@ function EscapeHex({ x, y, label, current, moveCandidate, hasNote, status, }) {
   )
 }
 
-function HumanHex({ x, y }) {
+function HumanHex({ x, y, moveCandidate }) {
   return (
     <g>
       <title>Human Spawn</title>
-      <HexShape {...{ className: 'key', x, y }} />
+      <HexShape {...{ className: 'key', x, y, moveCandidate }} />
       {/* <svg viewBox="0 0 134 116" width='60' height='60' x={x} y={y - 5}>
         <path d="M67.009,100.979l-33.996,-19.624l0,-56.517l16.998,-9.817l4.067,7.058l-12.921,7.456l0,47.117l25.852,14.927l25.834,-14.927l0,-47.117l-12.912,-7.456l4.072,-7.058l16.984,9.817l0,56.517l-33.978,19.624Z" style={{ fill: 'green', fillRule: 'nonzero' }} />
         <path d="M67.009,66.431l-31.958,-18.444l4.072,-7.058l27.886,16.103l27.872,-16.103l4.072,7.058l-31.944,18.444Z" style={{ fill: 'green', fillRule: 'nonzero' }} />
