@@ -98,7 +98,8 @@ const Game = {
     },
 
     // Increment the position in the play order at the end of the turn.
-    onEnd(G) {
+    onEnd(G, ctx) {
+      G.players[ctx.currentPlayer].reachable = []
       G.playOrderPos = (G.playOrderPos + 1) % G.playOrder.length
       if (G.playOrderPos === 0) {
         G.clues.unshift({
@@ -155,7 +156,6 @@ const Game = {
         msg: `${emojiPlusName(currentPlayerData)} teleported to the human spawn`,
       })
       currentPlayerData.hex = G.humanHex
-      currentPlayerData.reachable = [] // TODO clean this reachable thing up
       G.event = 'teleport'
       ++G.action
       ctx.events.endTurn()
@@ -229,7 +229,6 @@ const Game = {
       }
 
       currentPlayerData.hex = makeSerializable(hex)
-      currentPlayerData.reachable = [] // TODO clean this reachable thing up
 
       switch (hex.type) {
         case HEX_TYPES.silent:
@@ -337,7 +336,6 @@ const Game = {
       }
 
       currentPlayerData.hex = makeSerializable(hex)
-      currentPlayerData.reachable = [] // TODO clean this reachable thing up
       // TODO attack logic
       currentPlayerData.publicRole = 'alien' // only aliens can attack
       const clues = [{
@@ -406,7 +404,6 @@ const Game = {
       }
 
       currentPlayerData.hex = makeSerializable(hex)
-      currentPlayerData.reachable = [] // TODO clean this reachable thing up
       // TODO attack logic
       currentPlayerData.publicRole = 'human' // only humans can itemAttack
       const clues = [{
@@ -563,7 +560,7 @@ function makeDangerDeck(ctx) {
   // TODO replace items with silence if playing without items (look into setupData and lobby item toggles)
   const deck = [
     // ...Array(27).fill('you'),
-    ...Array(27).fill('any'),
+    // ...Array(27).fill('any'),
     // ...Array(6).fill('silence'),
     // ...Array(3).fill('adrenaline'),
     // ...Array(3).fill('sedatives'),
