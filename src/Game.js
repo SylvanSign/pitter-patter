@@ -155,10 +155,15 @@ const Game = {
         return INVALID_MOVE
       }
 
+      // TODO allow playing adrenaline even if you don't use the extra movement???
+      let usedAdrenaline = false
       if (gridData && new gridData.Hex(currentPlayerData.hex).distance(new gridData.Hex(hex)) > currentPlayerData.speed) {
+        usedAdrenaline = true
         discardCard(currentPlayerData.hand, 'adrenaline')
         currentPlayerData.publicRole = 'human' // TODO handle Surge Alien, eventually
       }
+      const adrenalineMsg = usedAdrenaline ? ' used ADRENALINE and ' : ' '
+
 
       currentPlayerData.hex = makeSerializable(hex)
       currentPlayerData.reachable = [] // TODO clean this reachable thing up
@@ -168,7 +173,7 @@ const Game = {
           G.clues.unshift({
             key: `${ctx.currentPlayer} ${G.round}`,
             id: Number.parseInt(ctx.currentPlayer, 10),
-            msg: `${G.round}: NAME is in a silent sector`,
+            msg: `${G.round}: NAME${adrenalineMsg}is in a silent sector`,
           })
           G.event = 'silent'
           ctx.events.endTurn()
@@ -180,7 +185,7 @@ const Game = {
               G.clues.unshift({
                 key: `${ctx.currentPlayer} ${G.round}`,
                 id: Number.parseInt(ctx.currentPlayer, 10),
-                msg: `${G.round}: NAME made a noise in ${hex.id}`,
+                msg: `${G.round}: NAME${adrenalineMsg}made a noise in ${hex.id}`,
               })
               G.event = 'noise'
               G.noise = hex.id
@@ -194,7 +199,7 @@ const Game = {
               G.clues.unshift({
                 key: `${ctx.currentPlayer} ${G.round}`,
                 id: Number.parseInt(ctx.currentPlayer, 10),
-                msg: `${G.round}: NAME may have found something in a dangerous sector`,
+                msg: `${G.round}: NAME${adrenalineMsg}may have found something in a dangerous sector`,
               })
               G.event = 'quiet'
               ctx.events.endTurn()
@@ -207,7 +212,7 @@ const Game = {
             G.clues.unshift({
               key: `${ctx.currentPlayer} ${G.round}`,
               id: Number.parseInt(ctx.currentPlayer, 10),
-              msg: `${G.round}: NAME left in escape pod ${hex.type}`,
+              msg: `${G.round}: NAME${adrenalineMsg}left in escape pod ${hex.type}`,
             })
             G.event = 'escape'
             G.escapes[hex.type] = 'success'
@@ -219,7 +224,7 @@ const Game = {
             G.clues.unshift({
               key: `${ctx.currentPlayer} ${G.round}`,
               id: Number.parseInt(ctx.currentPlayer, 10),
-              msg: `${G.round}: NAME failed to launch escape pod ${hex.id}`,
+              msg: `${G.round}: NAME${adrenalineMsg}failed to launch escape pod ${hex.id}`,
             })
             G.event = 'escapeFail'
             G.escapes[hex.type] = 'fail'
@@ -475,14 +480,14 @@ function makeDangerDeck(ctx) {
     // ...Array(27).fill('you'),
     // ...Array(27).fill('any'),
     // ...Array(6).fill('silence'),
-    // ...Array(3).fill('adrenaline'),
+    ...Array(3).fill('adrenaline'),
     // ...Array(3).fill('sedatives'),
     // ...Array(2).fill('attack'),
     // ...Array(2).fill('cat'),
     // ...Array(2).fill('spotlight'),
     // ...Array(1).fill('teleport'),
     // ...Array(1).fill('defense'),
-    ...Array(1).fill('clone'),
+    // ...Array(1).fill('clone'),
     // ...Array(1).fill('sensor'),
     // ...Array(1).fill('mutation'),
   ]
