@@ -118,6 +118,7 @@ const Game = {
         id: Number.parseInt(ctx.currentPlayer, 10),
         msg: `${emojiPlusName(currentPlayerData)} injected ADRENALINE`,
       })
+      G.event = 'adrenaline'
 
       const adrenalineSpeed = currentPlayerData.speed + 1
       if (gridData)
@@ -126,8 +127,13 @@ const Game = {
 
     sedatives(G, ctx) {
       const currentPlayerData = G.players[ctx.currentPlayer]
-      console.log(`MOVES sedatives`)
       discard(currentPlayerData, 'sedatives')
+      currentPlayerData.publicRole = 'human' // TODO deal with Junkie Alien
+      G.clues.unshift({
+        id: Number.parseInt(ctx.currentPlayer, 10),
+        msg: `${emojiPlusName(currentPlayerData)} took SEDATIVES`,
+      })
+      G.event = 'sedatives'
     },
 
     spotlight(G, ctx) {

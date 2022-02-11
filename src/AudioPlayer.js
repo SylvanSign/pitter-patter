@@ -73,9 +73,22 @@ const EVENT_SOUNDS = {
     'a-player-has-been-killed',
     'anybody-ever-tell-you-you-look-dead-man',
     'not-that-bad-to-be-eaten-by-alien',
+    'must-feel-good-to-fight-back-for-a-change',
+  ],
+  adrenaline: [
+    'drugs-are-bad',
+    'power-overwhelming',
+    'these-go-to-11',
+  ],
+  sedatives: [
+    'chill-pill',
+    'i-am-a-leaf-on-the-wind',
+    'you-must-have-found-my-stash',
   ],
   teleport: [
     'portal-quote',
+    'mr-gaeta-start-the-clock',
+    'somebody-took-the-blue-pill',
   ],
   escape: [
     'escape-pod-launched',
