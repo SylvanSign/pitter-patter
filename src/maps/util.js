@@ -64,7 +64,7 @@ export function reachableHexes(grid, Hex, escapes, start, movement, self, humanH
   const startHex = new Hex(start)
   const visited = new Set([startHex]); // set of hexes
   const fringes = [[startHex]] // array of arrays of hexes
-  const ignoreEscapes = movement > 1 // aliens cannot enter nor pass through escapes
+  const ignoreEscapes = self.role === 'alien' // aliens cannot enter nor pass through escapes
 
   for (let k = 1; k <= movement; ++k) {
     fringes.push([])

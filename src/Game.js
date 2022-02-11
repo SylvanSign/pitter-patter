@@ -338,13 +338,23 @@ const Game = {
         return INVALID_MOVE
       }
 
+
+      // TODO allow playing adrenaline even if you don't use the extra movement???
+      let usedAdrenaline = false
+      if (gridData && new gridData.Hex(currentPlayerData.hex).distance(new gridData.Hex(hex)) > currentPlayerData.speed) {
+        usedAdrenaline = true
+        discardCard(currentPlayerData.hand, 'adrenaline')
+        currentPlayerData.publicRole = 'human' // TODO handle Surge Alien, eventually
+      }
+      const adrenalineMsg = usedAdrenaline ? ' used ADRENALINE and ' : ' '
+
       currentPlayerData.hex = makeSerializable(hex)
       currentPlayerData.reachable = [] // TODO clean this reachable thing up
       // TODO attack logic
       const clues = [{
         key: `${ctx.currentPlayer} ${G.round}`,
         id: Number.parseInt(ctx.currentPlayer, 10),
-        msg: `${G.round}: ${EMOJIS.human} NAME attacked sector ${hex.id}`,
+        msg: `${G.round}: ${EMOJIS.human} NAME${adrenalineMsg}attacked sector ${hex.id}`,
       }]
       G.noise = hex.id
       let hitAnything = false
@@ -492,14 +502,14 @@ function makeDangerDeck(ctx) {
     // ...Array(27).fill('you'),
     // ...Array(27).fill('any'),
     // ...Array(6).fill('silence'),
-    // ...Array(3).fill('adrenaline'),
+    ...Array(3).fill('adrenaline'),
     // ...Array(3).fill('sedatives'),
-    // ...Array(2).fill('attack'),
+    ...Array(2).fill('attack'),
     // ...Array(2).fill('cat'),
     // ...Array(2).fill('spotlight'),
     ...Array(1).fill('teleport'),
-    // ...Array(1).fill('defense'),
-    // ...Array(1).fill('clone'),
+    ...Array(1).fill('defense'),
+    ...Array(1).fill('clone'),
     // ...Array(1).fill('sensor'),
     // ...Array(1).fill('mutation'),
   ]
