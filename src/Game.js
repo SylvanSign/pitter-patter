@@ -55,6 +55,7 @@ const Game = {
       winners: [],
       clues: [],
       event: null,
+      action: 0,
     })
   },
 
@@ -119,6 +120,7 @@ const Game = {
         msg: `${emojiPlusName(currentPlayerData)} injected ADRENALINE`,
       })
       G.event = 'adrenaline'
+      ++G.action
 
       const adrenalineSpeed = currentPlayerData.speed + 1
       if (gridData)
@@ -134,6 +136,7 @@ const Game = {
         msg: `${emojiPlusName(currentPlayerData)} took SEDATIVES`,
       })
       G.event = 'sedatives'
+      ++G.action
     },
 
     spotlight(G, ctx) {
@@ -153,6 +156,7 @@ const Game = {
       currentPlayerData.hex = G.humanHex
       currentPlayerData.reachable = [] // TODO clean this reachable thing up
       G.event = 'teleport'
+      ++G.action
       ctx.events.endTurn()
     },
 
@@ -189,6 +193,7 @@ const Game = {
         msg: `${emojiPlusName(G.players[ctx.currentPlayer])} made a noise in ${hex.id}`,
       })
       G.event = 'noise'
+      ++G.action
       G.noise = hex.id
       G.promptNoise = false
       ctx.events.endTurn()
@@ -221,6 +226,7 @@ const Game = {
             msg: `${emojiPlusName(currentPlayerData)} is in a silent sector`,
           })
           G.event = 'silent'
+          ++G.action
           ctx.events.endTurn()
           break
         case HEX_TYPES.danger:
@@ -232,6 +238,7 @@ const Game = {
                 msg: `${emojiPlusName(currentPlayerData)} made a noise in ${hex.id}`,
               })
               G.event = 'noise'
+              ++G.action
               G.noise = hex.id
               ctx.events.endTurn()
               break
@@ -245,6 +252,7 @@ const Game = {
                 msg: `${emojiPlusName(currentPlayerData)} may have found something in a dangerous sector`,
               })
               G.event = 'quiet'
+              ++G.action
               ctx.events.endTurn()
           }
           break
@@ -257,6 +265,7 @@ const Game = {
               msg: `${emojiPlusName(currentPlayerData)} left in escape pod ${hex.type}`,
             })
             G.event = 'escape'
+            ++G.action
             G.escapes[hex.type] = 'success'
             G.winners.push(Number.parseInt(ctx.currentPlayer, 10))
             remove(G, ctx.currentPlayer, false)
@@ -268,6 +277,7 @@ const Game = {
               msg: `${emojiPlusName(currentPlayerData)} failed to launch escape pod ${hex.id}`,
             })
             G.event = 'escapeFail'
+            ++G.action
             G.escapes[hex.type] = 'fail'
             ctx.events.endTurn()
           }
@@ -339,6 +349,7 @@ const Game = {
       }
       G.clues = clues.concat(G.clues)
       G.event = hitAnything ? 'hit' : 'miss'
+      ++G.action
       ctx.events.endTurn()
     },
     attackItem(G, ctx, hex) {
@@ -391,6 +402,7 @@ const Game = {
       }
       G.clues = clues.concat(G.clues)
       G.event = hitAnything ? 'hit' : 'miss'
+      ++G.action
       discard(currentPlayerData, 'attack')
       ctx.events.endTurn()
     },
@@ -523,11 +535,11 @@ function makeDangerDeck(ctx) {
     // ...Array(27).fill('any'),
     // ...Array(6).fill('silence'),
     ...Array(3).fill('adrenaline'),
-    // ...Array(3).fill('sedatives'),
+    ...Array(3).fill('sedatives'),
     // ...Array(2).fill('attack'),
     // ...Array(2).fill('cat'),
     // ...Array(2).fill('spotlight'),
-    // ...Array(1).fill('teleport'),
+    ...Array(1).fill('teleport'),
     // ...Array(1).fill('defense'),
     // ...Array(1).fill('clone'),
     // ...Array(1).fill('sensor'),

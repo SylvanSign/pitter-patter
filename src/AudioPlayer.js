@@ -2,7 +2,7 @@ import { useCallback, useEffect, useRef } from 'react'
 
 const SERVER_PORT = process.env.REACT_APP_SERVER_PORT || 8000
 
-export default function AudioPlayer({ src, turn }) {
+export default function AudioPlayer({ src, action }) {
   const audioRef = useRef()
 
   useEffect(() => {
@@ -14,7 +14,7 @@ export default function AudioPlayer({ src, turn }) {
         ref.currentTime = 0
       }
     }
-  }, [src, turn])
+  }, [src, action])
 
   const onCanPlay = useCallback(() => {
     audioRef.current.play()
@@ -47,7 +47,6 @@ const EVENT_SOUNDS = {
   quiet: [
     'must-have-just-been-the-wind',
     'quiet-game',
-    'sneaky-hobbits',
     'sneaky-hobbitses',
   ],
   noise: [
@@ -87,7 +86,7 @@ const EVENT_SOUNDS = {
   ],
   teleport: [
     'portal-quote',
-    'mr-gaeta-start-the-clock',
+    'start-the-clock',
     'somebody-took-the-blue-pill',
   ],
   escape: [
