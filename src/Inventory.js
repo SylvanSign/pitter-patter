@@ -1,5 +1,6 @@
 export default function Inventory({ G: { players }, moves, playerID }) {
-  const { hand } = players[playerID]
+  const self = players[playerID]
+  const { hand } = self
   return (
     <div>
       <h3 style={{ display: 'inline' }}>Items</h3>
@@ -7,14 +8,17 @@ export default function Inventory({ G: { players }, moves, playerID }) {
         {
           Object.entries(hand)
             .filter(([card, _]) => card !== 'silence')
-            .map(([card, count]) => (
-              <li key={card} style={{ display: 'inline' }}>
-                {' '}{count}x
-                <button className="button-outline" onClick={() => moves[card]()}>
-                  {card}
-                </button>
-              </li>
-            ))
+            .map(([card, count]) => {
+              const disabled = self.role === 'alien'
+              return (
+                <li key={card} style={{ display: 'inline' }}>
+                  {' '}{count}x
+                  <button disabled={disabled} className="button-outline" onClick={() => moves[card]()}>
+                    {card}
+                  </button>
+                </li>
+              )
+            })
         }
       </ul >
     </div>
