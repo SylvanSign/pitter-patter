@@ -7,7 +7,7 @@ export default function Inventory({ G: { players }, playerID }) {
         {
           Object.entries(hand)
             .filter(([card, _]) => card !== 'silence')
-            .map(([card, count]) => <li style={{ display: 'inline' }}> {count}x<button className="button-outline">{card}</button></li>)
+            .map(([card, count]) => <li key={card} style={{ display: 'inline' }}> {count}x<button className="button-outline">{card}</button></li>)
         }
       </ul >
     </div>
