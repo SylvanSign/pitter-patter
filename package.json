@@ -16,7 +16,7 @@
     "socket.io-client": "^4.4.1"
   },
   "scripts": {
-    "start": "node -r esm server/server.js & react-scripts start & wait",
+    "start": "npm run server & react-scripts start & wait",
     "build": "react-scripts build",
     "eject": "react-scripts eject",
     "server": "nodemon -r esm server/server.js",

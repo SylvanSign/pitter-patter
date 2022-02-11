@@ -17,7 +17,7 @@ function makeSerializable(data) {
 // TODO generally, remove all console.logs
 const Game = {
   name: 'pp',
-  minPlayers: 2,
+  minPlayers: 1,
   maxPlayers: 8,
   setup(ctx, { map = defaultMap } = {}) {
     const mapConfig = MAPS[map]
@@ -27,7 +27,8 @@ const Game = {
 
     const { playOrder, } = ctx
     const randomizedPlayOrder = ctx.random.Shuffle(playOrder)
-    const [humans, aliens] = pickRoles(ctx, playOrder)
+    // const [humans, aliens] = pickRoles(ctx, playOrder)
+    const [aliens, humans] = pickRoles(ctx, playOrder) // TODO use line above
     const players = setupPlayers({ humans, humanHex, }, { aliens, alienHex, })
 
     const dangerDeck = makeDangerDeck(ctx)
@@ -479,12 +480,12 @@ function makeDangerDeck(ctx) {
     // ...Array(27).fill('you'),
     // ...Array(27).fill('any'),
     // ...Array(6).fill('silence'),
-    ...Array(3).fill('adrenaline'),
+    // ...Array(3).fill('adrenaline'),
     // ...Array(3).fill('sedatives'),
     // ...Array(2).fill('attack'),
     // ...Array(2).fill('cat'),
     // ...Array(2).fill('spotlight'),
-    // ...Array(1).fill('teleport'),
+    ...Array(1).fill('teleport'),
     // ...Array(1).fill('defense'),
     // ...Array(1).fill('clone'),
     // ...Array(1).fill('sensor'),
