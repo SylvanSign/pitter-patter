@@ -169,8 +169,19 @@ const Game = {
 
     mutation(G, ctx) {
       const currentPlayerData = G.players[ctx.currentPlayer]
-      console.log(`MOVES mutation`)
       discard(currentPlayerData, 'mutation')
+      G.clues.unshift({
+        id: Number.parseInt(ctx.currentPlayer, 10),
+        msg: `${EMOJIS.human} NAME used MUTATION and is now ${EMOJIS.alien}`,
+      })
+      Object.assign(currentPlayerData, {
+        role: 'alien',
+        publicRole: 'alien',
+        speed: 2,
+      })
+      G.event = 'mutation'
+      ++G.action
+      ctx.events.endTurn()
     },
 
     noise(G, ctx, hex) {
@@ -244,6 +255,8 @@ const Game = {
               msg: `${emojiPlusName(currentPlayerData)} was sedated and made no sound`,
             })
             G.event = 'silent'
+            ++G.action
+            ctx.events.endTurn()
           } else {
             const dangerCard = drawDangerCard(G, ctx)
             switch (dangerCard) {
@@ -252,9 +265,9 @@ const Game = {
                   id: Number.parseInt(ctx.currentPlayer, 10),
                   msg: `${emojiPlusName(currentPlayerData)} made a noise in ${hex.id}`,
                 })
+                G.noise = hex.id
                 G.event = 'noise'
                 ++G.action
-                G.noise = hex.id
                 ctx.events.endTurn()
                 break
               case 'any':
@@ -267,11 +280,10 @@ const Game = {
                   msg: `${emojiPlusName(currentPlayerData)} may have found something in a dangerous sector`,
                 })
                 G.event = 'quiet'
+                ++G.action
+                ctx.events.endTurn()
             }
           }
-
-          ++G.action
-          ctx.events.endTurn()
           break
         default: // escape pod
           const escapeCard = G.escapeDeck.pop()
@@ -356,7 +368,7 @@ const Game = {
               eliminate(data, G, playerID, currentPlayerData)
               const stinger =
                 (data.role === 'human')
-                  ? `killed ${EMOJIS.human} NAME, who has respawned as a ${EMOJIS.alien}!`
+                  ? `killed ${EMOJIS.human} NAME, who has respawned as ${EMOJIS.alien}!`
                   : `killed ${EMOJIS.alien} NAME. Murderer!`
               clues.push({
                 id: Number.parseInt(playerID, 10),
@@ -399,7 +411,7 @@ const Game = {
       currentPlayerData.publicRole = 'human' // only humans can itemAttack
       const clues = [{
         id: Number.parseInt(ctx.currentPlayer, 10),
-        msg: `${emojiPlusName(currentPlayerData)} attacked sector ${hex.id}`,
+        msg: `${emojiPlusName(currentPlayerData)} used ATTACK in sector ${hex.id}`,
       }]
       G.noise = hex.id
       let hitAnything = false
@@ -420,7 +432,7 @@ const Game = {
         }
       }
       G.clues = clues.concat(G.clues)
-      G.event = hitAnything ? 'hit' : 'miss'
+      G.event = 'attackItem'
       ++G.action
       discard(currentPlayerData, 'attack')
       ctx.events.endTurn()
@@ -551,10 +563,10 @@ function makeDangerDeck(ctx) {
   // TODO replace items with silence if playing without items (look into setupData and lobby item toggles)
   const deck = [
     // ...Array(27).fill('you'),
-    // ...Array(27).fill('any'),
+    ...Array(27).fill('any'),
     // ...Array(6).fill('silence'),
     // ...Array(3).fill('adrenaline'),
-    ...Array(3).fill('sedatives'),
+    // ...Array(3).fill('sedatives'),
     // ...Array(2).fill('attack'),
     // ...Array(2).fill('cat'),
     // ...Array(2).fill('spotlight'),
@@ -562,7 +574,7 @@ function makeDangerDeck(ctx) {
     // ...Array(1).fill('defense'),
     // ...Array(1).fill('clone'),
     // ...Array(1).fill('sensor'),
-    // ...Array(1).fill('mutation'),
+    ...Array(1).fill('mutation'),
   ]
 
   return ctx.random.Shuffle(deck)

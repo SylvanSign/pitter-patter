@@ -72,7 +72,10 @@ const EVENT_SOUNDS = {
     'a-player-has-been-killed',
     'anybody-ever-tell-you-you-look-dead-man',
     'not-that-bad-to-be-eaten-by-alien',
+  ],
+  attackItem: [
     'must-feel-good-to-fight-back-for-a-change',
+    'swing-away-merrill',
   ],
   adrenaline: [
     'drugs-are-bad',
@@ -83,6 +86,11 @@ const EVENT_SOUNDS = {
     'chill-pill',
     'i-am-a-leaf-on-the-wind',
     'you-must-have-found-my-stash',
+  ],
+  mutation: [
+    'magneto',
+    'tnmt',
+    'curse-your-betrayal',
   ],
   teleport: [
     'portal-quote',
