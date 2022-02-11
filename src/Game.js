@@ -164,7 +164,6 @@ const Game = {
       }
       const adrenalineMsg = usedAdrenaline ? ' used ADRENALINE and ' : ' '
 
-
       currentPlayerData.hex = makeSerializable(hex)
       currentPlayerData.reachable = [] // TODO clean this reachable thing up
 
@@ -260,7 +259,7 @@ const Game = {
       const clues = [{
         key: `${ctx.currentPlayer} ${G.round}`,
         id: Number.parseInt(ctx.currentPlayer, 10),
-        msg: `${G.round}: NAME attacked sector ${hex.id}`,
+        msg: `${G.round}: ${EMOJIS.alien} NAME attacked sector ${hex.id}`,
       }]
       G.noise = hex.id
       let hitAnything = false
@@ -273,7 +272,7 @@ const Game = {
               clues.push({
                 key: `${ctx.currentPlayer} ${G.round} ${playerID}`,
                 id: Number.parseInt(playerID, 10),
-                msg: `and hit NAME, who blocked it with defense`
+                msg: `and hit ${EMOJIS.human} NAME, who blocked it with defense`
               })
             } else if (data.role === 'human' && data.hand.clone) {
               G.players[playerID] = freshHuman(G.humanHex)
@@ -281,7 +280,7 @@ const Game = {
               clues.push({
                 key: `${ctx.currentPlayer} ${G.round} ${playerID}`,
                 id: Number.parseInt(playerID, 10),
-                msg: `and hit NAME, whose ${EMOJIS.human} clone has spawned in their place!`
+                msg: `and hit ${EMOJIS.human} NAME, whose ${EMOJIS.human} clone has spawned in their place!`
               })
             } else {
               hitAnything = true
@@ -332,7 +331,7 @@ const Game = {
       const clues = [{
         key: `${ctx.currentPlayer} ${G.round}`,
         id: Number.parseInt(ctx.currentPlayer, 10),
-        msg: `${G.round}: NAME attacked sector ${hex.id}`,
+        msg: `${G.round}: ${EMOJIS.human} NAME attacked sector ${hex.id}`,
       }]
       G.noise = hex.id
       let hitAnything = false
