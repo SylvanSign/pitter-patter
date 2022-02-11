@@ -135,6 +135,7 @@ const Game = {
         id: Number.parseInt(ctx.currentPlayer, 10),
         msg: `${emojiPlusName(currentPlayerData)} took SEDATIVES`,
       })
+      G.skipNextDraw = true
       G.event = 'sedatives'
       ++G.action
     },
@@ -221,40 +222,56 @@ const Game = {
 
       switch (hex.type) {
         case HEX_TYPES.silent:
-          G.clues.unshift({
-            id: Number.parseInt(ctx.currentPlayer, 10),
-            msg: `${emojiPlusName(currentPlayerData)} is in a silent sector`,
-          })
+          if (G.skipNextDraw) {
+            G.clues.unshift({
+              id: Number.parseInt(ctx.currentPlayer, 10),
+              msg: `${emojiPlusName(currentPlayerData)} was sedated and made no sound`,
+            })
+          } else {
+            G.clues.unshift({
+              id: Number.parseInt(ctx.currentPlayer, 10),
+              msg: `${emojiPlusName(currentPlayerData)} is in a silent sector`,
+            })
+          }
           G.event = 'silent'
           ++G.action
           ctx.events.endTurn()
           break
         case HEX_TYPES.danger:
-          const dangerCard = drawDangerCard(G, ctx)
-          switch (dangerCard) {
-            case 'you':
-              G.clues.unshift({
-                id: Number.parseInt(ctx.currentPlayer, 10),
-                msg: `${emojiPlusName(currentPlayerData)} made a noise in ${hex.id}`,
-              })
-              G.event = 'noise'
-              ++G.action
-              G.noise = hex.id
-              ctx.events.endTurn()
-              break
-            case 'any':
-              G.promptNoise = true
-              break
-            default:
-              // silence or item
-              G.clues.unshift({
-                id: Number.parseInt(ctx.currentPlayer, 10),
-                msg: `${emojiPlusName(currentPlayerData)} may have found something in a dangerous sector`,
-              })
-              G.event = 'quiet'
-              ++G.action
-              ctx.events.endTurn()
+          if (G.skipNextDraw) {
+            G.clues.unshift({
+              id: Number.parseInt(ctx.currentPlayer, 10),
+              msg: `${emojiPlusName(currentPlayerData)} was sedated and made no sound`,
+            })
+            G.event = 'silent'
+          } else {
+            const dangerCard = drawDangerCard(G, ctx)
+            switch (dangerCard) {
+              case 'you':
+                G.clues.unshift({
+                  id: Number.parseInt(ctx.currentPlayer, 10),
+                  msg: `${emojiPlusName(currentPlayerData)} made a noise in ${hex.id}`,
+                })
+                G.event = 'noise'
+                ++G.action
+                G.noise = hex.id
+                ctx.events.endTurn()
+                break
+              case 'any':
+                G.promptNoise = true
+                break
+              default:
+                // silence or item
+                G.clues.unshift({
+                  id: Number.parseInt(ctx.currentPlayer, 10),
+                  msg: `${emojiPlusName(currentPlayerData)} may have found something in a dangerous sector`,
+                })
+                G.event = 'quiet'
+            }
           }
+
+          ++G.action
+          ctx.events.endTurn()
           break
         default: // escape pod
           const escapeCard = G.escapeDeck.pop()
@@ -282,6 +299,8 @@ const Game = {
             ctx.events.endTurn()
           }
       }
+
+      G.skipNextDraw = false
     },
     attack(G, ctx, hex) {
       const currentPlayerData = G.players[ctx.currentPlayer]
@@ -534,12 +553,12 @@ function makeDangerDeck(ctx) {
     // ...Array(27).fill('you'),
     // ...Array(27).fill('any'),
     // ...Array(6).fill('silence'),
-    ...Array(3).fill('adrenaline'),
+    // ...Array(3).fill('adrenaline'),
     ...Array(3).fill('sedatives'),
     // ...Array(2).fill('attack'),
     // ...Array(2).fill('cat'),
     // ...Array(2).fill('spotlight'),
-    ...Array(1).fill('teleport'),
+    // ...Array(1).fill('teleport'),
     // ...Array(1).fill('defense'),
     // ...Array(1).fill('clone'),
     // ...Array(1).fill('sensor'),
