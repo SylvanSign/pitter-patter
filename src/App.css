@@ -82,7 +82,7 @@ use.current {
 }
 
 use.can-move {
-  fill: lightblue;
+  fill: rgb(0, 255, 242);
   /* opacity: 70%; */
 }
 
