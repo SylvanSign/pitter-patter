@@ -36,7 +36,8 @@ const Game = {
     return makeSerializable({
       round: 1,
       map,
-      alienHex: alienHex,
+      alienHex,
+      humanHex,
       players: players,
       startingPlayOrder: randomizedPlayOrder,
       playOrder: randomizedPlayOrder,
@@ -156,6 +157,7 @@ const Game = {
 
       if (gridData && new gridData.Hex(currentPlayerData.hex).distance(new gridData.Hex(hex)) > currentPlayerData.speed) {
         discardCard(currentPlayerData.hand, 'adrenaline')
+        currentPlayerData.publicRole = 'human' // TODO handle Surge Alien, eventually
       }
 
       currentPlayerData.hex = makeSerializable(hex)
@@ -260,19 +262,28 @@ const Game = {
       for (const [playerID, data] of Object.entries(G.players)) {
         if (playerID !== ctx.currentPlayer && !data.dead) {
           if (data.hex.id === hex.id) {
-            if (data.hand.defense) {
+            if (data.role === 'human' && data.hand.defense) {
               discardCard(data.hand, 'defense')
+              data.publicRole = 'human' // only humans can use defense
               clues.push({
                 key: `${ctx.currentPlayer} ${G.round} ${playerID}`,
                 id: Number.parseInt(playerID, 10),
                 msg: `and hit NAME, who blocked it with defense`
+              })
+            } else if (data.role === 'human' && data.hand.clone) {
+              G.players[playerID] = freshHuman(G.humanHex)
+              G.players[playerID].publicRole = 'human' // only humans can use clone
+              clues.push({
+                key: `${ctx.currentPlayer} ${G.round} ${playerID}`,
+                id: Number.parseInt(playerID, 10),
+                msg: `and hit NAME, whose ${EMOJIS.human} clone has spawned in their place!`
               })
             } else {
               hitAnything = true
               eliminate(data, G, playerID, currentPlayerData)
               const stinger =
                 (data.role === 'human')
-                  ? `killed ${EMOJIS.human} NAME. A new ${EMOJIS.alien} NAME has spawned!`
+                  ? `killed ${EMOJIS.human} NAME, who has respawned as a ${EMOJIS.alien}!`
                   : `killed ${EMOJIS.alien} NAME`
               clues.push({
                 key: `${ctx.currentPlayer} ${G.round} ${playerID}`,
@@ -470,8 +481,8 @@ function makeDangerDeck(ctx) {
     // ...Array(2).fill('cat'),
     // ...Array(2).fill('spotlight'),
     // ...Array(1).fill('teleport'),
-    ...Array(1).fill('defense'),
-    // ...Array(1).fill('clone'),
+    // ...Array(1).fill('defense'),
+    ...Array(1).fill('clone'),
     // ...Array(1).fill('sensor'),
     // ...Array(1).fill('mutation'),
   ]
