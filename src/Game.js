@@ -260,17 +260,26 @@ const Game = {
       for (const [playerID, data] of Object.entries(G.players)) {
         if (playerID !== ctx.currentPlayer && !data.dead) {
           if (data.hex.id === hex.id) {
-            hitAnything = true
-            eliminate(data, G, playerID, currentPlayerData)
-            const stinger =
-              (data.role === 'human')
-                ? `killed ${EMOJIS.human} NAME. A new ${EMOJIS.alien} NAME has spawned!`
-                : `killed ${EMOJIS.alien} NAME`
-            clues.push({
-              key: `${ctx.currentPlayer} ${G.round} ${playerID}`,
-              id: Number.parseInt(playerID, 10),
-              msg: `and ${stinger}`
-            })
+            if (data.hand.defense) {
+              discardCard(data.hand, 'defense')
+              clues.push({
+                key: `${ctx.currentPlayer} ${G.round} ${playerID}`,
+                id: Number.parseInt(playerID, 10),
+                msg: `and hit NAME, who blocked it with defense`
+              })
+            } else {
+              hitAnything = true
+              eliminate(data, G, playerID, currentPlayerData)
+              const stinger =
+                (data.role === 'human')
+                  ? `killed ${EMOJIS.human} NAME. A new ${EMOJIS.alien} NAME has spawned!`
+                  : `killed ${EMOJIS.alien} NAME`
+              clues.push({
+                key: `${ctx.currentPlayer} ${G.round} ${playerID}`,
+                id: Number.parseInt(playerID, 10),
+                msg: `and ${stinger}`
+              })
+            }
           }
         }
       }
@@ -455,13 +464,13 @@ function makeDangerDeck(ctx) {
     // ...Array(27).fill('you'),
     // ...Array(27).fill('any'),
     // ...Array(6).fill('silence'),
-    ...Array(3).fill('adrenaline'),
+    // ...Array(3).fill('adrenaline'),
     // ...Array(3).fill('sedatives'),
     // ...Array(2).fill('attack'),
     // ...Array(2).fill('cat'),
     // ...Array(2).fill('spotlight'),
     // ...Array(1).fill('teleport'),
-    // ...Array(1).fill('defense'),
+    ...Array(1).fill('defense'),
     // ...Array(1).fill('clone'),
     // ...Array(1).fill('sensor'),
     // ...Array(1).fill('mutation'),
