@@ -154,6 +154,10 @@ const Game = {
         return INVALID_MOVE
       }
 
+      if (gridData && new gridData.Hex(currentPlayerData.hex).distance(new gridData.Hex(hex)) > currentPlayerData.speed) {
+        discardCard(currentPlayerData.hand, 'adrenaline')
+      }
+
       currentPlayerData.hex = makeSerializable(hex)
       currentPlayerData.reachable = [] // TODO clean this reachable thing up
 
@@ -325,14 +329,18 @@ const Game = {
       }
       G.clues = clues.concat(G.clues)
       G.event = hitAnything ? 'hit' : 'miss'
-      --currentPlayerData.hand.attack
-      if (!currentPlayerData.hand.attack) {
-        delete currentPlayerData.hand.attack
-      }
+      discardCard(currentPlayerData.hand, 'attack')
       currentPlayerData.publicRole = 'human' // only humans can itemAttack
       ctx.events.endTurn()
     },
   },
+}
+
+function discardCard(hand, type) {
+  --hand[type]
+  if (!hand[type]) {
+    delete hand[type]
+  }
 }
 
 
