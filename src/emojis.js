@@ -5,5 +5,6 @@ export const EMOJIS = {
   pod: '🚀',
   fail: '🔥',
   success: '🌎',
+  hand: '🛠️',
   unknown: '❓',
 }

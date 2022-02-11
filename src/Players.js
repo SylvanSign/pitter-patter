@@ -14,17 +14,19 @@ export default function Players({ G: { players, startingPlayOrder }, ctx: { curr
   const playerElements =
     startingPlayOrder
       .map(id => playerData[id])
-      .map(({ id, name, player }) => {
+      .map(({ id, name, player: { dead, publicRole, handSize } }) => {
         let roleInfo
-        if (player.dead) {
+        if (dead) {
           roleInfo = EMOJIS.dead
         } else {
-          roleInfo = `${EMOJIS[player.publicRole]}`
+          roleInfo = `${EMOJIS[publicRole]}`
         }
-        const currentPlayerMarker = id === currentPlayer ? ' 🤫' : ''
+        const currentPlayerMarker = id === currentPlayer ? '🤫' : ''
         name = id === playerID ? <span style={{ color: 'gold' }}>{name}</span> : name
 
-        return <li key={id} style={{ margin: '0' }}>{'> '}{roleInfo} {name}{currentPlayerMarker}</li>
+        const hand = `${EMOJIS.hand}x${handSize}`
+
+        return <li key={id} style={{ margin: '0' }}>{'> '}{roleInfo} {name} {hand} {currentPlayerMarker}</li>
       })
 
   return (

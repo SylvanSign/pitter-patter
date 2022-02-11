@@ -96,7 +96,7 @@ const Game = {
       if (self.role === 'human' && self.hand.adrenaline) {
         speed += 1
       }
-      self.reachable = makeSerializable(reachableHexes(gridData.grid, gridData.Hex, G.escapes, self.hex, speed, self, G.humanHex))
+      self.reachable = makeSerializable(reachableHexes(gridData.grid, gridData.Hex, G.escapes, self.hex, speed, self.role))
     },
 
     // Increment the position in the play order at the end of the turn.
@@ -113,6 +113,51 @@ const Game = {
   },
 
   moves: {
+    adrenaline(G, ctx) {
+      const currentPlayerData = G.players[ctx.currentPlayer]
+      console.log(`MOVES adrenaline`)
+      discard(currentPlayerData, 'adrenaline')
+    },
+
+    sedatives(G, ctx) {
+      const currentPlayerData = G.players[ctx.currentPlayer]
+      console.log(`MOVES sedatives`)
+      discard(currentPlayerData, 'sedatives')
+    },
+
+    spotlight(G, ctx) {
+      const currentPlayerData = G.players[ctx.currentPlayer]
+      console.log(`MOVES spotlight`)
+      discard(currentPlayerData, 'spotlight')
+    },
+
+    teleport(G, ctx) {
+      const currentPlayerData = G.players[ctx.currentPlayer]
+      discard(currentPlayerData, 'teleport')
+      currentPlayerData.publicRole = 'human' // TODO handle blink alien!
+      G.clues.unshift({
+        key: `${ctx.currentPlayer} ${G.round}`,
+        id: Number.parseInt(ctx.currentPlayer, 10),
+        msg: `${emojiPlusName(currentPlayerData)} teleported to the human spawn`,
+      })
+      currentPlayerData.hex = G.humanHex
+      currentPlayerData.reachable = [] // TODO clean this reachable thing up
+      G.event = 'teleport'
+      ctx.events.endTurn()
+    },
+
+    sensor(G, ctx) {
+      const currentPlayerData = G.players[ctx.currentPlayer]
+      console.log(`MOVES sensor`)
+      discard(currentPlayerData, 'sensor')
+    },
+
+    mutation(G, ctx) {
+      const currentPlayerData = G.players[ctx.currentPlayer]
+      console.log(`MOVES mutation`)
+      discard(currentPlayerData, 'mutation')
+    },
+
     noise(G, ctx, hex) {
       // handle invalid moves
       if (!hex) {
@@ -146,9 +191,8 @@ const Game = {
       }
 
       switch (G.mapConfig[hex.id]) {
-        // Human sometimes valid, because teleport item
-        // case HEX_TYPES.human:
-        //   return INVALID_MOVE
+        case HEX_TYPES.human:
+          return INVALID_MOVE
         case HEX_TYPES.alien:
           return INVALID_MOVE
         default: // proceed
@@ -162,7 +206,7 @@ const Game = {
       let usedAdrenaline = false
       if (gridData && new gridData.Hex(currentPlayerData.hex).distance(new gridData.Hex(hex)) > currentPlayerData.speed) {
         usedAdrenaline = true
-        discard(currentPlayerData.hand, 'adrenaline')
+        discard(currentPlayerData, 'adrenaline')
         currentPlayerData.publicRole = 'human' // TODO handle Surge Alien, eventually
       }
       const adrenalineMsg = usedAdrenaline ? ' used ADRENALINE and ' : ' '
@@ -206,17 +250,6 @@ const Game = {
               G.event = 'quiet'
               ctx.events.endTurn()
           }
-          break
-        case HEX_TYPES.human:
-          discard(currentPlayerData.hand, 'teleport')
-          currentPlayerData.publicRole = 'human' // TODO handle blink alien!
-          G.clues.unshift({
-            key: `${ctx.currentPlayer} ${G.round}`,
-            id: Number.parseInt(ctx.currentPlayer, 10),
-            msg: `${emojiPlusName(currentPlayerData)} teleported to the human spawn`,
-          })
-          G.event = 'teleport'
-          ctx.events.endTurn()
           break
         default: // escape pod
           const escapeCard = G.escapeDeck.pop()
@@ -282,7 +315,7 @@ const Game = {
         if (playerID !== ctx.currentPlayer && !data.dead) {
           if (data.hex.id === hex.id) {
             if (data.role === 'human' && data.hand.defense) {
-              discard(data.hand, 'defense')
+              discard(data, 'defense')
               data.publicRole = 'human' // only humans can use defense
               clues.push({
                 key: `${ctx.currentPlayer} ${G.round} ${playerID}`,
@@ -344,7 +377,7 @@ const Game = {
       let usedAdrenaline = false
       if (gridData && new gridData.Hex(currentPlayerData.hex).distance(new gridData.Hex(hex)) > currentPlayerData.speed) {
         usedAdrenaline = true
-        discard(currentPlayerData.hand, 'adrenaline')
+        discard(currentPlayerData, 'adrenaline')
         currentPlayerData.publicRole = 'human' // TODO handle Surge Alien, eventually
       }
       const adrenalineMsg = usedAdrenaline ? ' used ADRENALINE and ' : ' '
@@ -379,21 +412,23 @@ const Game = {
       }
       G.clues = clues.concat(G.clues)
       G.event = hitAnything ? 'hit' : 'miss'
-      discard(currentPlayerData.hand, 'attack')
+      discard(currentPlayerData, 'attack')
       ctx.events.endTurn()
     },
   },
 }
 
-function draw(hand, type) {
-  hand[type] = hand[type] || 0
-  ++hand[type]
+function draw(data, type) {
+  data.hand[type] = data.hand[type] || 0
+  ++data.hand[type]
+  ++data.handSize
 }
 
-function discard(hand, type) {
-  --hand[type]
-  if (!hand[type]) {
-    delete hand[type]
+function discard(data, type) {
+  --data.hand[type]
+  --data.handSize
+  if (!data.hand[type]) {
+    delete data.hand[type]
   }
 }
 
@@ -447,8 +482,7 @@ function drawDangerCard(G, ctx) {
       break
     default:
       // should 'silence' still go into hand so that we can have an accurate handsize in the UI?
-      const hand = G.players[ctx.currentPlayer].hand
-      draw(hand, dangerCard)
+      draw(G.players[ctx.currentPlayer], dangerCard)
   }
 
   return dangerCard
@@ -498,6 +532,7 @@ function freshPlayer(hex) {
     hex,
     reachable: [],
     hand: {},
+    handSize: 0,
     publicRole: 'unknown',
   }
 }
@@ -508,14 +543,14 @@ function makeDangerDeck(ctx) {
     // ...Array(27).fill('you'),
     // ...Array(27).fill('any'),
     // ...Array(6).fill('silence'),
-    ...Array(3).fill('adrenaline'),
+    // ...Array(3).fill('adrenaline'),
     // ...Array(3).fill('sedatives'),
-    ...Array(2).fill('attack'),
+    // ...Array(2).fill('attack'),
     // ...Array(2).fill('cat'),
     // ...Array(2).fill('spotlight'),
     ...Array(1).fill('teleport'),
-    ...Array(1).fill('defense'),
-    ...Array(1).fill('clone'),
+    // ...Array(1).fill('defense'),
+    // ...Array(1).fill('clone'),
     // ...Array(1).fill('sensor'),
     // ...Array(1).fill('mutation'),
   ]
