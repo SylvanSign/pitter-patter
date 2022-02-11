@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react"
 import AudioPlayer, { randSrc } from "./AudioPlayer"
-import { EMOJIS } from "./emojis"
 
 export default function ClueDisplay({ G: { clues, event, players }, ctx: { turn, gameover, currentPlayer, }, matchData }) {
   const [src, setSrc] = useState(randSrc('start'))
@@ -25,10 +24,10 @@ export default function ClueDisplay({ G: { clues, event, players }, ctx: { turn,
 }
 
 function renderClues(clues, matchData, players) {
-  return clues.map(({ key, id, msg }) => {
+  return clues.map(({ id, msg }, index) => {
     const renderedMsg = id !== undefined ? msg.replace(/NAME/g, matchData.find(e => e.id === id).name) : msg
     return {
-      key,
+      key: index,
       msg: renderedMsg,
     }
   })
