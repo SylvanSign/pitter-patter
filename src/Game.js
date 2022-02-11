@@ -278,7 +278,8 @@ const Game = {
       G.event = hitAnything ? 'hit' : 'miss'
       currentPlayerData.publicRole = 'alien' // only aliens can attack
       ctx.events.endTurn()
-    }, attackItem(G, ctx, hex) {
+    },
+    attackItem(G, ctx, hex) {
       const currentPlayerData = G.players[ctx.currentPlayer]
       if (currentPlayerData.role !== 'human') {
         return INVALID_MOVE
@@ -460,7 +461,7 @@ function makeDangerDeck(ctx) {
     // ...Array(2).fill('cat'),
     // ...Array(2).fill('spotlight'),
     // ...Array(1).fill('teleport'),
-    // ...Array(1).fill('defence'),
+    // ...Array(1).fill('defense'),
     // ...Array(1).fill('clone'),
     // ...Array(1).fill('sensor'),
     // ...Array(1).fill('mutation'),
