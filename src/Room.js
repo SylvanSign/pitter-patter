@@ -46,7 +46,6 @@ export default function Room({ id, setId, name, setName }) {
 function Lobby({ room, name, setCredentials, setPlayerID, setMatchID }) {
     const disableRoomLeaveNotifier = useRoomLeaverNotifier()
     const players = usePlayersUpdater()
-    const [map, setMap] = useState(defaultMap)
     const enoughPlayers = players.length > 0 // TODO
 
     const startGame = () => {
@@ -54,7 +53,7 @@ function Lobby({ room, name, setCredentials, setPlayerID, setMatchID }) {
     }
 
     useEffect(() => {
-        socket.once('start', async ({ map, matchID }) => {
+        socket.once('start', async ({ matchID }) => {
             const { playerID, playerCredentials } =
                 await lobbyClient.joinMatch('pp', matchID, { playerName: name })
             setCredentials(playerCredentials)
@@ -73,9 +72,11 @@ function Lobby({ room, name, setCredentials, setPlayerID, setMatchID }) {
     return (
         <>
             <h1>{room}</h1>
-            <MapSelector map={map} setMap={setMap} />
-            {' '}
+            <MapSelector />
+            <OptionSelector name='audio' startChecked={false} />
+            <OptionSelector name='items' startChecked={true} />
             <label htmlFor="startButton">REQUIRES AT LEAST 2 PLAYERS</label>
+            {' '}
             <button id='startButton' disabled={!enoughPlayers} onClick={startGame}>START GAME</button>
             <ul>
                 {players.map(p => <li key={p.id}>{p.name}</li>)}
@@ -84,7 +85,8 @@ function Lobby({ room, name, setCredentials, setPlayerID, setMatchID }) {
     )
 }
 
-function MapSelector({ map, setMap }) {
+function MapSelector() {
+    const [map, setMap] = useState(defaultMap)
     const options = Object.entries(MAPS).map(([name, _]) => <option key={name} value={name}>{name}</option>)
 
     useEffect(() => {
@@ -116,32 +118,32 @@ function MapSelector({ map, setMap }) {
 
 
 
-function OptionsSelector({ option, setOption }) {
-    const options = Object.entries(MAPS).map(([name, _]) => <option key={name} value={name}>{name}</option>)
+function OptionSelector({ name, startChecked }) {
+    const [checked, setChecked] = useState(startChecked)
 
     useEffect(() => {
-        socket.on('update-map', ({ map }) => {
-            setMap(map)
+        socket.on('update-option', ({ name: optionName, value }) => {
+            if (optionName === name)
+                setChecked(!!value)
         })
 
         return () => {
-            socket.off('update-map')
+            socket.off('update-option')
         }
-    }, [setMap])
+    }, [name])
 
     function onChange(e) {
-        const map = e.target.value
-        setMap(map)
-        socket.emit('map-change', { map })
+        const value = e.target.checked
+        setChecked(value)
+        socket.emit('option-change', { name, value })
     }
 
     return (
         <div>
-            <h3>Settings</h3>
-            <select id='mapSelector' value={map} onChange={onChange}>
-                {options}
-            </select>
-        </div>
+            <label style={{ display: 'inline-block' }} htmlFor={name}>{'> '}{name}</label>
+            {' '}
+            <input type='checkbox' id={name} name={name} checked={checked} onChange={onChange} />
+        </div >
     )
 }
 

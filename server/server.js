@@ -76,9 +76,17 @@ io.on('connection', socket => {
         socket.to(room).emit('update-map', { map })
     })
 
+    socket.on('option-change', ({ name, value }) => {
+        const { room } = socket.data
+        innKeeper.updateOption(room, name, value)
+        socket.to(room).emit('update-option', { name, value })
+    })
+
     socket.on('start', async () => {
         const { room } = socket.data
         const map = innKeeper.map(room)
+        const audio = innKeeper.option(room, 'audio')
+        const items = innKeeper.option(room, 'items')
         const numPlayers = innKeeper.size(room)
 
         // TODO prevent same room from creating duplicate matches
@@ -87,6 +95,8 @@ io.on('connection', socket => {
             // TODO setupData may eventually carry rules changes like items, abilities, houserules, etc.
             setupData: {
                 map,
+                audio,
+                items,
             },
             unlisted: true,
         })
@@ -118,4 +128,6 @@ async function join(socket, name, room, id) {
     socket.emit('joined', { room, id, matchID: innKeeper.matchID(room) })
     io.in(room).emit('update-players', { players: innKeeper.stuffs(room) })
     socket.emit('update-map', { map: innKeeper.map(room) })
+    socket.emit('update-option', { name: 'audio', value: innKeeper.option(room, 'audio') })
+    socket.emit('update-option', { name: 'items', value: innKeeper.option(room, 'items') })
 }

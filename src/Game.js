@@ -23,7 +23,7 @@ const Game = {
   name: 'pp',
   minPlayers: 1,
   maxPlayers: 8,
-  setup(ctx, { map = defaultMap } = {}) {
+  setup(ctx, { map = defaultMap, audio, items } = {}) {
     const mapConfig = MAPS[map]
     gridData = gridGenerator(map)
     const humanHex = gridData.grid.get(idToCartesian(mapConfig[HEX_TYPES.human]))
@@ -35,7 +35,7 @@ const Game = {
     const [aliens, humans] = pickRoles(ctx, playOrder) // TODO use line above
     const players = setupPlayers({ humans, humanHex, }, { aliens, alienHex, })
 
-    const dangerDeck = makeDangerDeck(ctx)
+    const dangerDeck = makeDangerDeck(ctx, items)
     const escapeDeck = makeEscapeDeck(ctx, Object.keys(mapConfig.escape).length)
 
     return makeSerializable({
@@ -57,6 +57,10 @@ const Game = {
       event: null,
       action: 0,
       pendingNoises: [],
+      options: {
+        audio,
+        items,
+      },
     })
   },
 
@@ -233,7 +237,7 @@ const Game = {
       G.clues = [
         {
           id: Number.parseInt(ctx.currentPlayer, 10),
-          msg: `${emojiPlusName(currentPlayerData)} used SENSOR`
+          msg: `${emojiPlusName(currentPlayerData)} activated SENSOR`
         },
         {
           id: Number.parseInt(id, 10),
@@ -356,14 +360,14 @@ const Game = {
               data.publicRole = 'human' // only humans can use defense
               clues.push({
                 id: Number.parseInt(playerID, 10),
-                msg: `and hit ${emojiPlusName(data)}, who blocked it with defense`
+                msg: `and hit ${emojiPlusName(data)}, who blocked it with DEFENSE`
               })
             } else if (data.role === 'human' && data.hand.clone) {
               G.players[playerID] = freshHuman(G.humanHex)
               G.players[playerID].publicRole = 'human' // only humans can use clone
               clues.push({
                 id: Number.parseInt(playerID, 10),
-                msg: `and hit ${emojiPlusName(G.players[playerID])}, whose clone has spawned in their place!`
+                msg: `and hit ${emojiPlusName(G.players[playerID])}, whose CLONE has spawned in their place!`
               })
             } else {
               hitAnything = true
@@ -684,24 +688,33 @@ function freshPlayer(hex) {
   }
 }
 
-function makeDangerDeck(ctx) {
+function makeDangerDeck(ctx, items) {
   // TODO replace items with silence if playing without items (look into setupData and lobby item toggles)
-  const deck = [
+  const baseDeck = [
     ...Array(27).fill('you'),
     ...Array(27).fill('any'),
     ...Array(6).fill('silence'),
-    ...Array(3).fill('adrenaline'),
-    ...Array(3).fill('sedatives'),
-    ...Array(2).fill('attack'),
-    ...Array(2).fill('cat'),
-    ...Array(2).fill('spotlight'),
-    ...Array(1).fill('teleport'),
-    ...Array(1).fill('defense'),
-    ...Array(1).fill('clone'),
-    ...Array(1).fill('sensor'),
-    ...Array(1).fill('mutation'),
   ]
 
+  let deck
+  if (items) {
+    deck = baseDeck.concat([
+      ...Array(3).fill('adrenaline'),
+      ...Array(3).fill('sedatives'),
+      ...Array(2).fill('attack'),
+      ...Array(2).fill('cat'),
+      ...Array(2).fill('spotlight'),
+      ...Array(1).fill('teleport'),
+      ...Array(1).fill('defense'),
+      ...Array(1).fill('clone'),
+      ...Array(1).fill('sensor'),
+      ...Array(1).fill('mutation'),
+    ])
+  } else {
+    deck = baseDeck.concat([
+      ...Array(17).fill('silence')
+    ])
+  }
   return ctx.random.Shuffle(deck)
 }
 

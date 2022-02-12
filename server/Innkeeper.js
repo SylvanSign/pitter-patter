@@ -17,6 +17,10 @@ export default class InnKeeper {
         // TODO do we need to initialize these?
         matchID: undefined,
         map: defaultMap,
+        options: {
+          audio: false,
+          items: true,
+        },
       })
     }
     const roomStuff = this._stuff.get(room)
@@ -81,6 +85,14 @@ export default class InnKeeper {
 
   updateMap(room, map) {
     this._stuff.get(room).map = map
+  }
+
+  option(room, name) {
+    return this._stuff.get(room).options[name]
+  }
+
+  updateOption(room, name, value) {
+    this._stuff.get(room).options[name] = value
   }
 
   matchID(room) {

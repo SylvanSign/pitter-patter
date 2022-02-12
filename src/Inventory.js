@@ -6,9 +6,14 @@ const DISABLED_CARDS = [
   'clone',
 ]
 
-export default function Inventory({ G: { players }, moves, playerID }) {
+export default function Inventory({ G: { players, options: { items }, }, moves, playerID }) {
+  // if items are disabled for this game, then don't render this component
+  if (!items)
+    return null
+
   const self = players[playerID]
   const { hand } = self
+
   return (
     <div>
       <h3 style={{ display: 'inline' }}>Items</h3>
