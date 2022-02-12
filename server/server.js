@@ -92,7 +92,6 @@ io.on('connection', socket => {
         // TODO prevent same room from creating duplicate matches
         const { matchID } = await createMatch({
             numPlayers,
-            // TODO setupData may eventually carry rules changes like items, abilities, houserules, etc.
             setupData: {
                 map,
                 audio,

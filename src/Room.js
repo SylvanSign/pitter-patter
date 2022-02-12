@@ -46,7 +46,7 @@ export default function Room({ id, setId, name, setName }) {
 function Lobby({ room, name, setCredentials, setPlayerID, setMatchID }) {
     const disableRoomLeaveNotifier = useRoomLeaverNotifier()
     const players = usePlayersUpdater()
-    const enoughPlayers = players.length > 0 // TODO
+    const enoughPlayers = players.length > 1
 
     const startGame = () => {
         socket.emit('start')

@@ -21,7 +21,7 @@ function emojiPlusName({ publicRole }) {
 // TODO generally, remove all console.logs
 const Game = {
   name: 'pp',
-  minPlayers: 1,
+  minPlayers: 2,
   maxPlayers: 8,
   setup(ctx, { map = defaultMap, audio, items } = {}) {
     const mapConfig = MAPS[map]
@@ -189,6 +189,7 @@ const Game = {
 
         for (const [hexId, playerIds] of Object.entries(found)) {
           for (const pid of playerIds) {
+            // TODO add to G's noise state too!
             clues.push({
               id: Number.parseInt(pid, 10),
               msg: `and ${emojiPlusName(G.players[pid])} was spotted in ${hexId}!`
