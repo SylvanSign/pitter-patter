@@ -212,8 +212,23 @@ const Game = {
 
     sensorWho(G, ctx, id) {
       const currentPlayerData = G.players[ctx.currentPlayer]
+      currentPlayerData.publicRole = 'human' // TODO handle blink alien!
       G.promptSensor = false
-      console.log(`Sensor ${id}`)
+      const sensoredPlayer = G.players[id]
+      const location = sensoredPlayer.hex.id
+      G.clues = [
+        {
+          id: Number.parseInt(ctx.currentPlayer, 10),
+          msg: `${emojiPlusName(currentPlayerData)} used SENSOR`
+        },
+        {
+          id: Number.parseInt(id, 10),
+          msg: `and sensed ${emojiPlusName(sensoredPlayer)} at ${location}!`
+        }
+      ].concat(G.clues)
+      G.noise = location
+      G.event = 'spotlight' // TODO should be 'sensor'
+      ++G.action
     },
 
     mutation(G, ctx) {
@@ -615,11 +630,11 @@ function makeDangerDeck(ctx) {
     // ...Array(3).fill('sedatives'),
     // ...Array(2).fill('attack'),
     // ...Array(2).fill('cat'),
-    ...Array(2).fill('spotlight'),
+    // ...Array(2).fill('spotlight'),
     // ...Array(1).fill('teleport'),
     // ...Array(1).fill('defense'),
     // ...Array(1).fill('clone'),
-    // ...Array(1).fill('sensor'),
+    ...Array(1).fill('sensor'),
     // ...Array(1).fill('mutation'),
   ]
 

@@ -8,6 +8,6 @@ const App = Client({
   game,
   board,
   multiplayer: SocketIO({ server: `${window.location.hostname}:${SERVER_PORT}` }),
-  debug: true,
+  debug: false,
 })
 export default App
