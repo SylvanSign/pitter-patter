@@ -121,22 +121,24 @@ function useRoomVerifier(name, id, setId, setMatchID) {
     room = room.toUpperCase()
 
     useEffect(() => {
-        socket.emit('room-check', { room, id, name })
-        socket.once('room-check', ({ valid }) => {
-            socket.emit('join', { name, room, id })
-            socket.once('joined', ({ id, matchID }) => {
-                setId(id)
-                setValid(valid)
-                setMatchID(matchID)
+        if (name) {
+            socket.emit('room-check', { room, id, name })
+            socket.once('room-check', ({ valid }) => {
+                socket.emit('join', { name, room, id })
+                socket.once('joined', ({ id, matchID }) => {
+                    setId(id)
+                    setValid(valid)
+                    setMatchID(matchID)
+                })
+                socket.once('invalid-room', () => {
+                    nav("/join", { state: room })
+                })
             })
-            socket.once('invalid-room', () => {
-                nav("/join", { state: room })
-            })
-        })
-        return () => {
-            socket.off('room-check')
-            socket.off('joined')
-            socket.off('invalid-room')
+            return () => {
+                socket.off('room-check')
+                socket.off('joined')
+                socket.off('invalid-room')
+            }
         }
     }, [name, room, id, setId, setMatchID, nav])
 
