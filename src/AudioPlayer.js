@@ -87,6 +87,14 @@ const EVENT_SOUNDS = {
     'i-am-a-leaf-on-the-wind',
     'you-must-have-found-my-stash',
   ],
+  cat: [
+    'here-kitty-kitty',
+    'puddy-tat',
+  ],
+  sensor: [
+    'do-not-censor-me-bro',
+    'sensortive',
+  ],
   spotlight: [
     'it-burns',
     'you-are-glowing',

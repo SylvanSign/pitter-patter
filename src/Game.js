@@ -56,6 +56,7 @@ const Game = {
       clues: [],
       event: null,
       action: 0,
+      pendingNoises: [],
     })
   },
 
@@ -136,9 +137,22 @@ const Game = {
         id: Number.parseInt(ctx.currentPlayer, 10),
         msg: `${emojiPlusName(currentPlayerData)} took SEDATIVES`,
       })
-      G.skipNextDraw = true
+      G.sedated = true
       G.event = 'sedatives'
       ++G.action
+    },
+
+    cat(G, ctx, hex) {
+      const currentPlayerData = G.players[ctx.currentPlayer]
+      discard(currentPlayerData, 'cat')
+      currentPlayerData.publicRole = 'human'
+      // currentPlayerData.reachable = []
+      G.clues.unshift({
+        id: Number.parseInt(ctx.currentPlayer, 10),
+        msg: `${emojiPlusName(currentPlayerData)} released CAT`,
+      })
+      G.kitteh = true
+      move(G, ctx, hex)
     },
 
     spotlight(G, ctx) {
@@ -226,8 +240,8 @@ const Game = {
           msg: `and sensed ${emojiPlusName(sensoredPlayer)} at ${location}!`
         }
       ].concat(G.clues)
-      G.noise = location
-      G.event = 'spotlight' // TODO should be 'sensor'
+      G.noise1 = location
+      G.event = 'sensor'
       ++G.action
     },
 
@@ -264,119 +278,45 @@ const Game = {
             return INVALID_MOVE
           }
       }
-      G.clues.unshift({
-        id: Number.parseInt(ctx.currentPlayer, 10),
-        msg: `${emojiPlusName(G.players[ctx.currentPlayer])} made a noise in ${hex.id}`,
-      })
-      G.event = 'noise'
-      ++G.action
-      G.noise = hex.id
-      G.promptNoise = false
-      ctx.events.endTurn()
+      --G.promptNoises
+      G.pendingNoises.push(hex.id)
+
+      if (!G.promptNoises) {
+        G.pendingNoises.sort() // to add ambiguity between two noises in case one is actual location
+        let clues
+        if (G.pendingNoises.length > 1) { // CAT too
+          const [noise1, noise2] = G.pendingNoises
+          clues = [
+            {
+              id: Number.parseInt(ctx.currentPlayer, 10),
+              msg: `${emojiPlusName(G.players[ctx.currentPlayer])} and their ${EMOJIS.cat} moved into dangerous sectors`,
+            },
+            {
+              msg: `and you hear noises in ${noise1} and ${noise2}`,
+            },
+          ]
+        } else { // no CAT ;(
+          clues = G.pendingNoises.map(noise => ({
+            id: Number.parseInt(ctx.currentPlayer, 10),
+            msg: `${emojiPlusName(G.players[ctx.currentPlayer])} moved into a dangerous sector. You hear a noise in ${noise}`,
+          }))
+        }
+
+        G.clues = clues.concat(G.clues)
+        G.noise1 = G.pendingNoises[0]
+        G.noise2 = G.pendingNoises[1]
+
+        // cleanup
+        G.event = G.pendingNoises.length > 1 ? 'cat' : 'noise'
+        ++G.action
+        G.pendingNoises = []
+        G.kitteh = false
+        ctx.events.endTurn()
+      }
     },
-    move(G, ctx, hex) {
-      const currentPlayerData = G.players[ctx.currentPlayer]
-      if (hex === currentPlayerData.hex) {
-        return INVALID_MOVE
-      }
 
-      switch (G.mapConfig[hex.id]) {
-        case HEX_TYPES.human:
-          return INVALID_MOVE
-        case HEX_TYPES.alien:
-          return INVALID_MOVE
-        default: // proceed
-      }
+    move,
 
-      if (!currentPlayerData.reachable.find(r => r.id === hex.id)) {
-        return INVALID_MOVE
-      }
-
-      currentPlayerData.hex = makeSerializable(hex)
-
-      switch (hex.type) {
-        case HEX_TYPES.silent:
-          if (G.skipNextDraw) {
-            G.clues.unshift({
-              id: Number.parseInt(ctx.currentPlayer, 10),
-              msg: `${emojiPlusName(currentPlayerData)} was sedated and made no sound`,
-            })
-          } else {
-            G.clues.unshift({
-              id: Number.parseInt(ctx.currentPlayer, 10),
-              msg: `${emojiPlusName(currentPlayerData)} is in a silent sector`,
-            })
-          }
-          G.event = 'silent'
-          ++G.action
-          ctx.events.endTurn()
-          break
-        case HEX_TYPES.danger:
-          if (G.skipNextDraw) {
-            G.clues.unshift({
-              id: Number.parseInt(ctx.currentPlayer, 10),
-              msg: `${emojiPlusName(currentPlayerData)} was sedated and made no sound`,
-            })
-            G.event = 'silent'
-            ++G.action
-            ctx.events.endTurn()
-          } else {
-            const dangerCard = drawDangerCard(G, ctx)
-            switch (dangerCard) {
-              case 'you':
-                G.clues.unshift({
-                  id: Number.parseInt(ctx.currentPlayer, 10),
-                  msg: `${emojiPlusName(currentPlayerData)} made a noise in ${hex.id}`,
-                })
-                G.noise = hex.id
-                G.event = 'noise'
-                ++G.action
-                ctx.events.endTurn()
-                break
-              case 'any':
-                G.promptNoise = true
-                break
-              default:
-                // silence or item
-                G.clues.unshift({
-                  id: Number.parseInt(ctx.currentPlayer, 10),
-                  msg: `${emojiPlusName(currentPlayerData)} may have found something in a dangerous sector`,
-                })
-                G.event = 'quiet'
-                ++G.action
-                ctx.events.endTurn()
-            }
-          }
-          break
-        default: // escape pod
-          const escapeCard = G.escapeDeck.pop()
-          if (escapeCard === 'success') {
-            currentPlayerData.publicRole = 'success'
-            G.clues.unshift({
-              id: Number.parseInt(ctx.currentPlayer, 10),
-              msg: `${emojiPlusName(currentPlayerData)} left in escape pod ${hex.type}`,
-            })
-            G.event = 'escape'
-            ++G.action
-            G.escapes[hex.type] = 'success'
-            G.winners.push(Number.parseInt(ctx.currentPlayer, 10))
-            remove(G, ctx.currentPlayer, false)
-            ctx.events.endTurn()
-          } else { // 'fail'
-            currentPlayerData.publicRole = 'human'
-            G.clues.unshift({
-              id: Number.parseInt(ctx.currentPlayer, 10),
-              msg: `${emojiPlusName(currentPlayerData)} failed to launch escape pod ${hex.id}`,
-            })
-            G.event = 'escapeFail'
-            ++G.action
-            G.escapes[hex.type] = 'fail'
-            ctx.events.endTurn()
-          }
-      }
-
-      G.skipNextDraw = false
-    },
     attack(G, ctx, hex) {
       const currentPlayerData = G.players[ctx.currentPlayer]
       if (currentPlayerData.role !== 'alien') {
@@ -406,7 +346,7 @@ const Game = {
         id: Number.parseInt(ctx.currentPlayer, 10),
         msg: `${emojiPlusName(currentPlayerData)} attacked sector ${hex.id}`,
       }]
-      G.noise = hex.id
+      G.noise1 = hex.id
       let hitAnything = false
       for (const [playerID, data] of Object.entries(G.players)) {
         if (playerID !== ctx.currentPlayer && !data.gone) {
@@ -445,6 +385,7 @@ const Game = {
       ++G.action
       ctx.events.endTurn()
     },
+
     attackItem(G, ctx, hex) {
       const currentPlayerData = G.players[ctx.currentPlayer]
       if (currentPlayerData.role !== 'human') {
@@ -474,7 +415,7 @@ const Game = {
         id: Number.parseInt(ctx.currentPlayer, 10),
         msg: `${emojiPlusName(currentPlayerData)} used ATTACK in sector ${hex.id}`,
       }]
-      G.noise = hex.id
+      G.noise1 = hex.id
       // let hitAnything = false
       for (const [playerID, data] of Object.entries(G.players)) {
         if (playerID !== ctx.currentPlayer && !data.gone) {
@@ -499,6 +440,129 @@ const Game = {
       ctx.events.endTurn()
     },
   },
+}
+
+function move(G, ctx, hex) {
+  const currentPlayerData = G.players[ctx.currentPlayer]
+  if (hex === currentPlayerData.hex) {
+    return INVALID_MOVE
+  }
+
+  switch (G.mapConfig[hex.id]) {
+    case HEX_TYPES.human:
+      return INVALID_MOVE
+    case HEX_TYPES.alien:
+      return INVALID_MOVE
+    default: // proceed
+  }
+
+  if (!currentPlayerData.reachable.find(r => r.id === hex.id)) {
+    return INVALID_MOVE
+  }
+
+  currentPlayerData.hex = makeSerializable(hex)
+  currentPlayerData.reachable = []
+
+  switch (hex.type) {
+    case HEX_TYPES.silent:
+      if (G.sedated) {
+        G.clues.unshift({
+          id: Number.parseInt(ctx.currentPlayer, 10),
+          msg: `${emojiPlusName(currentPlayerData)} was sedated and made no sound`,
+        })
+      } else {
+        G.clues.unshift({
+          id: Number.parseInt(ctx.currentPlayer, 10),
+          msg: `${emojiPlusName(currentPlayerData)} moved into a silent sector`,
+        })
+      }
+      G.event = 'silent'
+      delete G.noise1
+      delete G.noise2
+      ++G.action
+      ctx.events.endTurn()
+      break
+    case HEX_TYPES.danger:
+      if (G.sedated) {
+        G.clues.unshift({
+          id: Number.parseInt(ctx.currentPlayer, 10),
+          msg: `${emojiPlusName(currentPlayerData)} was sedated and made no sound`,
+        })
+        G.event = 'silent'
+        delete G.noise1
+        delete G.noise2
+        ++G.action
+        ctx.events.endTurn()
+      } else {
+        const dangerCard = drawDangerCard(G, ctx, G.kitteh)
+        if (G.kitteh) {
+          switch (dangerCard) {
+            case 'you':
+              G.pendingNoises.push(hex.id)
+              G.promptNoises = 1
+              break
+            default: // any, silence, or item should all allow 2 noise prompts
+              G.promptNoises = 2
+              break
+          }
+        } else {
+          switch (dangerCard) {
+            case 'you':
+              G.clues.unshift({
+                id: Number.parseInt(ctx.currentPlayer, 10),
+                msg: `${emojiPlusName(currentPlayerData)} moved into a dangerous sector. You hear a noise in ${hex.id}`,
+              })
+              G.noise1 = hex.id
+              G.event = 'noise'
+              ++G.action
+              ctx.events.endTurn()
+              break
+            case 'any':
+              G.promptNoises = 1
+              break
+            default:
+              // silence or item
+              G.clues.unshift({
+                id: Number.parseInt(ctx.currentPlayer, 10),
+                msg: `${emojiPlusName(currentPlayerData)} moved into a dangerous sector. You hear nothing...`,
+              })
+              G.event = 'quiet'
+              delete G.noise1
+              delete G.noise2
+              ++G.action
+              ctx.events.endTurn()
+          }
+        }
+      }
+      break
+    default: // escape pod
+      const escapeCard = G.escapeDeck.pop()
+      if (escapeCard === 'success') {
+        currentPlayerData.publicRole = 'success'
+        G.clues.unshift({
+          id: Number.parseInt(ctx.currentPlayer, 10),
+          msg: `${emojiPlusName(currentPlayerData)} left in escape pod ${hex.type}`,
+        })
+        G.event = 'escape'
+        ++G.action
+        G.escapes[hex.type] = 'success'
+        G.winners.push(Number.parseInt(ctx.currentPlayer, 10))
+        remove(G, ctx.currentPlayer, false)
+        ctx.events.endTurn()
+      } else { // 'fail'
+        currentPlayerData.publicRole = 'human'
+        G.clues.unshift({
+          id: Number.parseInt(ctx.currentPlayer, 10),
+          msg: `${emojiPlusName(currentPlayerData)} failed to launch escape pod ${hex.id}`,
+        })
+        G.event = 'escapeFail'
+        ++G.action
+        G.escapes[hex.type] = 'fail'
+        ctx.events.endTurn()
+      }
+  }
+
+  G.sedated = false
 }
 
 function draw(data, type) {
@@ -553,7 +617,7 @@ function remove(G, playerIDToEliminate, markDead = true) {
   }
 }
 
-function drawDangerCard(G, ctx) {
+function drawDangerCard(G, ctx, kitteh) {
   if (!G.dangerDeck.length) {
     G.dangerDeck = ctx.random.Shuffle(G.dangerDiscard.splice(0))
   }
@@ -564,8 +628,8 @@ function drawDangerCard(G, ctx) {
       G.dangerDiscard.push(dangerCard)
       break
     default:
-      // should 'silence' still go into hand so that we can have an accurate handsize in the UI?
-      draw(G.players[ctx.currentPlayer], dangerCard)
+      if (!kitteh) // when CAT is used, discard any drawn silence/item cards
+        draw(G.players[ctx.currentPlayer], dangerCard)
   }
 
   return dangerCard
@@ -629,12 +693,13 @@ function makeDangerDeck(ctx) {
     // ...Array(3).fill('adrenaline'),
     // ...Array(3).fill('sedatives'),
     // ...Array(2).fill('attack'),
-    // ...Array(2).fill('cat'),
+    ...Array(3).fill('cat'), // TODO should be 2
+    ...Array(3).fill('you'), // TODO remove this!
     // ...Array(2).fill('spotlight'),
     // ...Array(1).fill('teleport'),
     // ...Array(1).fill('defense'),
     // ...Array(1).fill('clone'),
-    ...Array(1).fill('sensor'),
+    // ...Array(1).fill('sensor'),
     // ...Array(1).fill('mutation'),
   ]
 

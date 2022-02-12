@@ -9,16 +9,20 @@ export default function Map({ G, playerID, moves, grid, fullGrid, Grid, corners,
   const [notes, setNotes] = useSessionStorageState('notes', {})
   const [modal, setModal] = useState({ id: null, comp: '' })
 
-
   // TODO do people actually like this auto-noter for noises?
   //      or is it more fun manually?
   useEffect(() => {
-    setNotes(Notes => {
-      return { ...Notes, [G.noise]: true }
+    setNotes(currentNotes => {
+      return { ...currentNotes, [G.noise1]: true }
     })
-  }, [G.noise, setNotes])
+  }, [G.noise1, G.action, setNotes])
+  useEffect(() => {
+    setNotes(currentNotes => {
+      return { ...currentNotes, [G.noise2]: true }
+    })
+  }, [G.noise2, G.action, setNotes])
 
-  const { map, promptNoise, promptSpotlight } = G
+  const { map, promptNoises, promptSpotlight } = G
   const self = G.players[playerID || 0] // TODO shouldn't need the || 0 except for local testing
   function close() {
     setModal({ id: null, comp: '' })
@@ -37,21 +41,21 @@ export default function Map({ G, playerID, moves, grid, fullGrid, Grid, corners,
     const hex = grid.get(hexCoordinates)
 
     if (hex) {
-      handleClick(hex, promptNoise, promptSpotlight)
+      handleClick(hex, promptNoises, promptSpotlight)
     }
   }
 
-  function handleClick(hex, promptNoise, promptSpotlight) {
-    if (promptNoise && playerID === currentPlayer) {
+  function handleClick(hex, promptNoises, promptSpotlight) {
+    if (promptNoises && playerID === currentPlayer) {
       moves.noise(hex)
-    } if (promptSpotlight && playerID === currentPlayer) {
+    } else if (promptSpotlight && playerID === currentPlayer) {
       moves.shineSpotlight(hex)
     } else {
       if (hex && !G.escapes[hex.type]) {
         if (hex.id === modal.id) { // clicking already open hex will close it
           close()
         } else if (!!self.reachable.find(r => r.id === hex.id)) { // reachable
-          setModal({ id: hex.id, comp: <Modal {...{ self, hand: G.players[playerID].hand, moves, hex, fullGrid, close, setNotes, }} /> })
+          setModal({ id: hex.id, comp: <Modal {...{ self, sedated: G.sedated, role: G.players[playerID].role, hand: G.players[playerID].hand, moves, hex, fullGrid, close, setNotes, }} /> })
         } else if (!modal.id && typeof hex.type !== 'number') {
           // quick notes
           setNotes(notes => {

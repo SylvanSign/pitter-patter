@@ -1,15 +1,23 @@
 import { useEffect } from "react"
 import { EMOJIS } from "./emojis"
 
-export default function RoundDisplay({ ctx: { gameover, currentPlayer, }, G: { round, players, promptNoise, promptSpotlight }, matchData, playerID }) {
-  const promptingNoiseForYou = (promptNoise && currentPlayer === playerID)
+export default function RoundDisplay({ ctx: { gameover, currentPlayer, }, G: { kitteh, round, players, promptNoises, promptSpotlight }, matchData, playerID }) {
+  const promptingNoiseForYou = (promptNoises && currentPlayer === playerID)
   const promptingSpotlightForYou = (promptSpotlight && currentPlayer === playerID)
   const role = players[playerID].role
 
   useEffect(() => {
     if (promptingNoiseForYou)
-      alert('Click any dangerous sector to make a noise there') // TODO better UI for this :)
-  }, [promptingNoiseForYou])
+      if (promptNoises === 1)
+        if (kitteh)
+          alert('You made a noise in you sector, but you can Click any dangerous sector to have your CAT make a noise there') // TODO better UI for this :)
+        else
+          alert('Click any dangerous sector to make a noise there') // TODO better UI for this :)
+      else
+        alert('Click any 2 dangerous sectors to make noises there') // TODO better UI for this :)
+    // disable ESlint here because we don't want to depend on promptNoises
+    // eslint-disable-next-line
+  }, [promptingNoiseForYou, kitteh])
 
   useEffect(() => {
     if (promptingSpotlightForYou)

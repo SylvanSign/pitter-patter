@@ -1,4 +1,6 @@
-export default function Modal({ self, hand, moves, fullGrid, hex, close, setNotes, }) {
+import { HEX_TYPES } from './maps/util'
+
+export default function Modal({ self, hand, role, sedated, moves, fullGrid, hex, close, setNotes, }) {
   const escape = typeof hex.type === 'number'
 
   if (escape && self.role === 'alient') {
@@ -10,7 +12,7 @@ export default function Modal({ self, hand, moves, fullGrid, hex, close, setNote
     move,
     attack,
   ] = fullGrid.neighborsOf(hex).filter(n => n)
-  const moveComp = <Move {...{ place: move, hex, moves, close }} />
+  const moveComp = <Move {...{ place: move, sedated, hex, moves, close, hand, role }} />
   const attackComp = self.role === 'alien' || hand.attack ? <Attack {...{ place: attack, role: self.role, hex, moves, close }} /> : ''
   const noteComp = escape ? '' : <Note {...{ place: note, hex, close, setNotes }} />
 
@@ -38,10 +40,19 @@ function Note({ place, hex, close, setNotes, }) {
   return <ModalHex {...{ place, svg, tooltip, onClick, }} />
 }
 
-function Move({ place, hex, close, moves, }) {
+function Move({ place, sedated, hex, close, moves, hand, role }) {
   function onClick() {
     close()
-    moves.move(hex)
+    if (
+      role === 'human'
+      && hand.cat
+      && hex.type === HEX_TYPES.danger
+      && !sedated
+      && window.confirm('Do you want to use CAT now?')
+    )
+      moves.cat(hex)
+    else
+      moves.move(hex)
   }
   const tooltip = 'MOVE'
   const svg = (
