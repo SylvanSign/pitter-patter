@@ -114,6 +114,37 @@ function MapSelector({ map, setMap }) {
     )
 }
 
+
+
+function OptionsSelector({ option, setOption }) {
+    const options = Object.entries(MAPS).map(([name, _]) => <option key={name} value={name}>{name}</option>)
+
+    useEffect(() => {
+        socket.on('update-map', ({ map }) => {
+            setMap(map)
+        })
+
+        return () => {
+            socket.off('update-map')
+        }
+    }, [setMap])
+
+    function onChange(e) {
+        const map = e.target.value
+        setMap(map)
+        socket.emit('map-change', { map })
+    }
+
+    return (
+        <div>
+            <h3>Settings</h3>
+            <select id='mapSelector' value={map} onChange={onChange}>
+                {options}
+            </select>
+        </div>
+    )
+}
+
 function useRoomVerifier(name, id, setId, setMatchID) {
     const nav = useNavigate()
     const [valid, setValid] = useState()
