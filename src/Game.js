@@ -143,8 +143,14 @@ const Game = {
 
     spotlight(G, ctx) {
       const currentPlayerData = G.players[ctx.currentPlayer]
-      console.log(`MOVES spotlight`)
       discard(currentPlayerData, 'spotlight')
+      G.promptSpotlight = true
+    },
+
+    shineSpotlight(G, ctx, hex) {
+      const currentPlayerData = G.players[ctx.currentPlayer]
+      console.log(`SHINING on ${hex}`)
+      G.promptSpotlight = false
     },
 
     teleport(G, ctx) {

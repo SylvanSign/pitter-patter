@@ -1,14 +1,20 @@
 import { useEffect } from "react"
 import { EMOJIS } from "./emojis"
 
-export default function RoundDisplay({ ctx: { gameover, currentPlayer, }, G: { round, players, promptNoise, }, matchData, playerID }) {
+export default function RoundDisplay({ ctx: { gameover, currentPlayer, }, G: { round, players, promptNoise, promptSpotlight }, matchData, playerID }) {
   const promptingNoiseForYou = (promptNoise && currentPlayer === playerID)
+  const promptingSpotlightForYou = (promptSpotlight && currentPlayer === playerID)
   const role = players[playerID].role
 
   useEffect(() => {
     if (promptingNoiseForYou)
       alert('Click any dangerous sector to make a noise there') // TODO better UI for this :)
   }, [promptingNoiseForYou])
+
+  useEffect(() => {
+    if (promptingSpotlightForYou)
+      alert('Click any sector to shine spotlight there') // TODO better UI for this :)
+  }, [promptingSpotlightForYou])
 
   return (
     gameover

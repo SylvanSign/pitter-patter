@@ -18,7 +18,7 @@ export default function Map({ G, playerID, moves, grid, fullGrid, Grid, corners,
     })
   }, [G.noise, setNotes])
 
-  const { map, promptNoise, } = G
+  const { map, promptNoise, promptSpotlight } = G
   const self = G.players[playerID || 0] // TODO shouldn't need the || 0 except for local testing
   function close() {
     setModal({ id: null, comp: '' })
