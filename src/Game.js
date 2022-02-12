@@ -143,7 +143,7 @@ const Game = {
 
     spotlight(G, ctx) {
       const currentPlayerData = G.players[ctx.currentPlayer]
-      // discard(currentPlayerData, 'spotlight') // TODO uncomment this
+      discard(currentPlayerData, 'spotlight')
       G.promptSpotlight = true
     },
 
@@ -206,8 +206,14 @@ const Game = {
 
     sensor(G, ctx) {
       const currentPlayerData = G.players[ctx.currentPlayer]
-      console.log(`MOVES sensor`)
       discard(currentPlayerData, 'sensor')
+      G.promptSensor = true
+    },
+
+    sensorWho(G, ctx, id) {
+      const currentPlayerData = G.players[ctx.currentPlayer]
+      G.promptSensor = false
+      console.log(`Sensor ${id}`)
     },
 
     mutation(G, ctx) {
