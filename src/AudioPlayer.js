@@ -87,6 +87,10 @@ const EVENT_SOUNDS = {
     'i-am-a-leaf-on-the-wind',
     'you-must-have-found-my-stash',
   ],
+  spotlight: [
+    'it-burns',
+    'you-are-glowing',
+  ],
   mutation: [
     'magneto',
     'tnmt',

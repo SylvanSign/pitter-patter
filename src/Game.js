@@ -143,14 +143,48 @@ const Game = {
 
     spotlight(G, ctx) {
       const currentPlayerData = G.players[ctx.currentPlayer]
-      discard(currentPlayerData, 'spotlight')
+      // discard(currentPlayerData, 'spotlight') // TODO uncomment this
       G.promptSpotlight = true
     },
 
     shineSpotlight(G, ctx, hex) {
       const currentPlayerData = G.players[ctx.currentPlayer]
-      console.log(`SHINING on ${hex}`)
+      currentPlayerData.publicRole = 'human' // TODO handle blink alien!
       G.promptSpotlight = false
+      const clues = [{
+        id: Number.parseInt(ctx.currentPlayer, 10),
+        msg: `${emojiPlusName(currentPlayerData)} shined SPOTLIGHT centered on ${hex.id}`,
+      }]
+
+      if (gridData) {
+        const neighbors = gridData.grid.neighborsOf(new gridData.Hex(hex)).filter(n => n)
+        neighbors.unshift(hex) // include center hex too :)
+        const neighborIds = neighbors.map(n => n.id)
+        const found = {}
+        for (const [playerID, data] of Object.entries(G.players)) {
+          const playerHex = data.hex.id
+          if (!data.gone && neighborIds.includes(playerHex)) {
+            found[playerHex] = found[playerHex] || []
+            found[playerHex].push(playerID)
+          }
+        }
+
+        for (const [hexId, playerIds] of Object.entries(found)) {
+          for (const pid of playerIds) {
+            clues.push({
+              id: Number.parseInt(pid, 10),
+              msg: `and ${emojiPlusName(G.players[pid])} was spotted in ${hexId}!`
+            })
+          }
+        }
+      }
+
+      if (clues.length === 1)
+        clues[0].msg += " but it didn't spot anyone..."
+
+      G.clues = clues.concat(G.clues)
+      G.event = 'spotlight'
+      ++G.action
     },
 
     teleport(G, ctx) {
@@ -351,7 +385,7 @@ const Game = {
       G.noise = hex.id
       let hitAnything = false
       for (const [playerID, data] of Object.entries(G.players)) {
-        if (playerID !== ctx.currentPlayer && !data.dead) {
+        if (playerID !== ctx.currentPlayer && !data.gone) {
           if (data.hex.id === hex.id) {
             if (data.role === 'human' && data.hand.defense) {
               discard(data, 'defense')
@@ -417,11 +451,11 @@ const Game = {
         msg: `${emojiPlusName(currentPlayerData)} used ATTACK in sector ${hex.id}`,
       }]
       G.noise = hex.id
-      let hitAnything = false
+      // let hitAnything = false
       for (const [playerID, data] of Object.entries(G.players)) {
-        if (playerID !== ctx.currentPlayer && !data.dead) {
+        if (playerID !== ctx.currentPlayer && !data.gone) {
           if (data.hex.id === hex.id) {
-            hitAnything = true
+            // hitAnything = true
             eliminate(data, G, playerID, currentPlayerData)
             const stinger =
               (data.role === 'human')
@@ -572,12 +606,12 @@ function makeDangerDeck(ctx) {
     // ...Array(3).fill('sedatives'),
     // ...Array(2).fill('attack'),
     // ...Array(2).fill('cat'),
-    // ...Array(2).fill('spotlight'),
+    ...Array(2).fill('spotlight'),
     // ...Array(1).fill('teleport'),
     // ...Array(1).fill('defense'),
     // ...Array(1).fill('clone'),
     // ...Array(1).fill('sensor'),
-    ...Array(1).fill('mutation'),
+    // ...Array(1).fill('mutation'),
   ]
 
   return ctx.random.Shuffle(deck)

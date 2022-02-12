@@ -37,13 +37,15 @@ export default function Map({ G, playerID, moves, grid, fullGrid, Grid, corners,
     const hex = grid.get(hexCoordinates)
 
     if (hex) {
-      handleClick(hex, promptNoise)
+      handleClick(hex, promptNoise, promptSpotlight)
     }
   }
 
-  function handleClick(hex, promptNoise) {
+  function handleClick(hex, promptNoise, promptSpotlight) {
     if (promptNoise && playerID === currentPlayer) {
       moves.noise(hex)
+    } if (promptSpotlight && playerID === currentPlayer) {
+      moves.shineSpotlight(hex)
     } else {
       if (hex && !G.escapes[hex.type]) {
         if (hex.id === modal.id) { // clicking already open hex will close it
