@@ -179,8 +179,11 @@ const Game = {
         }
       }
 
-      if (clues.length === 1)
-        clues[0].msg += " but it didn't spot anyone..."
+      if (clues.length === 1) {
+        clues.push({
+          msg: "but it didn't spot anyone..."
+        })
+      }
 
       G.clues = clues.concat(G.clues)
       G.event = 'spotlight'
