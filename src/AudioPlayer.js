@@ -94,6 +94,7 @@ const EVENT_SOUNDS = {
   sensor: [
     'do-not-censor-me-bro',
     'sensortive',
+    'sensor-hardly-know-her',
   ],
   spotlight: [
     'it-burns',

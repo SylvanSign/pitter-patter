@@ -687,20 +687,19 @@ function freshPlayer(hex) {
 function makeDangerDeck(ctx) {
   // TODO replace items with silence if playing without items (look into setupData and lobby item toggles)
   const deck = [
-    // ...Array(27).fill('you'),
-    // ...Array(27).fill('any'),
-    // ...Array(6).fill('silence'),
-    // ...Array(3).fill('adrenaline'),
-    // ...Array(3).fill('sedatives'),
-    // ...Array(2).fill('attack'),
-    ...Array(3).fill('cat'), // TODO should be 2
-    ...Array(3).fill('you'), // TODO remove this!
-    // ...Array(2).fill('spotlight'),
-    // ...Array(1).fill('teleport'),
-    // ...Array(1).fill('defense'),
-    // ...Array(1).fill('clone'),
-    // ...Array(1).fill('sensor'),
-    // ...Array(1).fill('mutation'),
+    ...Array(27).fill('you'),
+    ...Array(27).fill('any'),
+    ...Array(6).fill('silence'),
+    ...Array(3).fill('adrenaline'),
+    ...Array(3).fill('sedatives'),
+    ...Array(2).fill('attack'),
+    ...Array(2).fill('cat'),
+    ...Array(2).fill('spotlight'),
+    ...Array(1).fill('teleport'),
+    ...Array(1).fill('defense'),
+    ...Array(1).fill('clone'),
+    ...Array(1).fill('sensor'),
+    ...Array(1).fill('mutation'),
   ]
 
   return ctx.random.Shuffle(deck)
